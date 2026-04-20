@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "clean": "powershell -ExecutionPolicy Bypass -File clean-workspace.ps1",
+    "clean": "npx rimraf dist .nx/cache node_modules/.cache",
     "build:shared": "npx tsc --build packages/libs/shared-models/tsconfig.lib.json && npx tsc --build packages/libs/backend-utils/tsconfig.lib.json",
     "build:backend": "npm run build:shared && npx nx build backend --skip-nx-cache",
     "build:frontend": "npx nx build frontend",

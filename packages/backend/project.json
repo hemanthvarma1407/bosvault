@@ -11,7 +11,7 @@
                 "{workspaceRoot}/dist/packages/backend"
             ],
             "options": {
-                "command": "tsc --build packages/backend/tsconfig.app.json"
+                "command": "npx tsc --build packages/backend/tsconfig.app.json"
             }
         }
     }
