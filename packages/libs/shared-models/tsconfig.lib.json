@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "../../../dist/packages/libs/shared-models",
+    "outDir": "../../../dist/libs/shared-models",
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2022",
@@ -15,7 +15,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "tsBuildInfoFile": "../../../dist/packages/libs/shared-models/tsconfig.lib.tsbuildinfo",
+    "tsBuildInfoFile": "../../../dist/libs/shared-models/tsconfig.lib.tsbuildinfo",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,

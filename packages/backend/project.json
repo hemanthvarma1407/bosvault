@@ -8,7 +8,7 @@
         "build": {
             "executor": "nx:run-commands",
             "outputs": [
-                "{workspaceRoot}/dist/packages/backend"
+                "{workspaceRoot}/dist/backend"
             ],
             "options": {
                 "command": "npx tsc --build packages/backend/tsconfig.app.json"

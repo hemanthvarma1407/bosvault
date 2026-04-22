@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "../../dist/packages/backend",
+    "outDir": "../../dist/backend",
     "types": [
       "node",
       "multer"
     ],
     "rootDir": "src",
-    "tsBuildInfoFile": "../../dist/packages/backend/tsconfig.app.tsbuildinfo",
+    "tsBuildInfoFile": "../../dist/backend/tsconfig.app.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "target": "es2021",
