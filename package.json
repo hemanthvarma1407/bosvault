@@ -8,8 +8,8 @@
     "build:backend": "npm run build:shared && npx nx build backend --skip-nx-cache",
     "build:frontend": "npx nx build frontend",
     "build:all": "npm run build:shared && npm run build:backend && npm run build:frontend",
-    "dev:backend": "npm run build:backend && cross-env TS_NODE_PROJECT=packages/backend/tsconfig.runtime.json nodemon --watch packages/backend/src --ext ts --exec \"npm run build:backend && node -r tsconfig-paths/register dist/packages/backend/main.js\"",
-    "start:backend": "npm run build:backend && cross-env TS_NODE_PROJECT=packages/backend/tsconfig.runtime.json node -r tsconfig-paths/register dist/packages/backend/main.js",
+    "dev:backend": "npm run build:backend && cross-env TS_NODE_PROJECT=packages/backend/tsconfig.runtime.json nodemon --watch packages/backend/src --ext ts --exec \"npm run build:backend && node -r tsconfig-paths/register dist/backend/main.js\"",
+    "start:backend": "npm run build:backend && cross-env TS_NODE_PROJECT=packages/backend/tsconfig.runtime.json node -r tsconfig-paths/register dist/backend/main.js",
     "dev:frontend": "npx nx dev frontend",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
@@ -142,8 +142,8 @@
     "zod": "^4.3.6"
   },
   "_moduleAliases": {
-    "@adminvault/backend-utils": "dist/packages/libs/backend-utils",
-    "@adminvault/shared-models": "dist/packages/libs/shared-models",
-    "@adminvault/shared-services": "dist/packages/libs/shared-services"
+    "@adminvault/backend-utils": "dist/libs/backend-utils",
+    "@adminvault/shared-models": "dist/libs/shared-models",
+    "@adminvault/shared-services": "dist/libs/shared-services"
   }
 }
