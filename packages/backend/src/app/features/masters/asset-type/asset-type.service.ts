@@ -7,7 +7,6 @@ import { AssetTypeMasterEntity } from './entities/asset-type.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 import { PurchaseOrderItemEntity } from '../../procurement/entities/purchase-order-item.entity';
 import { DeviceConfigEntity } from '../brand/entities/brand.entity';
-import { AssetInfoEntity } from '../../asset-info/entities/asset-info.entity';
 
 @Injectable()
 export class AssetTypeService {

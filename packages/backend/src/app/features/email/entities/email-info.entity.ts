@@ -1,4 +1,4 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 import { EmailTypeEnum, EmailStatusEnum } from '@bosvault/shared-models';
 

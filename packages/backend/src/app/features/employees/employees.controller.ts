@@ -4,7 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { EmployeesService } from './employees.service';
 import { EmployeesBulkService } from './employees-bulk.service';
-import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetAllEmployeesResponseModel, GetEmployeeResponseModel, BulkImportResponseModel, IdRequestModel, BulkImportRequestModel, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
+import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetAllEmployeesResponseModel, GetEmployeeResponseModel, BulkImportResponseModel, BulkImportRequestModel, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 
 @ApiTags('Employees')
 @Controller('employees')

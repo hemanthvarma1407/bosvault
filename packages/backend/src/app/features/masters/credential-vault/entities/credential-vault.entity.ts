@@ -1,4 +1,4 @@
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { MasterBaseEntity } from '../../../../../database/master-base.entity';
 
 @Entity('credential_vault')

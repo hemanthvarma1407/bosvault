@@ -1,4 +1,4 @@
-import { Column, Entity, CreateDateColumn, Index } from 'typeorm';
+import { Column, Entity, CreateDateColumn } from 'typeorm';
 import { TicketStatusEnum } from '@bosvault/shared-models';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 

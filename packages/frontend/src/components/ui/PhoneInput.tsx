@@ -138,7 +138,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     }, [value, selectedCode, phoneNumber, sortedCountryCodes]);
 
     const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let raw = e.target.value;
+        const raw = e.target.value;
         const isManualCodeEntry = raw.startsWith('+');
 
         // Auto-detect country code from input

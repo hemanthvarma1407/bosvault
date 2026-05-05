@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { IdRequestModel, CreateEmailInfoModel, DeleteEmailInfoModel, EmailStatsResponseModel, GetAllEmailInfoModel, GetEmailInfoByIdModel, GetEmailInfoModel, GlobalResponse, UpdateEmailInfoModel, SendTicketCreatedEmailModel, SendPasswordResetEmailModel, RequestAccessModel, SendAssetApprovalEmailModel } from '@bosvault/shared-models';
+import { IdRequestModel, CreateEmailInfoModel, DeleteEmailInfoModel, EmailStatsResponseModel, GetAllEmailInfoModel, GetEmailInfoByIdModel, GetEmailInfoModel, GlobalResponse, UpdateEmailInfoModel, SendTicketCreatedEmailModel, SendPasswordResetEmailModel, RequestAccessModel } from '@bosvault/shared-models';
 
 export class EmailService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

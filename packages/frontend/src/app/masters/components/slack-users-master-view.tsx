@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Input';
 import { PhoneInput } from '@/components/ui/PhoneInput';
 import { Modal } from '@/components/ui/Modal';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
-import { Plus, Pencil, Trash2, ArrowLeft, User, Search, LayoutGrid, List, Eye, Slack, Hash, Shield, Phone, Mail, AtSign, Briefcase, MapPin, Tag, Globe, Activity, Settings, RefreshCw } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowLeft, User, Search, LayoutGrid, List, Eye, Slack, Hash, Shield, Phone, Mail, AtSign, Briefcase, MapPin, Globe, Activity, Settings, RefreshCw } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { DepartmentService, EmployeesService, SlackUserService, CompanyService } from '@bosvault/shared-services';

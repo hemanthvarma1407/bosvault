@@ -1,4 +1,4 @@
-import { Column, Entity, Index, DeleteDateColumn } from 'typeorm';
+import { Column, Entity, DeleteDateColumn } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@bosvault/shared-models';
 
