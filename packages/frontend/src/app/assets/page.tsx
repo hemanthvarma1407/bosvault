@@ -8,7 +8,7 @@ import { AllAssetsTab } from './components/AllAssetsTab';
 import dynamic from 'next/dynamic';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, AssetSearchRequestModel, IdRequestModel } from '@adminvault/shared-models';
+import { UserRoleEnum, AssetSearchRequestModel, IdRequestModel } from '@bosvault/shared-models';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { assetService, companyService } from '@/lib/api/services';

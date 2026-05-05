@@ -3,7 +3,7 @@
 import React from 'react';
 
 /**
- * Global Loading Component for AdminVault
+ * Global Loading Component for BosVault
  * Provides a smooth transition between pages and consistent visual feedback
  */
 interface LoadingScreenProps {

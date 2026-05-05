@@ -8,7 +8,7 @@ import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ShoppingCart, Plus, Search, Calendar, User, Building, DollarSign, FileText, AlertCircle, CheckCircle2, XCircle, Filter, Eye, Pen, FileUp, ExternalLink, Trash2 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, POStatusEnum, UpdatePOStatusRequestModel, PurchaseOrderModel } from '@adminvault/shared-models';
+import { UserRoleEnum, POStatusEnum, UpdatePOStatusRequestModel, PurchaseOrderModel } from '@bosvault/shared-models';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { CreatePOModal } from './components/CreatePOModal';

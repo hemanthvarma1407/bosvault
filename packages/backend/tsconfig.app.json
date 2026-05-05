@@ -26,13 +26,13 @@
     "noImplicitAny": false,
     "importHelpers": true,
     "paths": {
-      "@adminvault/shared-models": [
+      "@bosvault/shared-models": [
         "../libs/shared-models/src/index.ts"
       ],
-      "@adminvault/backend-utils": [
+      "@bosvault/backend-utils": [
         "../libs/backend-utils/src/index.ts"
       ],
-      "@adminvault/shared-services": [
+      "@bosvault/shared-services": [
         "../libs/shared-services/src/index.ts"
       ]
     }

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { useToast } from '@/contexts/ToastContext';
 import { Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { authService } from '@/lib/api/services';
-import { ResetPasswordModel } from '@adminvault/shared-models';
+import { ResetPasswordModel } from '@bosvault/shared-models';
 
 function ResetPasswordContent() {
     const router = useRouter();
@@ -76,7 +76,7 @@ function ResetPasswordContent() {
                             <ShieldCheck className="w-10 h-10" />
                         </div>
                         <h2 className="text-3xl font-black text-white mb-2 tracking-tight">New Password</h2>
-                        <p className="text-slate-400">Set a secure password for your AdminVault account.</p>
+                        <p className="text-slate-400">Set a secure password for your BosVault account.</p>
                     </div>
 
                     <form onSubmit={handleResetPassword} className="space-y-6">
@@ -138,7 +138,7 @@ function ResetPasswordContent() {
 
                 {/* Footer Brand */}
                 <div className="mt-8 text-center text-slate-500 text-sm font-medium">
-                    Protected by AdminVault Security Engine
+                    Protected by BosVault Security Engine
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { companyService, emailService, departmentService, employeeService } from '@/lib/api/services';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { EmailInfoResponseModel, EmailTypeEnum, IdRequestModel, UserRoleEnum, DepartmentEnum, DeleteEmailInfoModel, GetAllEmployeesRequestModel, EmailStatusEnum } from '@adminvault/shared-models';
+import { EmailInfoResponseModel, EmailTypeEnum, IdRequestModel, UserRoleEnum, DepartmentEnum, DeleteEmailInfoModel, GetAllEmployeesRequestModel, EmailStatusEnum } from '@bosvault/shared-models';
 import {
     Mail, Building2, Plus, Trash2, Search,
     Headphones, ShieldCheck, Landmark, Settings, Pencil,

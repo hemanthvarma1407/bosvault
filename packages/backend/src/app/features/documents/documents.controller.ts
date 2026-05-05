@@ -3,8 +3,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
 import express from 'express';
 import { DocumentsService } from './documents.service';
-import { UploadDocumentModel, DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, UploadDocumentResponseModel, GetAllDocumentsRequestModel, DownloadDocumentRequestModel, GlobalResponse } from '@adminvault/shared-models';
-import { returnException } from '@adminvault/backend-utils';
+import { UploadDocumentModel, DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, UploadDocumentResponseModel, GetAllDocumentsRequestModel, DownloadDocumentRequestModel, GlobalResponse } from '@bosvault/shared-models';
+import { returnException } from '@bosvault/backend-utils';
 
 @ApiTags('Documents')
 @Controller('documents')

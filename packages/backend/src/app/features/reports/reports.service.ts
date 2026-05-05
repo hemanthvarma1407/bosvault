@@ -12,7 +12,7 @@ import { DepartmentsMasterEntity } from '../masters/department/entities/departme
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { CompanyLicenseEntity } from '../licenses/entities/company-license.entity';
 import { LicensesMasterEntity } from '../masters/license/entities/license.entity';
-import { TicketStatusEnum, TicketPriorityEnum, AssetStatusEnum } from '@adminvault/shared-models';
+import { TicketStatusEnum, TicketPriorityEnum, AssetStatusEnum } from '@bosvault/shared-models';
 
 @Injectable()
 export class ReportsService {

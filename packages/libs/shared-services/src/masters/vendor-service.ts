@@ -1,6 +1,6 @@
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
-import { CreateVendorModel, GetAllVendorsResponseModel, IdRequestModel, UpdateVendorModel, GlobalResponse } from '@adminvault/shared-models';
+import { CreateVendorModel, GetAllVendorsResponseModel, IdRequestModel, UpdateVendorModel, GlobalResponse } from '@bosvault/shared-models';
 
 export class VendorService extends CommonAxiosService {
     private getURL(childUrl: string) {

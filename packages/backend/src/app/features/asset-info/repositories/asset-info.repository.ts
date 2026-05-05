@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { AssetInfoEntity } from "../entities/asset-info.entity";
-import { AssetStatusEnum, IdRequestModel } from "@adminvault/shared-models";
+import { AssetStatusEnum, IdRequestModel } from "@bosvault/shared-models";
 
 @Injectable()
 export class AssetInfoRepository extends Repository<AssetInfoEntity> {
@@ -103,7 +103,7 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
         return await query.groupBy('asset.asset_status_enum').getRawMany();
     }
 
-    async searchAssets(reqModel: import('@adminvault/shared-models').AssetSearchRequestModel) {
+    async searchAssets(reqModel: import('@bosvault/shared-models').AssetSearchRequestModel) {
         const query = this.createQueryBuilder('asset')
             .leftJoin('asset_types', 'device', 'asset.device_id = device.id')
             .leftJoin('employees', 'employee', 'asset.assigned_to_employee_id = employee.id')

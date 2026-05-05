@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AssetTypeRepository } from './repositories/asset-type.repository';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
-import { CreateAssetTypeModel, UpdateAssetTypeModel, GetAllAssetTypesResponseModel, CreateAssetTypeResponseModel, AssetTypeDropdownModel, AssetTypeDropdownResponse, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
+import { CreateAssetTypeModel, UpdateAssetTypeModel, GetAllAssetTypesResponseModel, CreateAssetTypeResponseModel, AssetTypeDropdownModel, AssetTypeDropdownResponse, IdRequestModel } from '@bosvault/shared-models';
 import { AssetTypeMasterEntity } from './entities/asset-type.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 import { PurchaseOrderItemEntity } from '../../procurement/entities/purchase-order-item.entity';

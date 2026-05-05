@@ -1,6 +1,6 @@
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
-import { CreateLicenseMasterModel, IdRequestModel, UpdateLicenseMasterModel, GlobalResponse } from '@adminvault/shared-models';
+import { CreateLicenseMasterModel, IdRequestModel, UpdateLicenseMasterModel, GlobalResponse } from '@bosvault/shared-models';
 
 export class ApplicationService extends CommonAxiosService {
     private getURL(childUrl: string) {

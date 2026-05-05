@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '@/lib/api/services';
 import { disconnectAllSockets } from '@/lib/socket';
-import { LoginUserModel, LoginResponseModel } from '@adminvault/shared-models';
+import { LoginUserModel, LoginResponseModel } from '@bosvault/shared-models';
 import { useToast } from './ToastContext';
 
 interface User {

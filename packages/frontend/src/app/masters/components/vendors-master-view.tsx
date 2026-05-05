@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CreateVendorModel, UpdateVendorModel, Vendor } from '@adminvault/shared-models';
+import { CreateVendorModel, UpdateVendorModel, Vendor } from '@bosvault/shared-models';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,7 +11,7 @@ import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Plus, Pencil, Trash2, ArrowLeft, Eye, Store, Phone, Mail, MapPin, User, Tag, ShieldCheck } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
-import { VendorService } from '@adminvault/shared-services';
+import { VendorService } from '@bosvault/shared-services';
 import { formatPhoneNumberWithCountryCode } from '@/lib/utils';
 
 

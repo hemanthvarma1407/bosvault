@@ -21,7 +21,7 @@
 The project uses **Nx** for monorepo management, ensuring efficient builds and shared code across the stack.
 
 ```text
-adminvault/
+bosvault/
 ├── packages/
 │   ├── frontend/         # Next.js 15+ React Application
 │   ├── backend/          # NestJS REST & WebSocket API

@@ -35,14 +35,14 @@ async function bootstrap() {
 
   // Swagger Configuration (for REST API documentation)
   const config = new DocumentBuilder()
-    .setTitle('AdminVault')
+    .setTitle('BosVault')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
-    customSiteTitle: 'AdminVault',
+    customSiteTitle: 'BosVault',
     customfavIcon: 'https://nestjs.com/img/logo-small.svg',
     customCss: '.swagger-ui .topbar { display: none }',
   });

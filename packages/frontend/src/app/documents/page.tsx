@@ -2,16 +2,16 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { documentsService } from '@/lib/api/services';
-import { DocumentModel, UploadDocumentModel } from '@adminvault/shared-models';
+import { DocumentModel, UploadDocumentModel } from '@bosvault/shared-models';
 import { Button } from '@/components/ui/Button';
 import { FileText, Upload, Download, Trash2, Search, FileSpreadsheet, Image as ImageIcon, FileCode, FileArchive, Plus, File as FileIcon, Lock, Eye } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 import { Modal } from '@/components/ui/Modal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
-import { GetAllDocumentsRequestModel } from '@adminvault/shared-models';
+import { GetAllDocumentsRequestModel } from '@bosvault/shared-models';
 
 const DocumentsPage: React.FC = () => {
     const { user } = useAuth();

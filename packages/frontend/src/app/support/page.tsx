@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSocket } from '@/lib/socket';
 import { ticketService } from '@/lib/api/services';
-import { TicketStatusEnum } from '@adminvault/shared-models';
-import { configVariables } from '@adminvault/shared-services';
+import { TicketStatusEnum } from '@bosvault/shared-models';
+import { configVariables } from '@bosvault/shared-services';
 import { Bot, PlusCircle, Lock, ArrowLeft, Send, Eye, FileText } from 'lucide-react';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 
 interface Message {
     id: number;

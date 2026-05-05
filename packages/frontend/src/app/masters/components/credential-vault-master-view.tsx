@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { CreateCredentialVaultModel, UpdateCredentialVaultModel, CredentialVaultModel, IdRequestModel } from '@adminvault/shared-models';
+import { CreateCredentialVaultModel, UpdateCredentialVaultModel, CredentialVaultModel, IdRequestModel } from '@bosvault/shared-models';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Pencil, Trash2, Key, Eye, EyeOff, Copy, ExternalLink, Shield, Hash, Globe, Mail, Fingerprint, ShieldCheck, User } from 'lucide-react';
@@ -7,7 +7,7 @@ import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { CredentialVaultService } from '@adminvault/shared-services';
+import { CredentialVaultService } from '@bosvault/shared-services';
 
 interface CredentialVaultMasterViewProps {
     onBack?: () => void;

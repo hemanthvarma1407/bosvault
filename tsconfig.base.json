@@ -25,13 +25,13 @@
       "@org/source"
     ],
     "paths": {
-      "@adminvault/shared-models": [
+      "@bosvault/shared-models": [
         "./packages/libs/shared-models/src/index.ts"
       ],
-      "@adminvault/backend-utils": [
+      "@bosvault/backend-utils": [
         "./packages/libs/backend-utils/src/index.ts"
       ],
-      "@adminvault/shared-services": [
+      "@bosvault/shared-services": [
         "./packages/libs/shared-services/src/index.ts"
       ]
     }

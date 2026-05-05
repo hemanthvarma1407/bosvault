@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { UploadDocumentModel, DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, DocumentModel, UploadDocumentResponseModel, GetAllDocumentsRequestModel, DownloadDocumentRequestModel, DownloadDocumentResponseModel, GlobalResponse } from '@adminvault/shared-models';
+import { UploadDocumentModel, DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, DocumentModel, UploadDocumentResponseModel, GetAllDocumentsRequestModel, DownloadDocumentRequestModel, DownloadDocumentResponseModel, GlobalResponse } from '@bosvault/shared-models';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { DocumentRepository } from './repositories/document.repository';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
 import { DocumentEntity } from './entities/document.entity';
-import { ErrorResponse } from '@adminvault/backend-utils';
+import { ErrorResponse } from '@bosvault/backend-utils';
 
 @Injectable()
 export class DocumentsService {

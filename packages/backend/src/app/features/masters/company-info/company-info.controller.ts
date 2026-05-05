@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { CompanyInfoService } from './company-info.service';
-import { CreateCompanyModel, UpdateCompanyModel, DeleteCompanyModel, GetCompanyModel, CompanyResponse, CompanyDropdownResponse } from '@adminvault/shared-models';
+import { CreateCompanyModel, UpdateCompanyModel, DeleteCompanyModel, GetCompanyModel, CompanyResponse, CompanyDropdownResponse } from '@bosvault/shared-models';
 
 @ApiTags('Company Info')
 @Controller('company-info')

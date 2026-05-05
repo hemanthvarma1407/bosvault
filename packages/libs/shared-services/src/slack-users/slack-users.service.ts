@@ -1,4 +1,4 @@
-import { SlackUserModel, CreateSlackUserModel, UpdateSlackUserModel, GlobalResponse } from '@adminvault/shared-models';
+import { SlackUserModel, CreateSlackUserModel, UpdateSlackUserModel, GlobalResponse } from '@bosvault/shared-models';
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
 

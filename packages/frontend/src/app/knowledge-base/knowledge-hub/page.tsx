@@ -48,7 +48,7 @@ export default function KnowledgeHubPage() {
                 <div className="relative z-10 max-w-3xl space-y-6">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">
                         <BookOpen className="h-3 w-3" />
-                        AdminVault Academy
+                        BosVault Academy
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
                         Knowledge is power. <br />

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import * as XLSX from 'xlsx';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
-import { EmployeesService } from '@adminvault/shared-services';
+import { EmployeesService } from '@bosvault/shared-services';
 
 interface EmployeeBulkImportModalProps {
     isOpen: boolean;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PlusCircle, UserPlus, UserMinus, RefreshCw, Trash2, Clock, History } from 'lucide-react';
 import { services } from '@/lib/api/services';
-import { AssetTimelineEvent, AssetTimelineEventType, AssetTimelineRequestModel } from '@adminvault/shared-models';
+import { AssetTimelineEvent, AssetTimelineEventType, AssetTimelineRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { Spinner } from '@/components/ui/Spinner';
 import { formatDateTime } from '@/lib/utils';

@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { LicensesService } from './licenses.service';
-import { CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, GetAllLicensesResponseModel, GetLicenseStatisticsResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, GetAllLicensesResponseModel, GetLicenseStatisticsResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { IAuthenticatedRequest } from '../../interfaces/auth.interface';
 
 @ApiTags('Licenses')

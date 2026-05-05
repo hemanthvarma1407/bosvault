@@ -2,15 +2,15 @@
 import { Injectable } from '@nestjs/common';
 import { LicenseRepository } from './repositories/license.repository';
 import { In } from 'typeorm';
-import { GlobalResponse } from '@adminvault/backend-utils';
-import { CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, GetAllLicensesResponseModel, GetLicenseStatisticsResponseModel, LicenseStatsModel, LicenseResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse } from '@bosvault/backend-utils';
+import { CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, GetAllLicensesResponseModel, GetLicenseStatisticsResponseModel, LicenseStatsModel, LicenseResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { CompanyLicenseEntity } from './entities/company-license.entity';
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { LicensesMasterEntity } from '../masters/license/entities/license.entity';
 import { EmployeesEntity } from '../employees/entities/employees.entity';
 
 import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '@adminvault/shared-models';
+import { NotificationType } from '@bosvault/shared-models';
 import { LicenseService as LicenseMasterService } from '../masters/license/license.service';
 
 @Injectable()

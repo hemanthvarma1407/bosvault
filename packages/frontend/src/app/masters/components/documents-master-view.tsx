@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { documentsService } from '@/lib/api/services';
-import { DocumentModel, UploadDocumentModel, GetAllDocumentsRequestModel } from '@adminvault/shared-models';
+import { DocumentModel, UploadDocumentModel, GetAllDocumentsRequestModel } from '@bosvault/shared-models';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';

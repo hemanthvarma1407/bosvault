@@ -7,9 +7,9 @@ import { AssetReturnHistoryEntity } from './entities/asset-return-history.entity
 import { AssetNextAssignmentEntity } from './entities/asset-next-assignment.entity';
 import { AssetAssignEntity } from './entities/asset-assign.entity';
 import { AssetInfoEntity } from './entities/asset-info.entity';
-import { GetStoreAssetsRequestModel, GetStoreAssetsResponseModel, StoreAssetModel, GetReturnAssetsRequestModel, GetReturnAssetsResponseModel, ReturnAssetModel, ProcessReturnRequestModel, ProcessReturnResponseModel, GetNextAssignmentsRequestModel, GetNextAssignmentsResponseModel, NextAssignmentModel, CreateNextAssignmentRequestModel, CreateNextAssignmentResponseModel, AssignFromQueueRequestModel, AssignFromQueueResponseModel, AssetStatusEnum, NextAssignmentStatus, AssignmentPriority, NextAssignmentStatusEnum, AssignmentPriorityEnum } from '@adminvault/shared-models';
+import { GetStoreAssetsRequestModel, GetStoreAssetsResponseModel, StoreAssetModel, GetReturnAssetsRequestModel, GetReturnAssetsResponseModel, ReturnAssetModel, ProcessReturnRequestModel, ProcessReturnResponseModel, GetNextAssignmentsRequestModel, GetNextAssignmentsResponseModel, NextAssignmentModel, CreateNextAssignmentRequestModel, CreateNextAssignmentResponseModel, AssignFromQueueRequestModel, AssignFromQueueResponseModel, AssetStatusEnum, NextAssignmentStatus, AssignmentPriority, NextAssignmentStatusEnum, AssignmentPriorityEnum } from '@bosvault/shared-models';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
-import { ErrorResponse } from '@adminvault/backend-utils';
+import { ErrorResponse } from '@bosvault/backend-utils';
 
 @Injectable()
 export class AssetTabsService {

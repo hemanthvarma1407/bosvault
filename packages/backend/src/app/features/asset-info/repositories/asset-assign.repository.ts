@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { AssetAssignEntity } from "../entities/asset-assign.entity";
-import { IdRequestModel } from "@adminvault/shared-models";
+import { IdRequestModel } from "@bosvault/shared-models";
 
 @Injectable()
 export class AssetAssignRepository extends Repository<AssetAssignEntity> {

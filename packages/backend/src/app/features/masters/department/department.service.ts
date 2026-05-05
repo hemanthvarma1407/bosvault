@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DepartmentRepository } from './repositories/department.repository';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
-import { CreateDepartmentModel, UpdateDepartmentModel, GetAllDepartmentsResponseModel, CreateDepartmentResponseModel, DepartmentDropdownModel, DepartmentDropdownResponse, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
+import { CreateDepartmentModel, UpdateDepartmentModel, GetAllDepartmentsResponseModel, CreateDepartmentResponseModel, DepartmentDropdownModel, DepartmentDropdownResponse, IdRequestModel } from '@bosvault/shared-models';
 import { DepartmentsMasterEntity } from './entities/department.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 import { EmployeesEntity } from '../../employees/entities/employees.entity';

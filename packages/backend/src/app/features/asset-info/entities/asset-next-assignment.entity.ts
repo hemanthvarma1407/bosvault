@@ -1,5 +1,5 @@
 import { Column, Entity, Index } from 'typeorm';
-import { AssignmentPriorityEnum, NextAssignmentStatusEnum } from '@adminvault/shared-models';
+import { AssignmentPriorityEnum, NextAssignmentStatusEnum } from '@bosvault/shared-models';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 
 @Entity('asset_next_assignment')

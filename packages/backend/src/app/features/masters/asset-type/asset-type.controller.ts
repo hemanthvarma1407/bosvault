@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AssetTypeService } from './asset-type.service';
-import { CreateAssetTypeModel, UpdateAssetTypeModel, GetAllAssetTypesResponseModel, CreateAssetTypeResponseModel, AssetTypeDropdownResponse, IdRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { CreateAssetTypeModel, UpdateAssetTypeModel, GetAllAssetTypesResponseModel, CreateAssetTypeResponseModel, AssetTypeDropdownResponse, IdRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
 

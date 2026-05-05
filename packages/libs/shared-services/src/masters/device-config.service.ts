@@ -1,6 +1,6 @@
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
-import { CreateDeviceConfigModel, CreateDeviceConfigResponseModel, GetAllDeviceConfigsResponseModel, IdRequestModel, UpdateDeviceConfigModel, UpdateDeviceConfigResponseModel, GlobalResponse } from '@adminvault/shared-models';
+import { CreateDeviceConfigModel, CreateDeviceConfigResponseModel, GetAllDeviceConfigsResponseModel, IdRequestModel, UpdateDeviceConfigModel, UpdateDeviceConfigResponseModel, GlobalResponse } from '@bosvault/shared-models';
 
 export class DeviceConfigService extends CommonAxiosService {
     private getURL(childUrl: string) {

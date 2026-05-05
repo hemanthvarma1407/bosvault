@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useEffect, useState } from 'react';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 
 interface RouteGuardProps {
     children: React.ReactNode;

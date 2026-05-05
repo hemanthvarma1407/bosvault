@@ -1,7 +1,7 @@
 import { AxiosInstance } from "../axios-instance";
 import { CommonAxiosService } from "../common-axios-service";
 import { AxiosRequestConfig } from "axios";
-import { DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, UploadDocumentResponseModel, UploadDocumentModel, GlobalResponse, GetAllDocumentsRequestModel } from '@adminvault/shared-models';
+import { DeleteDocumentModel, GetDocumentModel, GetAllDocumentsResponseModel, GetDocumentResponseModel, UploadDocumentResponseModel, UploadDocumentModel, GlobalResponse, GetAllDocumentsRequestModel } from '@bosvault/shared-models';
 
 export class DocumentsService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

@@ -13,7 +13,7 @@ import {
     UpdateTicketStatusRequestModel,
     AssignTicketRequestModel,
     AddTicketResponseRequestModel
-} from '@adminvault/shared-models';
+} from '@bosvault/shared-models';
 
 export class TicketsService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

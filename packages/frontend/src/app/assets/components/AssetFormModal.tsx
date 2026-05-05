@@ -5,7 +5,7 @@ import { Modal } from '../../../components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@adminvault/shared-models';
+import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@bosvault/shared-models';
 import { assetService, companyService, deviceConfigService, assetTypeService } from '@/lib/api/services';
 import { useToast } from '@/contexts/ToastContext';
 

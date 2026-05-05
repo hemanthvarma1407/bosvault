@@ -1,5 +1,5 @@
 import { CommonAxiosService } from '../common-axios-service';
-import { GlobalResponse, NotificationPayload } from '@adminvault/shared-models';
+import { GlobalResponse, NotificationPayload } from '@bosvault/shared-models';
 import { AxiosRequestConfig } from 'axios';
 
 export class NotificationsService extends CommonAxiosService {

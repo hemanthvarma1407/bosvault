@@ -1,5 +1,5 @@
 import { Column, Entity, Index, DeleteDateColumn } from 'typeorm';
-import { EmployeeStatusEnum } from '@adminvault/shared-models';
+import { EmployeeStatusEnum } from '@bosvault/shared-models';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 
 @Entity('employees')

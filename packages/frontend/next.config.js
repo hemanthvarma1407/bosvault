@@ -18,9 +18,9 @@ const nextConfig = {
   reactStrictMode: false,
   trailingSlash: true,
   transpilePackages: [
-    '@adminvault/shared-services',
-    '@adminvault/shared-models',
-    '@adminvault/backend-utils',
+    '@bosvault/shared-services',
+    '@bosvault/shared-models',
+    '@bosvault/backend-utils',
   ],
 
   typescript: {
@@ -95,7 +95,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: process.env.APP_AVS_SERVICE_URL || 'https://adminvault.inolyse.live/api/:path*',
+        destination: process.env.APP_AVS_SERVICE_URL || 'https://bosvault.inolyse.live/api/:path*',
       },
     ];
   },

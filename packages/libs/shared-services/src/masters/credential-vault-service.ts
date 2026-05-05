@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { CreateCredentialVaultModel, UpdateCredentialVaultModel, DeleteCredentialVaultModel, GetAllCredentialVaultResponseModel, GlobalResponse, IdRequestModel } from '@adminvault/shared-models';
+import { CreateCredentialVaultModel, UpdateCredentialVaultModel, DeleteCredentialVaultModel, GetAllCredentialVaultResponseModel, GlobalResponse, IdRequestModel } from '@bosvault/shared-models';
 
 export class CredentialVaultService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

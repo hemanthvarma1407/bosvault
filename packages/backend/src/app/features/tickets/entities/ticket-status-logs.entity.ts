@@ -1,5 +1,5 @@
 import { Column, Entity, CreateDateColumn, Index } from 'typeorm';
-import { TicketStatusEnum } from '@adminvault/shared-models';
+import { TicketStatusEnum } from '@bosvault/shared-models';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 
 @Entity('ticket_status_logs')

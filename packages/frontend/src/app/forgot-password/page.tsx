@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Mail, ArrowLeft, ArrowRight } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { authService } from '@/lib/api/services';
-import { ForgotPasswordModel } from '@adminvault/shared-models';
+import { ForgotPasswordModel } from '@bosvault/shared-models';
 import Link from 'next/link';
 
 const ForgotPasswordPage: React.FC = () => {

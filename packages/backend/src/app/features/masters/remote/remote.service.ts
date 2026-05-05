@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Not } from 'typeorm';
 import { RemoteRepository } from './repositories/remote.repository';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
-import { CreateRemoteMasterModel, UpdateRemoteMasterModel, GetAllRemoteMasterResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
+import { CreateRemoteMasterModel, UpdateRemoteMasterModel, GetAllRemoteMasterResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { RemoteMasterEntity } from './entities/remote.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 

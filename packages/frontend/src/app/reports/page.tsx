@@ -6,7 +6,7 @@ import { FileText, Users, Package, Ticket, TrendingUp, BarChart3, FileSpreadshee
 import { reportsService } from '@/lib/api/services';
 import { useToast } from '@/contexts/ToastContext';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 interface ReportItem {

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { AuthUsersEntity } from '../../auth-users/entities/auth-users.entity';
-import { NotificationType } from '@adminvault/shared-models';
+import { NotificationType } from '@bosvault/shared-models';
 
 @Entity('notifications')
 export class NotificationEntity {

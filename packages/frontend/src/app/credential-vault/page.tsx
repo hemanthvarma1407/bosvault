@@ -5,7 +5,7 @@ import { Lock, Plus, Search, ShieldCheck, Key, ShieldAlert, LayoutGrid, List } f
 import { PageHeader } from '@/components/ui/PageHeader';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { Button } from '@/components/ui/Button';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 import { CredentialVaultMasterView, CredentialVaultMasterViewHandle } from '../masters/components/credential-vault-master-view';
 import { authService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';

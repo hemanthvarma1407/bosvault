@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { companyService, employeeService, applicationService, licensesService } from '@/lib/api/services';
-import { UserRoleEnum, CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, IdRequestModel } from '@adminvault/shared-models';
+import { UserRoleEnum, CreateLicenseModel, UpdateLicenseModel, DeleteLicenseModel, IdRequestModel } from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 import {
     Plus, Key, Trash2, Shield, Pencil, Search,

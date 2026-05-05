@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CreateRemoteMasterModel, UpdateRemoteMasterModel, RemoteMaster, IdRequestModel } from '@adminvault/shared-models';
+import { CreateRemoteMasterModel, UpdateRemoteMasterModel, RemoteMaster, IdRequestModel } from '@bosvault/shared-models';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
@@ -10,7 +10,7 @@ import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { RemoteService } from '@adminvault/shared-services';
+import { RemoteService } from '@bosvault/shared-services';
 
 interface RemoteMasterViewProps {
     onBack?: () => void;

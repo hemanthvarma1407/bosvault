@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@adminvault/shared-models": [
+      "@bosvault/shared-models": [
         "../../dist/packages/libs/shared-models"
       ],
-      "@adminvault/backend-utils": [
+      "@bosvault/backend-utils": [
         "../../dist/packages/libs/backend-utils"
       ]
     }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Not } from 'typeorm';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
-import { ErrorResponse, GlobalResponse } from '@adminvault/backend-utils';
-import { CompanyResponse, CompanyResponseModel, CreateCompanyModel, DeleteCompanyModel, GetCompanyModel, UpdateCompanyModel, CompanyDropdownResponse, CompanyDropdownModel } from '@adminvault/shared-models';
+import { ErrorResponse, GlobalResponse } from '@bosvault/backend-utils';
+import { CompanyResponse, CompanyResponseModel, CreateCompanyModel, DeleteCompanyModel, GetCompanyModel, UpdateCompanyModel, CompanyDropdownResponse, CompanyDropdownModel } from '@bosvault/shared-models';
 import { CompanyInfoEntity } from './entities/company-info.entity';
 import { CompanyInfoRepository } from './repositories/company-info.repository';
 import { EmployeesEntity } from '../../employees/entities/employees.entity';

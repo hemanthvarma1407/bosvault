@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CreateDepartmentModel, UpdateDepartmentModel, Department } from '@adminvault/shared-models';
+import { CreateDepartmentModel, UpdateDepartmentModel, Department } from '@bosvault/shared-models';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -10,7 +10,7 @@ import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Plus, Pencil, Trash2, ArrowLeft, Eye, Users } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
-import { DepartmentService } from '@adminvault/shared-services';
+import { DepartmentService } from '@bosvault/shared-services';
 
 
 interface DepartmentsMasterViewProps {

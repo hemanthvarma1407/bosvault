@@ -3,9 +3,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import express from 'express';
 import { ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { KnowledgeBaseService } from './knowledge-base.service';
-import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeArticleResponseModel, GetAllKnowledgeArticlesResponseModel, GetKnowledgeBaseStatsResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeArticleResponseModel, GetAllKnowledgeArticlesResponseModel, GetKnowledgeBaseStatsResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { returnException } from '@adminvault/backend-utils';
+import { returnException } from '@bosvault/backend-utils';
 
 @ApiTags('Knowledge Base')
 @Controller('knowledge-base')

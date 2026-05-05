@@ -16,7 +16,7 @@ import {
     Building2,
     CheckCircle2
 } from 'lucide-react';
-import { RegisterUserModel, UserRoleEnum } from '@adminvault/shared-models';
+import { RegisterUserModel, UserRoleEnum } from '@bosvault/shared-models';
 import Link from 'next/link';
 import { hashPassword } from '@/lib/utils';
 
@@ -116,7 +116,7 @@ const RegisterPage: React.FC = () => {
                     </div>
 
                     <div className="text-sm text-slate-500 font-medium">
-                        © 2026 AdminVault Enterprise. All rights reserved.
+                        © 2026 BosVault Enterprise. All rights reserved.
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@ const RegisterPage: React.FC = () => {
                                 <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg">
                                     <Building2 className="w-6 h-6" />
                                 </div>
-                                <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">AdminVault</span>
+                                <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">BosVault</span>
                             </div>
                         </div>
                         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Create Account</h2>

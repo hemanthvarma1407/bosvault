@@ -13,7 +13,7 @@ import {
     AlertTriangle, CheckCircle, User, Users, Filter, Building2
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, IdRequestModel, CreateTicketModel, UpdateTicketModel, DeleteTicketModel, UserRoleEnum, TicketSeverityEnum } from '@adminvault/shared-models';
+import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, IdRequestModel, CreateTicketModel, UpdateTicketModel, DeleteTicketModel, UserRoleEnum, TicketSeverityEnum } from '@bosvault/shared-models';
 import { Input } from '@/components/ui/Input';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { useAuth } from '@/contexts/AuthContext';

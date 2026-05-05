@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
-import { POStatusEnum } from '@adminvault/shared-models';
+import { POStatusEnum } from '@bosvault/shared-models';
 
 @Entity('purchase_orders')
 export class PurchaseOrderEntity extends CommonBaseEntity {

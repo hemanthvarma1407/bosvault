@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { KnowledgeArticleEntity } from '../entities/knowledge-article.entity';
-import { KnowledgeBaseStatsModel, KnowledgeCategoryEnum, SearchArticleRequestModel } from '@adminvault/shared-models';
+import { KnowledgeBaseStatsModel, KnowledgeCategoryEnum, SearchArticleRequestModel } from '@bosvault/shared-models';
 
 @Injectable()
 export class KnowledgeItemsRepository extends Repository<KnowledgeArticleEntity> {

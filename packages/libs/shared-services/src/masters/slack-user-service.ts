@@ -1,6 +1,6 @@
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
-import { CreateSlackUserModel, GetAllSlackUsersResponseModel, IdRequestModel, UpdateSlackUserModel, GlobalResponse } from '@adminvault/shared-models';
+import { CreateSlackUserModel, GetAllSlackUsersResponseModel, IdRequestModel, UpdateSlackUserModel, GlobalResponse } from '@bosvault/shared-models';
 
 export class SlackUserService extends CommonAxiosService {
     private getURL(childUrl: string) {

@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RemoteService } from './remote.service';
-import { CreateRemoteMasterModel, UpdateRemoteMasterModel, GetAllRemoteMasterResponseModel, IdRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { CreateRemoteMasterModel, UpdateRemoteMasterModel, GetAllRemoteMasterResponseModel, IdRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
 

@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetEmployeeResponseModel, GetAllEmployeesResponseModel, GlobalResponse, IdRequestModel, GetAllEmployeesRequestModel } from '@adminvault/shared-models';
+import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetEmployeeResponseModel, GetAllEmployeesResponseModel, GlobalResponse, IdRequestModel, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 
 export class EmployeesService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {
@@ -27,7 +27,7 @@ export class EmployeesService extends CommonAxiosService {
         return await this.axiosPostCall(this.getURLwithMainEndPoint('deleteEmployee'), reqObj, config);
     }
 
-    async bulkImport(file: File, companyId: number, userId: number, config?: AxiosRequestConfig): Promise<import('@adminvault/shared-models').BulkImportResponseModel> {
+    async bulkImport(file: File, companyId: number, userId: number, config?: AxiosRequestConfig): Promise<import('@bosvault/shared-models').BulkImportResponseModel> {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('companyId', String(companyId));

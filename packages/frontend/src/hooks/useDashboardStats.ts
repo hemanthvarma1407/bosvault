@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { dashboardService } from '@/lib/api/services';
-import { IdRequestModel } from '@adminvault/shared-models';
+import { IdRequestModel } from '@bosvault/shared-models';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface DashboardStats {

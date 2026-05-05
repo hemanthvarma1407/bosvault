@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
-import { CreateAssetModel, UpdateAssetModel, DeleteAssetModel, GetAssetModel, GetAllAssetsModel, GetAssetByIdModel, AssetResponseModel, AssetStatisticsResponseModel, AssetSearchRequestModel, GetAssetsWithAssignmentsResponseModel, AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum, IdRequestModel, CreateAssetAssignModel, UpdateAssetAssignModel, GetAssetAssignModel, AssignAssetOpRequestModel, ReturnAssetOpRequestModel, GetExpiringWarrantyRequestModel, NotificationType, GlobalResponse } from '@adminvault/shared-models';
+import { CreateAssetModel, UpdateAssetModel, DeleteAssetModel, GetAssetModel, GetAllAssetsModel, GetAssetByIdModel, AssetResponseModel, AssetStatisticsResponseModel, AssetSearchRequestModel, GetAssetsWithAssignmentsResponseModel, AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum, IdRequestModel, CreateAssetAssignModel, UpdateAssetAssignModel, GetAssetAssignModel, AssignAssetOpRequestModel, ReturnAssetOpRequestModel, GetExpiringWarrantyRequestModel, NotificationType, GlobalResponse } from '@bosvault/shared-models';
 import { AssetInfoEntity } from './entities/asset-info.entity';
 import { AssetAssignEntity } from './entities/asset-assign.entity';
 import { AssetInfoRepository } from './repositories/asset-info.repository';
 import { AssetAssignRepository } from './repositories/asset-assign.repository';
 import { LessThan, IsNull } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { GetAllAssetAssignsModel, GetAssetAssignByIdModel, SendAssetAssignedEmailModel, UserRoleEnum } from '@adminvault/shared-models';
+import { GetAllAssetAssignsModel, GetAssetAssignByIdModel, SendAssetAssignedEmailModel, UserRoleEnum } from '@bosvault/shared-models';
 import { EmailInfoService } from '../email/email-info.service';
 import { EmployeesEntity } from '../employees/entities/employees.entity';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { AssetReturnHistoryEntity } from './entities/asset-return-history.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { ErrorResponse } from '@adminvault/backend-utils';
+import { ErrorResponse } from '@bosvault/backend-utils';
 
 @Injectable()
 export class AssetInfoService {

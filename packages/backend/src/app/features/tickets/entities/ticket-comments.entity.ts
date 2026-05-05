@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
-import { CommentByEnum } from '@adminvault/shared-models';
+import { CommentByEnum } from '@bosvault/shared-models';
 
 @Entity('ticket_comments')
 export class TicketCommentsEntity extends CommonBaseEntity {

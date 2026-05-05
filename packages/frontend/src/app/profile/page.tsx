@@ -6,7 +6,7 @@ import { Shield, Edit, Lock, Key, AlertCircle, Eye, EyeOff, ChevronRight } from 
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { authService } from '@/lib/api/services';
-import { UpdateUserModel } from '@adminvault/shared-models';
+import { UpdateUserModel } from '@bosvault/shared-models';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { Modal } from '@/components/ui/Modal';
 import { AlertMessages } from '@/lib/utils/AlertMessages';

@@ -12,7 +12,7 @@ import {
     Plus, Search, Building2, Users, LayoutGrid, List, Mail, Phone, Edit, DollarSign
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusEnum, GetAllEmployeesRequestModel } from '@adminvault/shared-models';
+import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusEnum, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/PageHeader';

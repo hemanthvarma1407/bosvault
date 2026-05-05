@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { LicenseRepository } from './repositories/license.repository';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
-import { CreateLicenseMasterModel, UpdateLicenseMasterModel, GetAllLicenseMastersResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
+import { CreateLicenseMasterModel, UpdateLicenseMasterModel, GetAllLicenseMastersResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { LicensesMasterEntity } from './entities/license.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 import { CompanyLicenseEntity } from '../../licenses/entities/company-license.entity';

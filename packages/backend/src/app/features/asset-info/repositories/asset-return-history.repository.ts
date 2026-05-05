@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { AssetReturnHistoryEntity } from '../entities/asset-return-history.entity';
-import { GetReturnAssetsRequestModel } from '@adminvault/shared-models';
+import { GetReturnAssetsRequestModel } from '@bosvault/shared-models';
 
 @Injectable()
 export class AssetReturnHistoryRepository extends Repository<AssetReturnHistoryEntity> {

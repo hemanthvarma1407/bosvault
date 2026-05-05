@@ -5,7 +5,7 @@ import { EmployeesEntity } from './entities/employees.entity';
 import { EmployeesRepository } from './repositories/employees.repository';
 import { DepartmentRepository } from '../masters/department/repositories/department.repository';
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
-import { EmployeeStatusEnum, BulkImportResponseModel, BulkImportRequestModel } from '@adminvault/shared-models';
+import { EmployeeStatusEnum, BulkImportResponseModel, BulkImportRequestModel } from '@bosvault/shared-models';
 
 @Injectable()
 export class EmployeesBulkService {

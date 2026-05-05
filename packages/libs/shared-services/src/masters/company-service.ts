@@ -1,4 +1,4 @@
-import { CreateCompanyModel, UpdateCompanyModel, DeleteCompanyModel, GetCompanyModel, GlobalResponse, CompanyResponse, CompanyDropdownResponse } from '@adminvault/shared-models';
+import { CreateCompanyModel, UpdateCompanyModel, DeleteCompanyModel, GetCompanyModel, GlobalResponse, CompanyResponse, CompanyDropdownResponse } from '@bosvault/shared-models';
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
 

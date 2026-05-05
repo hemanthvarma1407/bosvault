@@ -1,4 +1,4 @@
-import { AccessRequestStatus } from '@adminvault/shared-models';
+import { AccessRequestStatus } from '@bosvault/shared-models';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('access_requests')

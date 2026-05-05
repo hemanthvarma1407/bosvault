@@ -6,13 +6,13 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Book, Search, Plus, BookOpen, ChevronRight, FileText, Lock, Shield, Users, Download, Paperclip, Eye } from 'lucide-react';
-import { KnowledgeCategoryEnum, CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, IdRequestModel, UserRoleEnum } from '@adminvault/shared-models';
+import { KnowledgeCategoryEnum, CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, IdRequestModel, UserRoleEnum } from '@bosvault/shared-models';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
-import { KnowledgeBaseService } from '@adminvault/shared-services';
+import { KnowledgeBaseService } from '@bosvault/shared-services';
 
 const KnowledgeBasePage: React.FC = () => {
     const { user } = useAuth();

@@ -142,8 +142,8 @@
     "zod": "^4.3.6"
   },
   "_moduleAliases": {
-    "@adminvault/backend-utils": "dist/libs/backend-utils",
-    "@adminvault/shared-models": "dist/libs/shared-models",
-    "@adminvault/shared-services": "dist/libs/shared-services"
+    "@bosvault/backend-utils": "dist/libs/backend-utils",
+    "@bosvault/shared-models": "dist/libs/shared-models",
+    "@bosvault/shared-services": "dist/libs/shared-services"
   }
 }

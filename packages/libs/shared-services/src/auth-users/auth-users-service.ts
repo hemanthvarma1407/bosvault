@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { DeleteUserModel, GetAllUsersModel, GlobalResponse, LoginResponseModel, LoginUserModel, LogoutUserModel, RegisterUserModel, RequestAccessModel, UpdateUserModel, ForgotPasswordModel, ResetPasswordModel, IdRequestModel, AccessRequestsListModel, RequestVaultOtpModel, ResetVaultPasswordOtpModel } from '@adminvault/shared-models';
+import { DeleteUserModel, GetAllUsersModel, GlobalResponse, LoginResponseModel, LoginUserModel, LogoutUserModel, RegisterUserModel, RequestAccessModel, UpdateUserModel, ForgotPasswordModel, ResetPasswordModel, IdRequestModel, AccessRequestsListModel, RequestVaultOtpModel, ResetVaultPasswordOtpModel } from '@bosvault/shared-models';
 
 export class AuthUsersService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

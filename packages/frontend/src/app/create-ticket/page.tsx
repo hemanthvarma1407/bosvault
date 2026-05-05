@@ -9,7 +9,7 @@ import { RouteGuard } from '@/components/auth/RouteGuard';
 import {
     IdRequestModel, TicketCategoryEnum, TicketPriorityEnum,
     TicketStatusEnum, CreateTicketModel, UpdateTicketModel, DeleteTicketModel
-} from '@adminvault/shared-models';
+} from '@bosvault/shared-models';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';

@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { DashboardStatsResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { DashboardStatsResponseModel, IdRequestModel } from '@bosvault/shared-models';
 
 export class DashboardService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

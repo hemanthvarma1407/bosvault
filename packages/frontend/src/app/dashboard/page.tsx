@@ -14,7 +14,7 @@ import { DashboardCustomizer, WidgetConfig, WidgetSettings } from './components/
 import { formatNumber } from '@/lib/utils';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
-import { UserRoleEnum, TicketStatusEnum, TicketPriorityEnum, IdRequestModel } from '@adminvault/shared-models';
+import { UserRoleEnum, TicketStatusEnum, TicketPriorityEnum, IdRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 

@@ -1,6 +1,6 @@
-# @adminvault/shared-services
+# @bosvault/shared-services
 
-Shared services library for AdminVault application providing API service classes for frontend-backend communication.
+Shared services library for BosVault application providing API service classes for frontend-backend communication.
 
 ## Features
 
@@ -15,7 +15,7 @@ Shared services library for AdminVault application providing API service classes
 
 ## Installation
 
-This package is part of the AdminVault monorepo and is automatically available to other packages.
+This package is part of the BosVault monorepo and is automatically available to other packages.
 
 ```bash
 yarn install
@@ -25,7 +25,7 @@ yarn install
 
 The services use environment variables for configuration. Set these in your environment or `window._env_` object:
 
-- `APP_AVS_SERVICE_URL` - Backend API URL (default: `https://adminvault.onrender.com`)
+- `APP_AVS_SERVICE_URL` - Backend API URL (default: `https://bosvault.onrender.com`)
 - `APP_RETRY_CODES` - Network error codes to retry (default: `ECONNABORTED,ETIMEDOUT,ENOTFOUND`)
 - `APP_REQ_RETRY_STATUS_CODES` - HTTP status codes to retry (default: `408,429,500,502,503,504`)
 - `APP_REQ_RETRY_MAX_ATTEMPTS` - Maximum retry attempts (default: `3`)
@@ -36,7 +36,7 @@ The services use environment variables for configuration. Set these in your envi
 ### Authentication Service
 
 ```typescript
-import { AuthUserHelperService } from '@adminvault/shared-services';
+import { AuthUserHelperService } from '@bosvault/shared-services';
 
 const authService = new AuthUserHelperService();
 
@@ -70,7 +70,7 @@ const users = await authService.getAllUsers({ companyId: 1 });
 ### Company Service
 
 ```typescript
-import { CompanyInfoService } from '@adminvault/shared-services';
+import { CompanyInfoService } from '@bosvault/shared-services';
 
 const companyService = new CompanyInfoService();
 
@@ -96,7 +96,7 @@ await companyService.deleteCompany({ companyId: 1 });
 ### Employee Service
 
 ```typescript
-import { EmployeesService } from '@adminvault/shared-services';
+import { EmployeesService } from '@bosvault/shared-services';
 
 const employeeService = new EmployeesService();
 
@@ -124,7 +124,7 @@ await employeeService.deleteEmployee({ employeeId: 1 });
 ### Asset Service
 
 ```typescript
-import { AssetInfoService } from '@adminvault/shared-services';
+import { AssetInfoService } from '@bosvault/shared-services';
 
 const assetService = new AssetInfoService();
 
@@ -152,7 +152,7 @@ await assetService.deleteAsset({ assetId: 1 });
 ### Email Service
 
 ```typescript
-import { EmailInfoService } from '@adminvault/shared-services';
+import { EmailInfoService } from '@bosvault/shared-services';
 
 const emailService = new EmailInfoService();
 
@@ -167,7 +167,7 @@ await emailService.deleteEmailInfo({ emailId: 1 });
 ### Ticket Service
 
 ```typescript
-import { TicketsService } from '@adminvault/shared-services';
+import { TicketsService } from '@bosvault/shared-services';
 
 const ticketService = new TicketsService();
 
@@ -182,7 +182,7 @@ await ticketService.deleteTicket({ ticketId: 1 });
 ### Asset Assignment Service
 
 ```typescript
-import { AssetAssignService } from '@adminvault/shared-services';
+import { AssetAssignService } from '@bosvault/shared-services';
 
 const assignService = new AssetAssignService();
 
@@ -256,7 +256,7 @@ Feature Services (extend CommonAxiosService)
 
 ## Development
 
-The services are built using TypeScript and use models from `@adminvault/shared-models` for type safety.
+The services are built using TypeScript and use models from `@bosvault/shared-models` for type safety.
 
 ### Building
 
@@ -272,4 +272,4 @@ yarn type-check
 
 ## License
 
-Private - AdminVault Internal Use Only
+Private - BosVault Internal Use Only

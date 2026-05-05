@@ -7,7 +7,7 @@ import { TicketMessageEntity } from './entities/ticket-messages.entity';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { EmployeesEntity } from '../employees/entities/employees.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType, UserRoleEnum } from '@adminvault/shared-models';
+import { NotificationType, UserRoleEnum } from '@bosvault/shared-models';
 
 @WebSocketGateway({ cors: { origin: process.env.FRONTEND_URL || 'http://localhost:3000', credentials: true }, namespace: 'tickets', transports: ['polling', 'websocket'] })
 @Injectable()

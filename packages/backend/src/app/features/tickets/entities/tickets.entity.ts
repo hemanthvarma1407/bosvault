@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
-import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, TicketSeverityEnum } from '@adminvault/shared-models';
+import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, TicketSeverityEnum } from '@bosvault/shared-models';
 
 @Entity('tickets')
 export class TicketsEntity extends CommonBaseEntity {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AssetTimelineEvent, AssetTimelineEventType, AssetTimelineResponseModel, AssetTimelineRequestModel } from '@adminvault/shared-models';
+import { AssetTimelineEvent, AssetTimelineEventType, AssetTimelineResponseModel, AssetTimelineRequestModel } from '@bosvault/shared-models';
 import { AssetInfoRepository } from './repositories/asset-info.repository';
 import { AssetReturnHistoryRepository } from './repositories/asset-return-history.repository';
 import { EmployeesRepository } from '../employees/repositories/employees.repository';

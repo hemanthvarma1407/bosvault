@@ -5,11 +5,11 @@ import { EmployeesEntity } from './entities/employees.entity';
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { DepartmentsMasterEntity } from '../masters/department/entities/department.entity';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
-import { ErrorResponse, GlobalResponse } from '@adminvault/backend-utils';
-import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetAllEmployeesResponseModel, GetEmployeeResponseModel, EmployeeResponseModel, IdRequestModel, CreateEmailInfoModel, EmailTypeEnum, GetAllEmployeesRequestModel, EmployeeStatusEnum } from '@adminvault/shared-models';
+import { ErrorResponse, GlobalResponse } from '@bosvault/backend-utils';
+import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmployeeModel, GetAllEmployeesResponseModel, GetEmployeeResponseModel, EmployeeResponseModel, IdRequestModel, CreateEmailInfoModel, EmailTypeEnum, GetAllEmployeesRequestModel, EmployeeStatusEnum } from '@bosvault/shared-models';
 import { EmailInfoService } from '../email/email-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '@adminvault/shared-models';
+import { NotificationType } from '@bosvault/shared-models';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 
 @Injectable()

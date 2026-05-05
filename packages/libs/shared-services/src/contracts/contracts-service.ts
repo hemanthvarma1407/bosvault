@@ -1,5 +1,5 @@
 import { CommonAxiosService } from "../common-axios-service";
-import { CreateContractModel, UpdateContractModel, GlobalResponse, IdRequestModel } from '@adminvault/shared-models';
+import { CreateContractModel, UpdateContractModel, GlobalResponse, IdRequestModel } from '@bosvault/shared-models';
 
 export class ContractsService extends CommonAxiosService {
     private baseUrl = '/contract';

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { assetService, employeeService } from '@/lib/api/services';
-import { AssignAssetOpRequestModel, ReturnAssetOpRequestModel, AssetStatusEnum, GetAllEmployeesRequestModel } from '@adminvault/shared-models';
+import { AssignAssetOpRequestModel, ReturnAssetOpRequestModel, AssetStatusEnum, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 

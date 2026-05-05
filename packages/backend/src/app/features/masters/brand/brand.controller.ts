@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards, Req } from '@nestjs/common';
 import { DeviceConfigService } from './brand.service';
-import { CreateDeviceConfigModel, UpdateDeviceConfigModel, GetAllDeviceConfigsResponseModel, IdRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { CreateDeviceConfigModel, UpdateDeviceConfigModel, GetAllDeviceConfigsResponseModel, IdRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
 

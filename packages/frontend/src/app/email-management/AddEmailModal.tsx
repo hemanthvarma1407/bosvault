@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { EmailTypeEnum, GetAllEmployeesRequestModel, EmailStatusEnum } from '@adminvault/shared-models';
+import { EmailTypeEnum, GetAllEmployeesRequestModel, EmailStatusEnum } from '@bosvault/shared-models';
 import { employeeService, departmentService } from '@/lib/api/services';
 import { Select } from '@/components/ui/Select';
 import { MultiSelect } from '@/components/ui/MultiSelect';

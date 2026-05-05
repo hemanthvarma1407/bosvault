@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
-import { EmailTypeEnum, EmailStatusEnum } from '@adminvault/shared-models';
+import { EmailTypeEnum, EmailStatusEnum } from '@bosvault/shared-models';
 
 @Entity('email_info')
 export class EmailInfoEntity extends CommonBaseEntity {

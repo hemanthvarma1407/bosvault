@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { DepartmentService } from './department.service';
-import { CreateDepartmentModel, UpdateDepartmentModel, DepartmentDropdownResponse, IdRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { CreateDepartmentModel, UpdateDepartmentModel, DepartmentDropdownResponse, IdRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../guards/jwt-auth.guard';
 

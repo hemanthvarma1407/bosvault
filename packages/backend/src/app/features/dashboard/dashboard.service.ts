@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DashboardRepository } from './repositories/dashboard.repository';
-import { AssetStatusEnum, TicketStatusEnum, DashboardStatsResponseModel, DashboardStats, IdRequestModel } from '@adminvault/shared-models';
+import { AssetStatusEnum, TicketStatusEnum, DashboardStatsResponseModel, DashboardStats, IdRequestModel } from '@bosvault/shared-models';
 import { AssetInfoEntity } from '../asset-info/entities/asset-info.entity';
 import { TicketsEntity } from '../tickets/entities/tickets.entity';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';

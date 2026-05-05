@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Users, UserPlus, ShieldCheck, Plus, Search, CheckCircle, Clock, Mail, Eye, EyeOff, Trash2, AlertTriangle, Edit2 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, IdRequestModel, RegisterUserModel, DeleteUserModel, UpdateUserModel } from '@adminvault/shared-models';
+import { UserRoleEnum, IdRequestModel, RegisterUserModel, DeleteUserModel, UpdateUserModel } from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';

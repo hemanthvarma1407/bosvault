@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { AssetNextAssignmentEntity } from '../entities/asset-next-assignment.entity';
-import { NextAssignmentStatusEnum, GetNextAssignmentsRequestModel } from '@adminvault/shared-models';
+import { NextAssignmentStatusEnum, GetNextAssignmentsRequestModel } from '@bosvault/shared-models';
 
 @Injectable()
 export class AssetNextAssignmentRepository extends Repository<AssetNextAssignmentEntity> {

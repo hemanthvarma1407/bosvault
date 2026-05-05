@@ -3,7 +3,7 @@
 import React from 'react';
 import { ShoppingCart, DollarSign, Package, TrendingUp, ArrowUpRight } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import { DashboardStats } from '@adminvault/shared-models';
+import { DashboardStats } from '@bosvault/shared-models';
 import Link from 'next/link';
 import { formatNumber } from '@/lib/utils';
 

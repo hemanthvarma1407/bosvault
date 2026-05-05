@@ -8,7 +8,7 @@ import {
     UpdateContractModel,
     IdRequestModel,
     Vendor
-} from '@adminvault/shared-models';
+} from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 import {
     Plus, Library, Trash2, Pencil, Search,
@@ -21,7 +21,7 @@ import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { ModernTabs } from '../assets/components/ModernTabs';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Modal } from '@/components/ui/Modal';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 
 export default function ContractsPage() {
     const { } = useAuth();

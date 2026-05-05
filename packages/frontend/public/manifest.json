@@ -1,6 +1,6 @@
 {
-    "name": "AdminVault",
-    "short_name": "AdminVault",
+    "name": "BosVault",
+    "short_name": "BosVault",
     "description": "Enterprise IT Asset Management Platform",
     "start_url": "/",
     "display": "standalone",

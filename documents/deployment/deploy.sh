@@ -26,10 +26,10 @@ echo "🔨 Building frontend..."
 npx nx build frontend
 
 echo "♻️ Restarting backend..."
-pm2 restart adminvault-backend
+pm2 restart bosvault-backend
 
 echo "♻️ Restarting frontend..."
-pm2 restart adminvault-frontend
+pm2 restart bosvault-frontend
 
 echo "💾 Saving PM2 state..."
 pm2 save

@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { slackUserService, companyService } from '@/lib/api/services';
-import { SlackUserModel, CompanyDropdownModel } from '@adminvault/shared-models';
+import { SlackUserModel, CompanyDropdownModel } from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Search, RefreshCw, Download, Trash2, Shield, Mail, Slack, MessageSquare, User, Briefcase, MapPin, Globe, Activity, AtSign, Hash } from 'lucide-react';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuth } from '@/contexts/AuthContext';

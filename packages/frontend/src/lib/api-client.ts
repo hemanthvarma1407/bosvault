@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { configVariables } from '@adminvault/shared-services';
+import { configVariables } from '@bosvault/shared-services';
 
 const API_BASE_URL = configVariables.APP_AVS_SERVICE_URL;
 

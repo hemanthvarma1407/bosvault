@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { WebSocketEvent, WebSocketRoomHelper } from '@adminvault/shared-models';
+import { WebSocketEvent, WebSocketRoomHelper } from '@bosvault/shared-models';
 
 /**
  * WebSocket Gateway for real-time communication

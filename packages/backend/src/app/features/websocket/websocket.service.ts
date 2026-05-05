@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AppWebSocketGateway } from './websocket.gateway';
-import { WebSocketEvent, WebSocketRoomHelper, NotificationPayload, DashboardUpdatePayload, TicketEventPayload, AssetEventPayload, SystemAlertPayload, } from '@adminvault/shared-models';
+import { WebSocketEvent, WebSocketRoomHelper, NotificationPayload, DashboardUpdatePayload, TicketEventPayload, AssetEventPayload, SystemAlertPayload, } from '@bosvault/shared-models';
 
 
 @Injectable()

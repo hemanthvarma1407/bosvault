@@ -6,9 +6,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Lock, Mail, Eye, EyeOff, ArrowRight, Users, BookOpen, Package, Key, Ticket } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
-import { LoginUserModel } from '@adminvault/shared-models';
+import { LoginUserModel } from '@bosvault/shared-models';
 import Link from 'next/link';
-import { configVariables } from '@adminvault/shared-services';
+import { configVariables } from '@bosvault/shared-services';
 import { hashPassword } from '@/lib/utils';
 
 const LoginPage: React.FC = () => {

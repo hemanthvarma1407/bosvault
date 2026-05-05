@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ProcurementService } from './procurement.service';
-import { CreatePOModel, UpdatePOModel, GetAllPOsModel, GetPOByIdModel, GetAllPOsCompanyIdRequestModel, GetPORequestModel, UpdatePOStatusRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, returnException } from '@adminvault/backend-utils';
+import { CreatePOModel, UpdatePOModel, GetAllPOsModel, GetPOByIdModel, GetAllPOsCompanyIdRequestModel, GetPORequestModel, UpdatePOStatusRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, returnException } from '@bosvault/backend-utils';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 

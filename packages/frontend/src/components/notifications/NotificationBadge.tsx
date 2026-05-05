@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Check } from 'lucide-react';
 import { useWebSocketEvent } from '@/hooks/useWebSocket';
-import { WebSocketEvent, NotificationPayload, NotificationType } from '@adminvault/shared-models';
+import { WebSocketEvent, NotificationPayload, NotificationType } from '@bosvault/shared-models';
 import { notificationsService } from '@/lib/api/services';
 
 interface NotificationBadgeProps {

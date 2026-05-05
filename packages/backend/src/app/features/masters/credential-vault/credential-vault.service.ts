@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Not } from 'typeorm';
 import { CredentialVaultRepository } from './repositories/credential-vault.repository';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
-import { CreateCredentialVaultModel, UpdateCredentialVaultModel, GetAllCredentialVaultResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
+import { CreateCredentialVaultModel, UpdateCredentialVaultModel, GetAllCredentialVaultResponseModel, IdRequestModel } from '@bosvault/shared-models';
 import { CredentialVaultEntity } from './entities/credential-vault.entity';
 import { GenericTransactionManager } from '../../../../database/typeorm-transactions';
 

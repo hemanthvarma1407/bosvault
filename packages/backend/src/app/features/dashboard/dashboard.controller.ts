@@ -2,8 +2,8 @@ import { Controller, Post, UseGuards, Body } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { DashboardService } from './dashboard.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { returnException } from '@adminvault/backend-utils';
-import { DashboardStatsResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { returnException } from '@bosvault/backend-utils';
+import { DashboardStatsResponseModel, IdRequestModel } from '@bosvault/shared-models';
 
 @ApiTags('Dashboard')
 @Controller('dashboard')

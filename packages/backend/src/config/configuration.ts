@@ -5,7 +5,7 @@ export default () => ({
         port: parseInt(process.env.DB_PORT || '5432', 10),
         username: process.env.DB_USERNAME || 'root',
         password: process.env.DB_PASSWORD || '',
-        dbName: process.env.DB_DATABASE || 'adminvault',
+        dbName: process.env.DB_DATABASE || 'bosvault',
         poolLimit: parseInt(process.env.DB_POOL_LIMIT || '10', 10),
     },
     app: {

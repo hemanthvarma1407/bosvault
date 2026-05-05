@@ -1,5 +1,5 @@
 import { CommonAxiosService } from '../common-axios-service';
-import { CreatePOModel, UpdatePOModel, GetAllPOsModel, GetPOByIdModel, GlobalResponse, GetPORequestModel, UpdatePOStatusRequestModel, GetAllPOsCompanyIdRequestModel } from '@adminvault/shared-models';
+import { CreatePOModel, UpdatePOModel, GetAllPOsModel, GetPOByIdModel, GlobalResponse, GetPORequestModel, UpdatePOStatusRequestModel, GetAllPOsCompanyIdRequestModel } from '@bosvault/shared-models';
 import { AxiosRequestConfig } from 'axios';
 
 export class ProcurementService extends CommonAxiosService {

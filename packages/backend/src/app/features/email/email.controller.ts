@@ -2,8 +2,8 @@ import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { EmailInfoService } from './email-info.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ApiTags, ApiBody } from '@nestjs/swagger';
-import { CreateEmailInfoModel, UpdateEmailInfoModel, DeleteEmailInfoModel, GetAllEmailInfoModel, EmailStatsResponseModel, IdRequestModel, GetEmailInfoModel, GetEmailInfoByIdModel, SendTicketCreatedEmailModel, SendPasswordResetEmailModel, RequestAccessModel, GlobalResponse } from '@adminvault/shared-models';
-import { returnException } from '@adminvault/backend-utils';
+import { CreateEmailInfoModel, UpdateEmailInfoModel, DeleteEmailInfoModel, GetAllEmailInfoModel, EmailStatsResponseModel, IdRequestModel, GetEmailInfoModel, GetEmailInfoByIdModel, SendTicketCreatedEmailModel, SendPasswordResetEmailModel, RequestAccessModel, GlobalResponse } from '@bosvault/shared-models';
+import { returnException } from '@bosvault/backend-utils';
 
 @ApiTags('Email Settings')
 @Controller('administration/email')

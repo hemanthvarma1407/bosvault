@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { KnowledgeItemsRepository } from './repositories/knowledge-items.repository';
-import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeArticleResponseModel, GetAllKnowledgeArticlesResponseModel, GetKnowledgeBaseStatsResponseModel, IdRequestModel } from '@adminvault/shared-models';
-import { ErrorResponse } from '@adminvault/backend-utils';
+import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeArticleResponseModel, GetAllKnowledgeArticlesResponseModel, GetKnowledgeBaseStatsResponseModel, IdRequestModel } from '@bosvault/shared-models';
+import { ErrorResponse } from '@bosvault/backend-utils';
 import { AuthUsersService } from '../auth-users/auth-users.service';
 import * as path from 'path';
 import * as fs from 'fs';

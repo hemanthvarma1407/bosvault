@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotificationRepository } from './repositories/notification.repository';
 import { NotificationEntity } from './entities/notification.entity';
 import { WebSocketService } from '../websocket/websocket.service';
-import { NotificationType, GlobalResponse } from '@adminvault/shared-models';
+import { NotificationType, GlobalResponse } from '@bosvault/shared-models';
 
 @Injectable()
 export class NotificationsService {

@@ -1,7 +1,7 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { DataSource, In } from 'typeorm';
-import { CreatePOModel, UpdatePOModel, PurchaseOrderModel, POItemModel, GetAllPOsModel, GetPOByIdModel, POStatusEnum, GetPORequestModel, UpdatePOStatusRequestModel, GetAllPOsCompanyIdRequestModel } from '@adminvault/shared-models';
-import { GlobalResponse, ErrorResponse } from '@adminvault/backend-utils';
+import { CreatePOModel, UpdatePOModel, PurchaseOrderModel, POItemModel, GetAllPOsModel, GetPOByIdModel, POStatusEnum, GetPORequestModel, UpdatePOStatusRequestModel, GetAllPOsCompanyIdRequestModel } from '@bosvault/shared-models';
+import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
 import { PurchaseOrderEntity } from './entities/purchase-order.entity';
 import { PurchaseOrderItemEntity } from './entities/purchase-order-item.entity';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
@@ -12,7 +12,7 @@ import { VendorsMasterEntity } from '../masters/vendor/entities/vendor.entity';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { AssetTypeMasterEntity } from '../masters/asset-type/entities/asset-type.entity';
-import { SendPOApprovalEmailModel } from '@adminvault/shared-models';
+import { SendPOApprovalEmailModel } from '@bosvault/shared-models';
 import { EmailInfoService } from '../email/email-info.service';
 import { VendorRepository } from '../masters/vendor/repositories/vendor.repository';
 @Injectable()

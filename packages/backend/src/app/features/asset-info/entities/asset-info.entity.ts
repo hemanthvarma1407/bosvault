@@ -1,6 +1,6 @@
 import { Column, Entity, Index, DeleteDateColumn } from 'typeorm';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
-import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@adminvault/shared-models';
+import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@bosvault/shared-models';
 
 @Entity('asset_info')
 export class AssetInfoEntity extends CommonBaseEntity {

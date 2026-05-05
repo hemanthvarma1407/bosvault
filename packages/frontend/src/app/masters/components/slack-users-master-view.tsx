@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CreateSlackUserModel, UpdateSlackUserModel, SlackUserModel, IdRequestModel, CompanyDropdownModel, GetAllEmployeesRequestModel } from '@adminvault/shared-models';
+import { CreateSlackUserModel, UpdateSlackUserModel, SlackUserModel, IdRequestModel, CompanyDropdownModel, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,7 +11,7 @@ import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { Plus, Pencil, Trash2, ArrowLeft, User, Search, LayoutGrid, List, Eye, Slack, Hash, Shield, Phone, Mail, AtSign, Briefcase, MapPin, Tag, Globe, Activity, Settings, RefreshCw } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
-import { DepartmentService, EmployeesService, SlackUserService, CompanyService } from '@adminvault/shared-services';
+import { DepartmentService, EmployeesService, SlackUserService, CompanyService } from '@bosvault/shared-services';
 import { formatPhoneNumberWithCountryCode } from '@/lib/utils';
 
 interface EmployeeOption {

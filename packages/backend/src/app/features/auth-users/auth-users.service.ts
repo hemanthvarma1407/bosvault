@@ -7,15 +7,15 @@ import { AuthTokensRepository } from './repositories/auth-tokens.repository';
 import { AuthUsersEntity } from './entities/auth-users.entity';
 import { AuthTokensEntity } from './entities/auth-tokens.entity';
 import { GenericTransactionManager } from '../../../database/typeorm-transactions';
-import { IdRequestModel, DeleteUserModel, GetAllUsersModel, LoginResponseModel, LoginUserModel, LogoutUserModel, RefreshTokenModel, RegisterUserModel, UpdateUserModel, UserResponseModel, UsersResponseModel, UserAccessRequestModel, AccessRequestsListModel, AccessRequestStatus, GlobalResponse } from '@adminvault/shared-models';
-import { UserRoleEnum } from '@adminvault/shared-models';
+import { IdRequestModel, DeleteUserModel, GetAllUsersModel, LoginResponseModel, LoginUserModel, LogoutUserModel, RefreshTokenModel, RegisterUserModel, UpdateUserModel, UserResponseModel, UsersResponseModel, UserAccessRequestModel, AccessRequestsListModel, AccessRequestStatus, GlobalResponse } from '@bosvault/shared-models';
+import { UserRoleEnum } from '@bosvault/shared-models';
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt';
 import { EmailInfoService } from '../email/email-info.service';
-import { ForgotPasswordModel, ResetPasswordModel, RequestAccessModel, SendPasswordResetEmailModel } from '@adminvault/shared-models';
+import { ForgotPasswordModel, ResetPasswordModel, RequestAccessModel, SendPasswordResetEmailModel } from '@bosvault/shared-models';
 import { Request } from 'express';
 import { IUserPayload } from '../../interfaces/auth.interface';
-import { ErrorResponse } from '@adminvault/backend-utils';
+import { ErrorResponse } from '@bosvault/backend-utils';
 import { AccessRequestEntity } from '../email/entities/access-request.entity';
 
 const DEFAULT_MENUS = [

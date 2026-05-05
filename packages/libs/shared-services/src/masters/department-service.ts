@@ -1,6 +1,6 @@
 import { CommonAxiosService } from '../common-axios-service';
 import { AxiosRequestConfig } from 'axios';
-import { CreateDepartmentModel, CreateDepartmentResponseModel, DepartmentDropdownResponse, GetAllDepartmentsResponseModel, IdRequestModel, UpdateDepartmentModel, GlobalResponse } from '@adminvault/shared-models';
+import { CreateDepartmentModel, CreateDepartmentResponseModel, DepartmentDropdownResponse, GetAllDepartmentsResponseModel, IdRequestModel, UpdateDepartmentModel, GlobalResponse } from '@bosvault/shared-models';
 
 export class DepartmentService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

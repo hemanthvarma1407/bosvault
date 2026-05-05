@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Plus, Trash2, ShoppingCart } from 'lucide-react';
-import { CreatePOModel, UpdatePOModel, POItemModel, Vendor, GetAllEmployeesRequestModel } from '@adminvault/shared-models';
+import { CreatePOModel, UpdatePOModel, POItemModel, Vendor, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { vendorService, procurementService, employeeService, companyService, assetTypeService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';

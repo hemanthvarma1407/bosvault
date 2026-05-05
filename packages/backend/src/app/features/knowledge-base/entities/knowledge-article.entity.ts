@@ -1,5 +1,5 @@
 import { Entity, Column } from 'typeorm';
-import { KnowledgeCategoryEnum } from '@adminvault/shared-models';
+import { KnowledgeCategoryEnum } from '@bosvault/shared-models';
 import { CommonBaseEntity } from '../../../../database/common-base.entity';
 
 @Entity('knowledge_articles')

@@ -4,7 +4,7 @@ import { AssetInfoEntity } from '../../asset-info/entities/asset-info.entity';
 import { EmployeesEntity } from '../../employees/entities/employees.entity';
 import { TicketsEntity } from '../../tickets/entities/tickets.entity';
 import { CompanyLicenseEntity } from '../../licenses/entities/company-license.entity';
-import { TicketStatusEnum, TicketPriorityEnum, POStatusEnum } from '@adminvault/shared-models';
+import { TicketStatusEnum, TicketPriorityEnum, POStatusEnum } from '@bosvault/shared-models';
 import { PurchaseOrderEntity } from '../../procurement/entities/purchase-order.entity';
 import { DepartmentsMasterEntity } from '../../masters/department/entities/department.entity';
 import { LicensesMasterEntity } from '../../masters/license/entities/license.entity';

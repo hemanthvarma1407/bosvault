@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import { CommonAxiosService } from "../common-axios-service";
-import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeBaseStatsResponseModel, GetKnowledgeArticleResponseModel, IdRequestModel } from '@adminvault/shared-models';
+import { CreateArticleRequestModel, UpdateArticleRequestModel, SearchArticleRequestModel, GlobalResponse, GetKnowledgeBaseStatsResponseModel, GetKnowledgeArticleResponseModel, IdRequestModel } from '@bosvault/shared-models';
 
 export class KnowledgeBaseService extends CommonAxiosService {
     private getURLwithMainEndPoint(childUrl: string) {

@@ -1,7 +1,7 @@
 'use client';
 
 import io from 'socket.io-client';
-import { configVariables } from '@adminvault/shared-services';
+import { configVariables } from '@bosvault/shared-services';
 
 const socketInstances: Record<string, any> = {};
 
