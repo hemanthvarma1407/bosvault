@@ -11,7 +11,7 @@ const dataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    ssl: process.env.DB_HOST?.includes('aivencloud.com') ? { rejectUnauthorized: false } : false,
+    ssl: (process.env.DB_HOST?.includes('aivencloud.com') || process.env.DB_HOST?.includes('database.azure.com')) ? { rejectUnauthorized: false } : false,
 });
 
 async function run() {
