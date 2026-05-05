@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, IdRequestModel, CreateTicketModel, UpdateTicketModel, DeleteTicketModel, UserRoleEnum, TicketSeverityEnum } from '@bosvault/shared-models';
-import { Input } from '@/components/ui/Input';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
@@ -846,35 +845,42 @@ const TicketsPage: React.FC = () => {
 
                             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Core Info Section */}
                                     <div className="md:col-span-2">
-                                        <Input
-                                            label="Subject"
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Subject</label>
+                                        <input
+                                            type="text"
                                             value={formData.subject}
                                             onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                             required
-                                            className="font-bold text-lg"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-lg disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
+                                            placeholder="Brief summary of the issue"
                                         />
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">
-                                            Description
-                                        </label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Description</label>
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium shadow-sm min-h-[120px] resize-y disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500"
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium min-h-[120px] resize-y disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
+                                            placeholder="Provide as much detail as possible..."
                                         />
                                     </div>
 
+                                    {/* Classification Section */}
+                                    <div className="md:col-span-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+                                        <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Classification & Priority</h4>
+                                    </div>
+
                                     <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Category</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Category</label>
                                         <select
                                             value={formData.categoryEnum}
                                             onChange={(e) => setFormData({ ...formData, categoryEnum: e.target.value as TicketCategoryEnum })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                         >
                                             {Object.values(TicketCategoryEnum).map((cat) => (
@@ -884,20 +890,23 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     <div>
-                                        <Input
-                                            label="Sub-Category"
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Sub-Category</label>
+                                        <input
+                                            type="text"
                                             value={formData.subCategory}
                                             onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
+                                            placeholder="e.g. Printer, Software"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Priority</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Priority</label>
                                         <select
                                             value={formData.priorityEnum}
                                             onChange={(e) => setFormData({ ...formData, priorityEnum: e.target.value as TicketPriorityEnum })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                         >
                                             {Object.values(TicketPriorityEnum).map((prio) => (
@@ -907,11 +916,11 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Severity</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Severity</label>
                                         <select
                                             value={formData.severityEnum}
                                             onChange={(e) => setFormData({ ...formData, severityEnum: e.target.value as TicketSeverityEnum })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                         >
                                             {Object.values(TicketSeverityEnum).map((sev) => (
@@ -920,10 +929,15 @@ const TicketsPage: React.FC = () => {
                                         </select>
                                     </div>
 
+                                    {/* Requester Info Section */}
+                                    <div className="md:col-span-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+                                        <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Requester & Assignment</h4>
+                                    </div>
+
                                     <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Department</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Department</label>
                                         <select
-                                            className="w-full px-4 py-2 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             value={formData.department}
                                             onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                                             disabled={!!editingTicket}
@@ -936,29 +950,34 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     <div>
-                                        <Input
-                                            label="Location"
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Location</label>
+                                        <input
+                                            type="text"
                                             value={formData.location}
                                             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
+                                            placeholder="Workstation, Floor, etc."
                                         />
                                     </div>
 
                                     <div>
-                                        <Input
-                                            label="Contact Number"
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Contact Number</label>
+                                        <input
+                                            type="text"
                                             value={formData.contactNumber}
                                             onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Status</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Status</label>
                                         <select
                                             value={formData.ticketStatus}
                                             onChange={(e) => setFormData({ ...formData, ticketStatus: e.target.value as TicketStatusEnum })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
                                         >
                                             {Object.values(TicketStatusEnum).map((status) => (
                                                 <option key={status} value={status}>{status.replace('_', ' ')}</option>
@@ -967,11 +986,11 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Assign To</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Assign To Admin</label>
                                         <select
                                             value={formData.assignAdminId}
                                             onChange={(e) => setFormData({ ...formData, assignAdminId: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
                                         >
                                             <option value="">Select Admin</option>
                                             {admins.map((admin) => (
@@ -981,11 +1000,12 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2">Remarks</label>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Internal Remarks / Notes</label>
                                         <textarea
                                             value={formData.adminComments}
                                             onChange={(e) => setFormData({ ...formData, adminComments: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium shadow-sm min-h-[100px] resize-y"
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium min-h-[100px] resize-y"
+                                            placeholder="Internal notes for support team..."
                                         />
                                     </div>
                                 </div>

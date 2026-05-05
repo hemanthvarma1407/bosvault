@@ -23,7 +23,7 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
             .select([
                 'asset.id as "id"',
                 'device.name as "deviceName"',
-                'asset.configuration as "configuration"',
+                'COALESCE(NULLIF(asset.configuration, \'\'), brand.configuration) as "configuration"',
                 'asset.serialNumber as "serialNumber"',
                 'asset.boxNo as "boxNo"',
                 'asset.assetStatusEnum as "assetStatusEnum"',
@@ -31,8 +31,8 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
                 'asset.model as "model"',
                 'asset.warrantyExpiry as "warrantyExpiry"'
             ])
-            .addSelect('CONCAT(pastUser.firstName, \' \', pastUser.lastName)', 'pastUserName')
-            .addSelect('CONCAT(presentUser.firstName, \' \', presentUser.lastName)', 'presentUserName')
+            .addSelect('CONCAT(pastUser.first_name, \' \', pastUser.last_name)', 'pastUserName')
+            .addSelect('CONCAT(presentUser.first_name, \' \', presentUser.last_name)', 'presentUserName')
             .getRawMany();
     }
 
@@ -51,7 +51,7 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
                 'asset.deviceId as "deviceId"',
                 'asset.deviceConfigId as "deviceConfigId"',
                 'asset.model as "model"',
-                'COALESCE(asset.configuration, brand.configuration) as "configuration"',
+                'COALESCE(NULLIF(asset.configuration, \'\'), brand.configuration) as "configuration"',
                 'asset.serialNumber as "serialNumber"',
                 'asset.purchaseDate as "purchaseDate"',
                 'asset.warrantyExpiry as "warrantyExpiry"',
@@ -116,7 +116,7 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
                 'asset.deviceId as "deviceId"',
                 'asset.deviceConfigId as "deviceConfigId"',
                 'asset.model as "model"',
-                'COALESCE(asset.configuration, brand.configuration) as "configuration"',
+                'COALESCE(NULLIF(asset.configuration, \'\'), brand.configuration) as "configuration"',
                 'asset.serialNumber as "serialNumber"',
                 'asset.purchaseDate as "purchaseDate"',
                 'asset.warrantyExpiry as "warrantyExpiry"',

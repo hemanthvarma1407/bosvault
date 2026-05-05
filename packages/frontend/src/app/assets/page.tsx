@@ -506,9 +506,17 @@ const AssetsPage: React.FC = () => {
                             <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 italic">Technical Specifications</h4>
                                 <div className="space-y-3">
-                                    <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap bg-white dark:bg-black/20 p-3 rounded-lg border border-slate-100 dark:border-white/5">
-                                        {selectedAsset?.configuration || 'No configuration details available for this asset.'}
-                                    </pre>
+                                    {selectedAsset?.configuration ? (
+                                        <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap bg-white dark:bg-black/20 p-3 rounded-lg border border-slate-100 dark:border-white/5">
+                                            {selectedAsset.configuration}
+                                        </pre>
+                                    ) : (
+                                        <div className="text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-black/20 p-4 rounded-lg border border-dashed border-slate-200 dark:border-slate-800 text-center">
+                                            <p className="font-bold mb-1">Standard {selectedAsset?.assetType || 'Asset'} Specs</p>
+                                            <p className="text-[10px] opacity-75">Model: {selectedAsset?.model || 'Generic'}</p>
+                                            <p className="text-[10px] opacity-75">S/N: {selectedAsset?.serialNumber}</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex justify-end">

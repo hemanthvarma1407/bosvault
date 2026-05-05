@@ -151,10 +151,10 @@ const DashboardPage: React.FC = () => {
 
                 // 2. Resolve which company to select
                 let targetCompanyId = null;
-                if (user?.companyId) {
-                    targetCompanyId = Number(user.companyId);
-                } else if (companiesList.length > 0) {
+                if (companiesList.length > 0) {
                     targetCompanyId = Number(companiesList[0].id);
+                } else if (user?.companyId) {
+                    targetCompanyId = Number(user.companyId);
                 }
 
                 if (targetCompanyId !== null) {
@@ -485,7 +485,7 @@ const DashboardPage: React.FC = () => {
 
                     {/* Support Pulse Table */}
                     {widgetSettings['intelligence_pulse']?.isVisible !== false && (
-                        <motion.div variants={itemVariants} className={widgetSettings['quick_launch']?.isVisible === false ? "lg:col-span-4" : "lg:col-span-3"}>
+                        <motion.div variants={itemVariants} className={widgetSettings['quick_launch']?.isVisible === false ? "lg:col-span-12" : "lg:col-span-9"}>
                             <Card className="p-4 bg-white dark:bg-slate-900 border-none shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
                                 <div className="flex items-center justify-between mb-3">
                                     <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -531,7 +531,7 @@ const DashboardPage: React.FC = () => {
                                                     </td>
                                                 </tr>
                                             ) : (
-                                                (stats?.tickets.recent || []).slice(0, 5).map((ticket: any) => (
+                                                (stats?.tickets.recent || []).slice(0, 10).map((ticket: any) => (
                                                     <tr key={ticket.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                                                         <td className="p-2">
                                                             <div className="max-w-[180px]">
