@@ -165,7 +165,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                         <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{(item as any).totalQuantity || 0}</td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{(item as any).usedQuantity || 0}</td>
+                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{(item as any).usedCount ?? (item as any).usedQuantity ?? 0}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${item.isActive
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
@@ -278,11 +278,11 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                 </div>
                                 <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50">
                                     <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block mb-1">Used</span>
-                                    <p className="text-lg font-black text-amber-600 dark:text-amber-400">{(selectedLicense as any).usedQuantity || 0}</p>
+                                    <p className="text-lg font-black text-amber-600 dark:text-amber-400">{(selectedLicense as any).usedCount ?? (selectedLicense as any).usedQuantity ?? 0}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50">
                                     <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">Available</span>
-                                    <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">{Math.max(0, ((selectedLicense as any).totalQuantity || 0) - ((selectedLicense as any).usedQuantity || 0))}</p>
+                                    <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">{Math.max(0, ((selectedLicense as any).totalQuantity || 0) - ((selectedLicense as any).usedCount ?? (selectedLicense as any).usedQuantity ?? 0))}</p>
                                 </div>
                             </div>
 

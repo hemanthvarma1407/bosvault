@@ -16,12 +16,26 @@ interface AddEmailModalProps {
     companyId: number;
     initialTab?: 'COMPANY' | 'USER' | 'GROUP';
     editData?: any;
+    companies?: any[];
     children?: React.ReactNode;
 }
 
-export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, onSuccess, companyId, initialTab, editData }: AddEmailModalProps) => {
+export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, onSuccess, companyId, initialTab, editData, companies }: AddEmailModalProps) => {
     const [employees, setEmployees] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
+
+    useEffect(() => {
+        if (companyId > 0) {
+            setSelectedCompanyId(String(companyId));
+        } else if (editData?.companyId) {
+            setSelectedCompanyId(String(editData.companyId));
+        } else if (companies && companies.length > 0) {
+            setSelectedCompanyId(String(companies[0].id));
+        } else {
+            setSelectedCompanyId('');
+        }
+    }, [companyId, editData, companies, isOpen]);
 
     const getDefaultType = useCallback(() => {
         if (initialTab === 'USER') return EmailTypeEnum.USER;
@@ -44,7 +58,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
 
     const fetchEmployees = useCallback(async () => {
         try {
-            const req = new GetAllEmployeesRequestModel(Number(companyId) || 0);
+            const req = new GetAllEmployeesRequestModel(Number(selectedCompanyId) || 0);
             const response = await employeeService.getAllEmployees(req);
             if (response.status) {
                 const data = response.data || [];
@@ -53,7 +67,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
         } catch (error) {
             console.error('Failed to fetch employees:', error);
         }
-    }, [companyId]);
+    }, [selectedCompanyId]);
 
     const fetchDepartments = useCallback(async () => {
         try {
@@ -114,7 +128,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
         const payload = {
             ...formData,
             id: editData?.id,
-            companyId,
+            companyId: Number(selectedCompanyId) || companyId,
             employeeId: formData.employeeId ? Number(formData.employeeId) : null,
             memberIds: formData.emailType === EmailTypeEnum.GROUP ? formData.memberIds : [],
             billing: formData.billing ? Number(formData.billing) : null,
@@ -151,6 +165,22 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
             size="4xl"
         >
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                {companyId === 0 && (
+                    <div className="grid grid-cols-1 gap-4">
+                        <Select
+                            label="Target Company"
+                            value={selectedCompanyId}
+                            onChange={e => setSelectedCompanyId(e.target.value)}
+                            options={
+                                (companies || []).map(c => ({
+                                    value: String(c.id),
+                                    label: (c.companyName || c.name || '').toUpperCase()
+                                }))
+                            }
+                            required
+                        />
+                    </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <Input
                         label="Email Address"

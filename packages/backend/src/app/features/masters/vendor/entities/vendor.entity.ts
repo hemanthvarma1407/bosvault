@@ -25,5 +25,8 @@ export class VendorsMasterEntity extends MasterBaseEntity {
     @Column('text', { name: 'address', nullable: true, comment: 'Vendor address' })
     address: string;
 
+    @Column('varchar', { name: 'category', length: 255, nullable: true, comment: 'Vendor category' })
+    category: string;
+
 
 }

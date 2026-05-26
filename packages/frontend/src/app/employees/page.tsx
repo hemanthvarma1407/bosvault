@@ -9,10 +9,11 @@ import { PhoneInput } from '@/components/ui/PhoneInput';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import {
-    Plus, Search, Building2, Users, LayoutGrid, List, Mail, Phone, Edit, DollarSign
+    Plus, Search, Building2, Users, LayoutGrid, List, Mail, Phone, Edit, DollarSign, Eye, Calendar, Trash2
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusEnum, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
+import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusEnum, GetAllEmployeesRequestModel, DeleteEmployeeModel } from '@bosvault/shared-models';
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -80,6 +81,11 @@ const EmployeesPage: React.FC = () => {
         groupEmails: [] as string[]
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
 
     const fetchEmployees = useCallback(async () => {
@@ -270,8 +276,43 @@ const EmployeesPage: React.FC = () => {
         });
     };
 
+    const handleDeleteClick = (employee: Employee) => {
+        setEmployeeToDelete(employee);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!employeeToDelete) return;
+        try {
+            setIsDeleting(true);
+            const req = new DeleteEmployeeModel(employeeToDelete.id);
+            const response = await employeeService.deleteEmployee(req);
+            if (response.status) {
+                AlertMessages.getSuccessMessage(response.message);
+                setIsDeleteModalOpen(false);
+                setEmployeeToDelete(null);
+                fetchEmployees();
+            } else {
+                AlertMessages.getErrorMessage(response.message);
+            }
+        } catch (error: any) {
+            AlertMessages.getErrorMessage(error.message || 'Failed to delete employee');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     const getInitials = (firstName?: string, lastName?: string) => {
         return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+    };
+
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return '—';
+        return new Date(dateString).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
     const getDepartmentName = (emp: any) => {
@@ -514,9 +555,17 @@ const EmployeesPage: React.FC = () => {
                                                 {emp.empStatus}
                                             </span>
                                             <div className="flex gap-1">
-                                                <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors">
+                                                <button onClick={() => { setSelectedEmployee(emp); setIsDetailModalOpen(true); }} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" title="View details">
+                                                    <Eye className="h-3 w-3" />
+                                                </button>
+                                                <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors" title="Edit">
                                                     <Edit className="h-3 w-3" />
                                                 </button>
+                                                {emp.empStatus?.toLowerCase() === 'deactivated' && (
+                                                    <button onClick={() => handleDeleteClick(emp)} className="p-1 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
+                                                        <Trash2 className="h-3 w-3" />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </motion.div>
@@ -585,9 +634,17 @@ const EmployeesPage: React.FC = () => {
                                             </td>
                                             <td className="px-3 py-2">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors">
+                                                    <button onClick={() => { setSelectedEmployee(emp); setIsDetailModalOpen(true); }} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" title="View details">
+                                                        <Eye className="h-3 w-3" />
+                                                    </button>
+                                                    <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors" title="Edit">
                                                         <Edit className="h-3 w-3" />
                                                     </button>
+                                                    {emp.empStatus?.toLowerCase() === 'deactivated' && (
+                                                        <button onClick={() => handleDeleteClick(emp)} className="p-1 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded text-slate-400 hover:text-rose-600 transition-colors" title="Delete">
+                                                            <Trash2 className="h-3 w-3" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
@@ -706,6 +763,154 @@ const EmployeesPage: React.FC = () => {
                         </div>
                     </form>
                 </Modal>
+
+                <Modal
+                    isOpen={isDetailModalOpen}
+                    onClose={() => { setIsDetailModalOpen(false); setSelectedEmployee(null); }}
+                    title="Employee Profile"
+                    size="2xl"
+                >
+                    {selectedEmployee && (
+                        <div className="space-y-6">
+                            {/* Header Section */}
+                            <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 bg-gradient-to-br ${getDepartmentBg(selectedEmployee)} shadow-md`}>
+                                    {getInitials(selectedEmployee.firstName, selectedEmployee.lastName)}
+                                </div>
+                                <div className="text-center sm:text-left flex-1">
+                                    <h4 className="text-xl font-bold text-slate-900 dark:text-white">
+                                        {selectedEmployee.firstName} {selectedEmployee.lastName}
+                                    </h4>
+                                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-1">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                            {getDepartmentName(selectedEmployee)}
+                                        </span>
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${selectedEmployee.empStatus?.toLowerCase() === 'active' ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400' : selectedEmployee.empStatus?.toLowerCase() === 'inactive' ? 'text-amber-600 bg-amber-50 dark:bg-amber-900/20' : 'text-rose-600 bg-rose-50 dark:bg-rose-900/20'}`}>
+                                            {selectedEmployee.empStatus}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Details Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Contact Details */}
+                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Information</h5>
+                                    <div className="space-y-2 text-xs">
+                                        <div className="flex items-center gap-2">
+                                            <Mail className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Email Address</p>
+                                                <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedEmployee.email}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Phone className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Phone Number</p>
+                                                <p className="font-semibold text-slate-800 dark:text-slate-200">{formatPhoneNumberWithCountryCode(selectedEmployee.phNumber) || '—'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Organization Details */}
+                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Organization Details</h5>
+                                    <div className="space-y-2 text-xs">
+                                        <div className="flex items-center gap-2">
+                                            <Users className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Reporting Manager</p>
+                                                <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedEmployee.managerName || '—'}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <DollarSign className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Monthly Billing</p>
+                                                <p className="font-semibold text-emerald-600 dark:text-emerald-400">${Number(selectedEmployee.billingAmount || 0).toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Lifecycle Dates */}
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                                <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lifecycle & Timeline</h5>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <div>
+                                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Joining Date</p>
+                                            <p className="font-semibold text-slate-800 dark:text-slate-200">{formatDate(selectedEmployee.joiningDate)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <div>
+                                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Email Created Date</p>
+                                            <p className="font-semibold text-slate-800 dark:text-slate-200">{formatDate(selectedEmployee.emailCreatedDate)}</p>
+                                        </div>
+                                    </div>
+                                    {selectedEmployee.empStatus?.toLowerCase() === 'deactivated' && (
+                                        <>
+                                            <div className="flex items-center gap-2 p-2 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                                                <Calendar className="h-4 w-4 text-rose-500 shrink-0" />
+                                                <div>
+                                                    <p className="text-[9px] font-bold text-rose-500 uppercase tracking-tight">Last Working Day</p>
+                                                    <p className="font-semibold text-rose-700 dark:text-rose-400">{formatDate(selectedEmployee.lastWorkingDay)}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 p-2 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                                                <Calendar className="h-4 w-4 text-rose-500 shrink-0" />
+                                                <div>
+                                                    <p className="text-[9px] font-bold text-rose-500 uppercase tracking-tight">Email Deletion Date</p>
+                                                    <p className="font-semibold text-rose-700 dark:text-rose-400">{formatDate(selectedEmployee.emailDeletionDate)}</p>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Remarks */}
+                            {selectedEmployee.remarks && (
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Additional Remarks</label>
+                                    <div className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                        {selectedEmployee.remarks}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Action buttons */}
+                            <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                {selectedEmployee.empStatus?.toLowerCase() === 'deactivated' && (
+                                    <Button variant="danger" onClick={() => { handleDeleteClick(selectedEmployee); setIsDetailModalOpen(false); }}>
+                                        Delete Employee
+                                    </Button>
+                                )}
+                                <Button variant="outline" onClick={() => { setIsDetailModalOpen(false); setSelectedEmployee(null); }}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={() => { handleEdit(selectedEmployee); setIsDetailModalOpen(false); }}>
+                                    Edit Profile
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </Modal>
+
+                <DeleteConfirmDialog
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => { setIsDeleteModalOpen(false); setEmployeeToDelete(null); }}
+                    onConfirm={handleDeleteConfirm}
+                    itemName={employeeToDelete ? `${employeeToDelete.firstName} ${employeeToDelete.lastName}` : 'employee'}
+                    isDeleting={isDeleting}
+                />
 
             </div>
         </RouteGuard>

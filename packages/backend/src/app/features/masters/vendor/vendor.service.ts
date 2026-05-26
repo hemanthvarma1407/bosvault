@@ -34,6 +34,7 @@ export class VendorService {
             saveEntity.email = reqModel.email;
             saveEntity.phone = reqModel.phone;
             saveEntity.address = reqModel.address;
+            saveEntity.category = reqModel.category;
             saveEntity.userId = reqModel.userId;
             await transManager.getRepository(VendorsMasterEntity).save(saveEntity);
             await transManager.completeTransaction();
@@ -47,7 +48,7 @@ export class VendorService {
     async getAllVendors(): Promise<GetAllVendorsResponseModel> {
         try {
             const vendors = await this.vendorRepo.find();
-            const vendorsWithCompanyName = vendors.map(vendor => ({ id: vendor.id, userId: vendor.userId, createdAt: vendor.createdAt, updatedAt: vendor.updatedAt, name: vendor.name, description: vendor.description, isActive: vendor.isActive, contactPerson: vendor.contactPerson, email: vendor.email, phone: vendor.phone, address: vendor.address }));
+            const vendorsWithCompanyName = vendors.map(vendor => ({ id: vendor.id, userId: vendor.userId, createdAt: vendor.createdAt, updatedAt: vendor.updatedAt, name: vendor.name, description: vendor.description, isActive: vendor.isActive, contactPerson: vendor.contactPerson, email: vendor.email, phone: vendor.phone, address: vendor.address, category: vendor.category }));
             return new GetAllVendorsResponseModel(true, 200, 'Vendors retrieved successfully', vendorsWithCompanyName);
         } catch (error) {
             throw error;
@@ -63,7 +64,7 @@ export class VendorService {
             }
 
             await transManager.startTransaction();
-            await transManager.getRepository(VendorsMasterEntity).update(reqModel.id, { name: reqModel.name, description: reqModel.description, isActive: reqModel.isActive, contactPerson: reqModel.contactPerson, email: reqModel.email, phone: reqModel.phone, address: reqModel.address });
+            await transManager.getRepository(VendorsMasterEntity).update(reqModel.id, { name: reqModel.name, description: reqModel.description, isActive: reqModel.isActive, contactPerson: reqModel.contactPerson, email: reqModel.email, phone: reqModel.phone, address: reqModel.address, category: reqModel.category });
             await transManager.completeTransaction();
             return new GlobalResponse(true, 200, 'Vendor updated successfully');
         } catch (error) {

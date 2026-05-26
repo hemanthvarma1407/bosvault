@@ -183,9 +183,8 @@ const InfoEmailsPage: React.FC = () => {
     const [itemToDelete, setItemToDelete] = useState<any>(null);
 
     const fetchEmployeesForLookup = useCallback(async () => {
-        if (!selectedOrg) return;
         try {
-            const req = new GetAllEmployeesRequestModel(Number(selectedOrg));
+            const req = new GetAllEmployeesRequestModel(Number(selectedOrg) || 0);
             const response = await employeeService.getAllEmployees(req);
             if (response.status) {
                 setEmployees(response.data || []);
@@ -207,7 +206,6 @@ const InfoEmailsPage: React.FC = () => {
     }, []);
 
     const fetchDepartments = useCallback(async () => {
-        if (!selectedOrg) return;
         try {
             const response = await departmentService.getAllDepartments();
             if (response.status) {
@@ -216,12 +214,11 @@ const InfoEmailsPage: React.FC = () => {
         } catch (err: any) {
             console.error('Failed to fetch departments:', err);
         }
-    }, [selectedOrg]);
+    }, []);
 
     const fetchEmailInfo = useCallback(async () => {
-        if (!selectedOrg) return;
         try {
-            const req = new IdRequestModel(Number(selectedOrg));
+            const req = new IdRequestModel(Number(selectedOrg) || 0);
             const response = await emailService.getAllEmailInfo(req);
             if (response.status) {
                 setEmailInfoList(response.data || []);
@@ -238,23 +235,10 @@ const InfoEmailsPage: React.FC = () => {
     }, [fetchCompanies]);
 
     useEffect(() => {
-        if (selectedOrg) {
-            fetchEmailInfo();
-            fetchDepartments();
-            fetchEmployeesForLookup();
-        } else {
-            setEmailInfoList([]);
-            setDepartments([]);
-            setEmployees([]);
-        }
+        fetchEmailInfo();
+        fetchDepartments();
+        fetchEmployeesForLookup();
     }, [selectedOrg, fetchEmailInfo, fetchDepartments, fetchEmployeesForLookup]);
-
-    // Auto-select first organization if none selected
-    useEffect(() => {
-        if (companies.length > 0 && !selectedOrg) {
-            setSelectedOrg(companies[0].id.toString());
-        }
-    }, [companies, selectedOrg]);
 
 
     const handleUpsertEmailInfo = async (data: any) => {
@@ -472,16 +456,7 @@ const InfoEmailsPage: React.FC = () => {
 
                     {/* Collapsible Panel List */}
                     <div className="lg:col-span-3 space-y-3">
-                        {!selectedOrg ? (
-                            <div className="h-[400px] flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-[2rem] border-2 border-dashed border-slate-100 dark:border-white/5">
-                                <Mail className="h-8 w-8 text-indigo-400 mb-6 animate-pulse" />
-                                <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Select a Company</h3>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 max-w-xs font-medium leading-relaxed uppercase tracking-widest">
-                                    Please select a company to view records
-                                </p>
-                            </div>
-                        ) : (
-                            Object.entries(groupedData).map(([dept, emails]) => {
+                        {Object.entries(groupedData).map(([dept, emails]) => {
                                 const config = DeptConfig[dept] || DeptConfig['Default'];
                                 const Icon = config.icon;
                                 const isExpanded = !!expandedDepts[dept];
@@ -548,7 +523,7 @@ const InfoEmailsPage: React.FC = () => {
                                     </div>
                                 );
                             })
-                        )}
+                        }
                     </div>
                 </div>
 
@@ -558,10 +533,11 @@ const InfoEmailsPage: React.FC = () => {
                         setIsModalOpen(false);
                         setEditData(null);
                     }}
-                    companyId={Number(selectedOrg)}
+                    companyId={Number(selectedOrg) || 0}
                     onSuccess={handleUpsertEmailInfo}
                     initialTab={activeTab}
                     editData={editData}
+                    companies={companies}
                 />
                 <DeleteConfirmationModal
                     isOpen={isDeleteModalOpen}

@@ -23,6 +23,32 @@ const openSlackChat = (slackUserId: string, teamId: string) => {
     setTimeout(() => window.open(webLink, '_blank'), 1500);
 };
 
+const ImageWithFallback: React.FC<{
+    src?: string;
+    alt: string;
+    className?: string;
+    fallback: React.ReactNode;
+}> = ({ src, alt, className, fallback }) => {
+    const [imgError, setImgError] = useState(false);
+
+    useEffect(() => {
+        setImgError(false);
+    }, [src]);
+
+    if (!src || imgError) {
+        return <>{fallback}</>;
+    }
+
+    return (
+        <img
+            src={src}
+            alt={alt}
+            className={className}
+            onError={() => setImgError(true)}
+        />
+    );
+};
+
 const SlackUsersPage: React.FC = () => {
     const { user } = useAuth();
     const [users, setUsers] = useState<SlackUserModel[]>([]);
@@ -216,13 +242,16 @@ const SlackUsersPage: React.FC = () => {
                                 >
                                     <div className="flex items-start gap-3">
                                         <div className="relative shrink-0">
-                                            {a.avatarUrl ? (
-                                                <img src={a.avatarUrl} alt={u.name} className="w-10 h-10 rounded-lg object-cover shadow-sm ring-1 ring-slate-100 dark:ring-slate-700/50" />
-                                            ) : (
-                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-inner">
-                                                    {initials}
-                                                </div>
-                                            )}
+                                            <ImageWithFallback
+                                                src={a.avatarUrl}
+                                                alt={u.name}
+                                                className="w-10 h-10 rounded-lg object-cover shadow-sm ring-1 ring-slate-100 dark:ring-slate-700/50"
+                                                fallback={
+                                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-inner">
+                                                        {initials}
+                                                    </div>
+                                                }
+                                            />
                                             <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-slate-800 ${u.isActive ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                             {a.isAdmin && (
                                                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center shadow-sm">
@@ -292,11 +321,12 @@ const SlackUsersPage: React.FC = () => {
                             <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
                                 <div className="relative">
                                     <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
-                                        {(selectedUser as any).avatarUrl ? (
-                                            <img src={(selectedUser as any).avatarUrl} alt={selectedUser.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <User className="h-12 w-12" />
-                                        )}
+                                        <ImageWithFallback
+                                            src={(selectedUser as any).avatarUrl}
+                                            alt={selectedUser.name}
+                                            className="w-full h-full object-cover"
+                                            fallback={<User className="h-12 w-12" />}
+                                        />
                                     </div>
                                     <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm z-20">
                                         <Slack className="h-5 w-5 text-[#4A154B]" />

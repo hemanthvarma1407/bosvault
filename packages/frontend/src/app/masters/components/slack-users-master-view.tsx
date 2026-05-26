@@ -33,6 +33,32 @@ interface DepartmentInfo {
     name: string;
 }
 
+const ImageWithFallback: React.FC<{
+    src?: string;
+    alt: string;
+    className?: string;
+    fallback: React.ReactNode;
+}> = ({ src, alt, className, fallback }) => {
+    const [imgError, setImgError] = useState(false);
+
+    useEffect(() => {
+        setImgError(false);
+    }, [src]);
+
+    if (!src || imgError) {
+        return <>{fallback}</>;
+    }
+
+    return (
+        <img
+            src={src}
+            alt={alt}
+            className={className}
+            onError={() => setImgError(true)}
+        />
+    );
+};
+
 export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBack }) => {
     const { user } = useAuth();
     const [users, setUsers] = useState<SlackUserModel[]>([]);
@@ -384,11 +410,12 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                 <td className="px-6 py-4 border border-slate-200 dark:border-slate-700 text-center">
                                                     <div className="flex items-center justify-center gap-3">
                                                         <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 border border-indigo-100 dark:border-indigo-800 overflow-hidden shadow-sm">
-                                                            {item.avatarUrl ? (
-                                                                <img src={item.avatarUrl} alt={item.name} className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <User className="h-5 w-5" />
-                                                            )}
+                                                            <ImageWithFallback
+                                                                src={item.avatarUrl}
+                                                                alt={item.name}
+                                                                className="w-full h-full object-cover"
+                                                                fallback={<User className="h-5 w-5" />}
+                                                            />
                                                         </div>
                                                         <div className="text-left">
                                                             <div className="flex items-center gap-2">
@@ -451,11 +478,12 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                             <div className="flex items-start justify-between mb-3">
                                                 <div className="relative group/avatar">
                                                     <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center overflow-hidden shadow-md group-hover:scale-110 transition-transform">
-                                                        {item.avatarUrl ? (
-                                                            <img src={item.avatarUrl} alt={item.name} className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <Slack className="h-6 w-6" />
-                                                        )}
+                                                        <ImageWithFallback
+                                                            src={item.avatarUrl}
+                                                            alt={item.name}
+                                                            className="w-full h-full object-cover"
+                                                            fallback={<Slack className="h-6 w-6" />}
+                                                        />
                                                     </div>
                                                     {item.isAdmin && (
                                                         <div className="absolute -top-1 -right-1 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm z-10">
@@ -588,11 +616,12 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
                             <div className="relative">
                                 <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
-                                    {selectedSlackUser.avatarUrl ? (
-                                        <img src={selectedSlackUser.avatarUrl} alt={selectedSlackUser.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User className="h-12 w-12" />
-                                    )}
+                                    <ImageWithFallback
+                                        src={selectedSlackUser.avatarUrl}
+                                        alt={selectedSlackUser.name}
+                                        className="w-full h-full object-cover"
+                                        fallback={<User className="h-12 w-12" />}
+                                    />
                                 </div>
                                 <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm z-20">
                                     <Slack className="h-5 w-5 text-[#4A154B]" />
