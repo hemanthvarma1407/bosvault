@@ -9,7 +9,8 @@ import {
     BarChart3, Mail, Users, Laptop, ShoppingCart, Key, Network,
     ShieldCheck, Ticket, PlusCircle, UserCircle, BookOpen, CheckSquare,
     Library, Globe, HelpCircle, LayoutGrid, Slack, Contact, Monitor,
-    History, ClipboardCheck, Store, ShieldAlert, Shield, Lock, UserCheck
+    History, ClipboardCheck, Store, ShieldAlert, Shield, Lock, UserCheck,
+    User, UserSquare2
 } from 'lucide-react';
 
 const IconMap: Record<string, any> = {
@@ -42,7 +43,9 @@ const IconMap: Record<string, any> = {
     ShieldAlert,
     Shield,
     Lock,
-    UserCheck
+    UserCheck,
+    User,
+    UserSquare2
 };
 
 const getIcon = (name: string) => IconMap[name] || Package;

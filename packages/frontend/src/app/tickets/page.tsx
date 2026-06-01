@@ -10,7 +10,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import {
     Search, Edit, Trash2, Ticket, Clock, MessageSquare,
     Monitor, Cpu, Wifi, Mail, Lock, HelpCircle,
-    AlertTriangle, CheckCircle, User, Users, Filter, Building2
+    AlertTriangle, CheckCircle, User, Users, Filter
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, IdRequestModel, CreateTicketModel, UpdateTicketModel, DeleteTicketModel, UserRoleEnum, TicketSeverityEnum } from '@bosvault/shared-models';
@@ -50,12 +50,6 @@ const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gra
         bg: 'bg-rose-50 dark:bg-rose-900/20',
         gradient: 'from-rose-500 to-pink-500'
     },
-    [TicketCategoryEnum.REAL_ESTATE]: {
-        icon: Building2,
-        color: 'text-emerald-600 dark:text-emerald-400',
-        bg: 'bg-emerald-50 dark:bg-emerald-900/20',
-        gradient: 'from-emerald-500 to-green-500'
-    },
     [TicketCategoryEnum.OTHER]: {
         icon: HelpCircle,
         color: 'text-slate-600 dark:text-slate-400',
@@ -70,7 +64,6 @@ export const SUB_CATEGORY_MAP: Record<TicketCategoryEnum, string[]> = {
     [TicketCategoryEnum.NETWORK]: ['internet', 'vpn', 'wifi', 'lan', 'firewall', 'other'],
     [TicketCategoryEnum.EMAIL]: ['outlook', 'webmail', 'smtp', 'password_reset', 'other'],
     [TicketCategoryEnum.ACCESS]: ['folder_access', 'vpn_access', 'erp_access', 'database', 'other'],
-    [TicketCategoryEnum.REAL_ESTATE]: ['cleaning', 'repair', 'furniture', 'lighting', 'other'],
     [TicketCategoryEnum.OTHER]: ['other'],
 };
 

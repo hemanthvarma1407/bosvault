@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Users, UserPlus, ShieldCheck, Plus, Search, CheckCircle, Clock, Mail, Eye, EyeOff, Trash2, AlertTriangle, Edit2 } from 'lucide-react';
+import { Users, UserPlus, ShieldCheck, Plus, Search, CheckCircle, Clock, Mail, Eye, EyeOff, Trash2, AlertTriangle, Edit2, Key, Send } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
-import { UserRoleEnum, IdRequestModel, RegisterUserModel, DeleteUserModel, UpdateUserModel } from '@bosvault/shared-models';
+import { UserRoleEnum, IdRequestModel, RegisterUserModel, DeleteUserModel, UpdateUserModel, ForgotPasswordModel, ResetPasswordModel } from '@bosvault/shared-models';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +17,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const TABS = [
     { id: 'create-user', label: 'Create Login User', icon: UserPlus },
     { id: 'access-requests', label: 'Access Requests', icon: ShieldCheck },
+    { id: 'password-resets', label: 'Forgot/Reset Password', icon: Key },
 ];
 
 const ROLE_OPTIONS = [
@@ -82,6 +83,64 @@ export default function UsersManagementPage() {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingUserId, setEditingUserId] = useState<number | null>(null);
 
+    // Password resets tab state
+    const [resetEmail, setResetEmail] = useState('');
+    const [forgotLoading, setForgotLoading] = useState(false);
+
+    const [forceResetEmail, setForceResetEmail] = useState('');
+    const [forceResetPassword, setForceResetPassword] = useState('');
+    const [forceResetLoading, setForceResetLoading] = useState(false);
+    const [showForcePassword, setShowForcePassword] = useState(false);
+
+    const handleTriggerForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!resetEmail) {
+            AlertMessages.getErrorMessage('Please select a user email address');
+            return;
+        }
+        setForgotLoading(true);
+        try {
+            const res = await authService.forgotPassword(new ForgotPasswordModel(resetEmail));
+            if (res.status) {
+                AlertMessages.getSuccessMessage(res.message || 'Password reset email sent successfully!');
+                setResetEmail('');
+            } else {
+                AlertMessages.getErrorMessage(res.message || 'Failed to send reset email');
+            }
+        } catch (err: any) {
+            AlertMessages.getErrorMessage(err.message || 'Failed to send reset email');
+        } finally {
+            setForgotLoading(false);
+        }
+    };
+
+    const handleForceResetPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!forceResetEmail) {
+            AlertMessages.getErrorMessage('Please select a user email address');
+            return;
+        }
+        if (!forceResetPassword || forceResetPassword.length < 6) {
+            AlertMessages.getErrorMessage('Please enter a new password of at least 6 characters');
+            return;
+        }
+        setForceResetLoading(true);
+        try {
+            const res = await authService.resetPassword(new ResetPasswordModel(forceResetEmail, forceResetPassword));
+            if (res.status) {
+                AlertMessages.getSuccessMessage(res.message || 'Password has been administrative reset successfully!');
+                setForceResetEmail('');
+                setForceResetPassword('');
+            } else {
+                AlertMessages.getErrorMessage(res.message || 'Failed to override password');
+            }
+        } catch (err: any) {
+            AlertMessages.getErrorMessage(err.message || 'Failed to override password');
+        } finally {
+            setForceResetLoading(false);
+        }
+    };
+
     const fetchUsers = useCallback(async () => {
         if (!user?.companyId) return;
         setUsersLoading(true);
@@ -116,7 +175,7 @@ export default function UsersManagementPage() {
     }, []);
 
     useEffect(() => {
-        if (activeTab === 'create-user') fetchUsers();
+        if (activeTab === 'create-user' || activeTab === 'password-resets') fetchUsers();
         else if (activeTab === 'access-requests') fetchAccessRequests();
     }, [activeTab, fetchUsers, fetchAccessRequests]);
 
@@ -301,6 +360,11 @@ export default function UsersManagementPage() {
 
     const getInitials = (name: string) =>
         name?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+
+    const userOptions = users.map(u => ({
+        value: u.email,
+        label: `${u.fullName} (${u.email})`,
+    }));
 
     return (
         <RouteGuard requiredRoles={[UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN]}>
@@ -549,6 +613,119 @@ export default function UsersManagementPage() {
                                     </table>
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {/* ── Password Resets Tab ── */}
+                    {activeTab === 'password-resets' && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 p-6 space-y-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                
+                                {/* Card 1: Trigger Reset Link */}
+                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 rounded-xl">
+                                            <Send className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Trigger Password Reset Email</h3>
+                                            <p className="text-slate-450 text-[10px] mt-0.5 leading-normal">
+                                                Generates a secure, expiring password reset token for the user and dispatches reset instructions to their registered email address.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <form onSubmit={handleTriggerForgotPassword} className="space-y-4 pt-2">
+                                        <Select
+                                            label="Select User Account"
+                                            value={resetEmail}
+                                            onChange={e => setResetEmail(e.target.value)}
+                                            options={[{ value: '', label: 'Select user...' }, ...userOptions]}
+                                            disabled={forgotLoading}
+                                        />
+                                        
+                                        <Button 
+                                            variant="primary" 
+                                            type="submit" 
+                                            disabled={forgotLoading || !resetEmail}
+                                            className="w-full justify-center shadow-lg shadow-indigo-500/20"
+                                            leftIcon={forgotLoading ? undefined : <Send className="h-3.5 w-3.5" />}
+                                        >
+                                            {forgotLoading ? (
+                                                <span className="flex items-center gap-1.5 justify-center">
+                                                    <span className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />
+                                                    Sending instructions...
+                                                </span>
+                                            ) : 'Send Reset Link'}
+                                        </Button>
+                                    </form>
+                                </div>
+
+                                {/* Card 2: Force Reset Password */}
+                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-xl">
+                                            <Key className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Administrative Force Reset</h3>
+                                            <p className="text-slate-455 text-[10px] mt-0.5 leading-normal">
+                                                Directly overrides and updates the user's password hash in the database. Use this for immediate administrative credential recovery.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <form onSubmit={handleForceResetPassword} className="space-y-4 pt-2">
+                                        <Select
+                                            label="Select User Account"
+                                            value={forceResetEmail}
+                                            onChange={e => setForceResetEmail(e.target.value)}
+                                            options={[{ value: '', label: 'Select user...' }, ...userOptions]}
+                                            disabled={forceResetLoading}
+                                        />
+                                        
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                                New Password <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    type={showForcePassword ? 'text' : 'password'}
+                                                    value={forceResetPassword}
+                                                    onChange={e => setForceResetPassword(e.target.value)}
+                                                    required
+                                                    disabled={forceResetLoading}
+                                                    placeholder="Enter strong new password"
+                                                    className="w-full px-2.5 py-1.5 pr-8 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all disabled:opacity-50"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowForcePassword(!showForcePassword)}
+                                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                                >
+                                                    {showForcePassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <Button 
+                                            variant="primary" 
+                                            type="submit" 
+                                            disabled={forceResetLoading || !forceResetEmail || !forceResetPassword}
+                                            className="w-full justify-center shadow-lg shadow-amber-500/20 bg-amber-600 hover:bg-amber-700 border-amber-600 hover:border-amber-700 font-bold"
+                                            leftIcon={forceResetLoading ? undefined : <Key className="h-3.5 w-3.5" />}
+                                        >
+                                            {forceResetLoading ? (
+                                                <span className="flex items-center gap-1.5 justify-center">
+                                                    <span className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent" />
+                                                    Overriding password...
+                                                </span>
+                                            ) : 'Force Reset Password'}
+                                        </Button>
+                                    </form>
+                                </div>
+                                
+                            </div>
                         </div>
                     )}
                 </div>

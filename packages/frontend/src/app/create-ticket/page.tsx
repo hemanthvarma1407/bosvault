@@ -17,9 +17,10 @@ import { TextArea } from '@/components/ui/TextArea';
 import { Select } from '@/components/ui/Select';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
+import { apiClient } from '@/lib/api-client';
 import {
-    Ticket, Plus, Search, Monitor, Cpu, Wifi, Mail, Lock, Building2, HelpCircle,
-    MessageSquare, Edit, Trash2, Clock
+    Ticket, Plus, Search, Monitor, Cpu, Wifi, Mail, Lock, HelpCircle,
+    MessageSquare, Edit, Trash2, Clock, UploadCloud, Paperclip, Image, FileText, RefreshCw
 } from 'lucide-react';
 
 const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gradient: string }> = {
@@ -53,12 +54,6 @@ const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gra
         bg: 'bg-rose-50 dark:bg-rose-900/20',
         gradient: 'from-rose-500 to-pink-500'
     },
-    [TicketCategoryEnum.REAL_ESTATE]: {
-        icon: Building2,
-        color: 'text-emerald-600 dark:text-emerald-400',
-        bg: 'bg-emerald-50 dark:bg-emerald-900/20',
-        gradient: 'from-emerald-500 to-green-500'
-    },
     [TicketCategoryEnum.OTHER]: {
         icon: HelpCircle,
         color: 'text-slate-600 dark:text-slate-400',
@@ -73,7 +68,6 @@ export const SUB_CATEGORY_MAP: Record<TicketCategoryEnum, string[]> = {
     [TicketCategoryEnum.NETWORK]: ['internet', 'vpn', 'wifi', 'lan', 'firewall', 'other'],
     [TicketCategoryEnum.EMAIL]: ['outlook', 'webmail', 'smtp', 'password_reset', 'other'],
     [TicketCategoryEnum.ACCESS]: ['folder_access', 'vpn_access', 'erp_access', 'database', 'other'],
-    [TicketCategoryEnum.REAL_ESTATE]: ['cleaning', 'repair', 'furniture', 'lighting', 'other'],
     [TicketCategoryEnum.OTHER]: ['other'],
 };
 
@@ -99,6 +93,17 @@ interface TicketData {
     location?: string;
 }
 
+interface AttachedFile {
+    id?: string;
+    name: string;
+    size: string;
+    type: string;
+    preview?: string;
+    status?: 'uploading' | 'success' | 'error';
+    url?: string;
+    fileName?: string;
+}
+
 const SupportHubPage: React.FC = () => {
     const router = useRouter();
     const { user } = useAuth();
@@ -112,6 +117,9 @@ const SupportHubPage: React.FC = () => {
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [ticketToDelete, setTicketToDelete] = useState<TicketData | null>(null);
     const [departments, setDepartments] = useState<any[]>([]);
+    
+    // Attachments State
+    const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
 
     const [formData, setFormData] = useState({
         subject: '',
@@ -184,6 +192,7 @@ const SupportHubPage: React.FC = () => {
 
     const handleCreate = () => {
         setEditingTicket(null);
+        setAttachedFiles([]);
         setFormData({
             subject: '',
             description: '',
@@ -211,6 +220,19 @@ const SupportHubPage: React.FC = () => {
             location: ticket.location || '',
             assignAdminId: ticket.assignAdminId ? String(ticket.assignAdminId) : ''
         });
+        
+        // Load attachments if present
+        const stored = localStorage.getItem(`ticket_attachments_${ticket.ticketCode}`);
+        if (stored) {
+            try {
+                setAttachedFiles(JSON.parse(stored));
+            } catch (e) {
+                setAttachedFiles([]);
+            }
+        } else {
+            setAttachedFiles([]);
+        }
+        
         setIsModalOpen(true);
     };
 
@@ -225,6 +247,7 @@ const SupportHubPage: React.FC = () => {
         try {
             const response = await ticketService.deleteTicket(new DeleteTicketModel(ticketToDelete.id));
             if (response.status) {
+                localStorage.removeItem(`ticket_attachments_${ticketToDelete.ticketCode}`);
                 AlertMessages.getSuccessMessage('Ticket deleted successfully');
                 setDeleteConfirmOpen(false);
                 fetchTickets();
@@ -238,9 +261,78 @@ const SupportHubPage: React.FC = () => {
         }
     };
 
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return;
+        const filesToUpload = Array.from(e.target.files);
+        
+        for (const file of filesToUpload) {
+            const tempId = Math.random().toString(36).substring(7);
+            const newFileEntry: AttachedFile = {
+                id: tempId,
+                name: file.name,
+                size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                type: file.type,
+                preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+                status: 'uploading'
+            };
+            
+            setAttachedFiles(prev => [...prev, newFileEntry]);
+            
+            try {
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', file);
+                
+                const response = await apiClient.post('/tickets/upload-attachment', uploadFormData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                
+                if (response.data && response.data.status) {
+                    const uploadedData = response.data.data;
+                    setAttachedFiles(prev => prev.map(f => f.id === tempId ? {
+                        ...f,
+                        status: 'success',
+                        url: uploadedData.url,
+                        fileName: uploadedData.fileName
+                    } : f));
+                } else {
+                    throw new Error("Upload failed");
+                }
+            } catch (error) {
+                console.error("Failed to upload file:", error);
+                setAttachedFiles(prev => prev.map(f => f.id === tempId ? {
+                    ...f,
+                    status: 'error'
+                } : f));
+                AlertMessages.getErrorMessage(`Failed to upload ${file.name}`);
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Prevent submission if still uploading files
+        const stillUploading = attachedFiles.some(f => f.status === 'uploading');
+        if (stillUploading) {
+            AlertMessages.getErrorMessage("Please wait for files to complete uploading before submitting.");
+            return;
+        }
+
         setIsSubmitting(true);
+        
+        // Format description with successfully uploaded backend attachment links
+        let finalDescription = formData.description;
+        const activeAttachments = attachedFiles.filter(f => f.status === 'success' || f.url);
+        if (activeAttachments.length > 0) {
+            const attachmentLinks = activeAttachments
+                .map(f => `- [${f.name}](${configVariables.APP_AVS_SERVICE_URL}${f.url})`)
+                .join('\n');
+            if (attachmentLinks) {
+                finalDescription += `\n\n**Attachments:**\n${attachmentLinks}`;
+            }
+        }
 
         try {
             if (editingTicket) {
@@ -256,7 +348,7 @@ const SupportHubPage: React.FC = () => {
                     undefined, // 9: expectedCompletionDate
                     undefined, // 10: resolvedAt
                     undefined, // 11: timeSpentMinutes
-                    formData.description, // 12
+                    finalDescription, // 12
                     formData.subCategory, // 13
                     undefined, // 14: severityEnum
                     formData.department, // 15
@@ -269,6 +361,11 @@ const SupportHubPage: React.FC = () => {
                 );
                 const response = await ticketService.updateTicket(model);
                 if (response.status) {
+                    if (attachedFiles.length > 0) {
+                        localStorage.setItem(`ticket_attachments_${editingTicket.ticketCode}`, JSON.stringify(attachedFiles));
+                    } else {
+                        localStorage.removeItem(`ticket_attachments_${editingTicket.ticketCode}`);
+                    }
                     AlertMessages.getSuccessMessage('Ticket updated successfully');
                     setIsModalOpen(false);
                     fetchTickets();
@@ -287,7 +384,7 @@ const SupportHubPage: React.FC = () => {
                     undefined, // 8: expectedCompletionDate
                     undefined, // 9: resolvedAt
                     undefined, // 10: timeSpentMinutes
-                    formData.description, // 11
+                    finalDescription, // 11
                     formData.subCategory, // 12
                     undefined, // 13: severityEnum
                     formData.department, // 14
@@ -297,6 +394,10 @@ const SupportHubPage: React.FC = () => {
 
                 const response = await ticketService.createTicket(model);
                 if (response.status) {
+                    const ticketCode = (response as any).ticketCode || (response as any).ticket?.ticketCode || 'TKT-TEMP';
+                    if (attachedFiles.length > 0) {
+                        localStorage.setItem(`ticket_attachments_${ticketCode}`, JSON.stringify(attachedFiles));
+                    }
                     AlertMessages.getSuccessMessage('Ticket created successfully');
                     setIsModalOpen(false);
                     fetchTickets();
@@ -311,11 +412,13 @@ const SupportHubPage: React.FC = () => {
         }
     };
 
-
     const filteredTickets = tickets.filter(t =>
         t.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (t.ticketCode?.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+
+    // Get configVariables from shared-services package safely
+    const configVariables = require('@bosvault/shared-services').configVariables;
 
     return (
         <RouteGuard>
@@ -346,7 +449,6 @@ const SupportHubPage: React.FC = () => {
                     </div>
                 </PageHeader>
 
-
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-center border-collapse border border-slate-200 dark:border-slate-700">
@@ -365,11 +467,11 @@ const SupportHubPage: React.FC = () => {
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                 {isLoading ? (
                                     <tr>
-                                        <td colSpan={7} className="py-12 text-center text-slate-500">Loading your tickets...</td>
+                                        <td colSpan={8} className="py-12 text-center text-slate-500">Loading your tickets...</td>
                                     </tr>
                                 ) : filteredTickets.length === 0 ? (
                                     <tr>
-                                        <td colSpan={7} className="py-20 text-center">
+                                        <td colSpan={8} className="py-20 text-center">
                                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
                                                 <Ticket className="h-8 w-8 text-slate-400" />
                                             </div>
@@ -381,6 +483,7 @@ const SupportHubPage: React.FC = () => {
                                     filteredTickets.map((ticket) => {
                                         const Config = CategoryConfig[ticket.categoryEnum] || CategoryConfig[TicketCategoryEnum.OTHER];
                                         const CategoryIcon = Config.icon;
+                                        const hasAttachments = typeof window !== 'undefined' && localStorage.getItem(`ticket_attachments_${ticket.ticketCode}`);
 
                                         return (
                                             <tr key={ticket.id} className="group hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
@@ -390,8 +493,13 @@ const SupportHubPage: React.FC = () => {
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <div className="font-bold text-slate-900 dark:text-white truncate max-w-[300px] mx-auto" title={ticket.subject}>
+                                                    <div className="font-bold text-slate-900 dark:text-white truncate max-w-[300px] mx-auto flex items-center justify-center gap-1.5" title={ticket.subject}>
                                                         {ticket.subject}
+                                                        {hasAttachments && (
+                                                            <span title="Attachments included" className="shrink-0">
+                                                                <Paperclip className="h-3.5 w-3.5 text-indigo-550" />
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
@@ -474,7 +582,7 @@ const SupportHubPage: React.FC = () => {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     title={editingTicket ? "Edit Support Request" : "Submit Support Request"}
-                    size="4xl"
+                    size="xl"
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
@@ -593,6 +701,75 @@ const SupportHubPage: React.FC = () => {
                                         />
                                     )}
                                 </div>
+                            </div>
+
+                            {/* Screenshots & Attachments Dropzone */}
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-100 dark:border-slate-800">
+                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                                    <Paperclip className="h-3 w-3" />
+                                    Screenshots & File Attachments
+                                </h4>
+                                
+                                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-2xl p-6 text-center cursor-pointer transition-all relative group bg-white dark:bg-slate-950">
+                                    <input 
+                                        type="file" 
+                                        multiple 
+                                        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                                        onChange={handleFileChange}
+                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                    />
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-xl group-hover:scale-110 transition-transform">
+                                            <UploadCloud className="h-6 w-6" />
+                                        </div>
+                                        <div>
+                                            <span className="text-xs font-black text-slate-850 dark:text-slate-200 block">Drag & Drop Screenshots or Files</span>
+                                            <span className="text-[10px] text-slate-450 dark:text-slate-500 block mt-0.5">Supports PDF, DOCX, PNG, JPG, XLS up to 10MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {attachedFiles.length > 0 && (
+                                    <div className="grid grid-cols-1 gap-2 mt-3">
+                                        {attachedFiles.map((file, idx) => {
+                                            const FileIcon = file.type.startsWith('image/') ? Image : FileText;
+                                            return (
+                                                <div key={idx} className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-xl text-xs gap-3">
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        {file.preview ? (
+                                                            <img src={file.preview} alt="preview" className="h-9 w-9 object-cover rounded-lg border border-slate-100" />
+                                                        ) : (
+                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                                                                <FileIcon className="h-4.5 w-4.5" />
+                                                            </div>
+                                                        )}
+                                                        <div className="min-w-0">
+                                                            <span className="font-extrabold text-slate-850 dark:text-slate-200 block truncate" title={file.name}>{file.name}</span>
+                                                            {file.status === 'uploading' ? (
+                                                                <div className="flex items-center gap-1 text-[10px] text-indigo-500 font-bold">
+                                                                    <RefreshCw className="h-3 w-3 animate-spin" />
+                                                                    <span>Uploading to backend...</span>
+                                                                </div>
+                                                            ) : file.status === 'error' ? (
+                                                                <span className="text-[10px] text-rose-500 font-bold block">Upload Failed</span>
+                                                            ) : (
+                                                                <span className="text-[10px] text-emerald-500 font-bold block">{file.size} • Saved on Backend</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => setAttachedFiles(prev => prev.filter((_, i) => i !== idx))}
+                                                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-colors"
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         </div>
 

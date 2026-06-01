@@ -60,6 +60,10 @@ export class TicketsService extends CommonAxiosService {
         return await this.axiosPostCall(this.getURLwithMainEndPoint('addResponse'), reqObj, config);
     }
 
+    async getUserTickets(reqObj: { email: string }, config?: AxiosRequestConfig): Promise<GetAllTicketsModel> {
+        return await this.axiosPostCall(this.getURLwithMainEndPoint('getUserTickets'), reqObj, config);
+    }
+
     async uploadAttachment(file: File, config?: AxiosRequestConfig): Promise<GlobalResponse> {
         const formData = new FormData();
         formData.append('file', file);

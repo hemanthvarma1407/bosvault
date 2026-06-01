@@ -448,7 +448,145 @@ export class TicketsService {
     async getStatistics(reqModel: GetTicketStatisticsRequestModel): Promise<any> {
         const tickets = await this.ticketsRepo.find({ where: { companyId: reqModel.companyId } });
 
+        // SLA calculation: only on tickets that have an SLA deadline
+        const resolvedOrClosed = tickets.filter(t => t.ticketStatus === TicketStatusEnum.RESOLVED || t.ticketStatus === TicketStatusEnum.CLOSED);
+        const resolvedWithSLA = resolvedOrClosed.filter(t => t.slaDeadline);
+        
+        const slaMetCount = resolvedWithSLA.filter(t => {
+            const resolvedTime = t.resolvedAt ? new Date(t.resolvedAt).getTime() : new Date().getTime();
+            return resolvedTime <= new Date(t.slaDeadline).getTime();
+        }).length;
+        
+        const slaBreachedCount = resolvedWithSLA.length - slaMetCount;
+        
+        const openOverdueCount = tickets.filter(t => 
+            t.ticketStatus !== TicketStatusEnum.RESOLVED && 
+            t.ticketStatus !== TicketStatusEnum.CLOSED && 
+            t.slaDeadline && 
+            new Date().getTime() > new Date(t.slaDeadline).getTime()
+        ).length;
+
+        // CSAT calculation
+        const ratedTickets = tickets.filter(t => t.userRating && t.userRating > 0);
+        const avgCSAT = ratedTickets.length > 0
+            ? Number((ratedTickets.reduce((acc, t) => acc + t.userRating, 0) / ratedTickets.length).toFixed(1))
+            : 0;
+
+        const ratingsDistribution = {
+            5: ratedTickets.filter(t => t.userRating === 5).length,
+            4: ratedTickets.filter(t => t.userRating === 4).length,
+            3: ratedTickets.filter(t => t.userRating === 3).length,
+            2: ratedTickets.filter(t => t.userRating === 2).length,
+            1: ratedTickets.filter(t => t.userRating === 1).length,
+        };
+
+        // Average Resolution Time (in hours)
+        const resolvedTicketsWithTimes = resolvedOrClosed.filter(t => t.createdAt && t.resolvedAt);
+        const avgResolutionTimeHours = resolvedTicketsWithTimes.length > 0
+            ? Number((resolvedTicketsWithTimes.reduce((acc, t) => {
+                const diff = new Date(t.resolvedAt).getTime() - new Date(t.createdAt).getTime();
+                return acc + (diff / (1000 * 60 * 60));
+              }, 0) / resolvedTicketsWithTimes.length).toFixed(1))
+            : 0;
+
+        // Resolution Rate
+        const resolutionRate = tickets.length > 0
+            ? Math.round((resolvedOrClosed.length / tickets.length) * 100)
+            : 0;
+
+        // SLA Compliance Rate
+        const slaComplianceRate = resolvedWithSLA.length > 0
+            ? Math.round((slaMetCount / resolvedWithSLA.length) * 100)
+            : 100; // If no tickets have SLA, default to 100%
+
+        // Monthly trends (last 6 months)
+        const monthlyTrendsMap: Record<string, { created: number, resolved: number }> = {};
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        // Pre-populate last 6 months in chronological order
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const label = `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+            monthlyTrendsMap[label] = { created: 0, resolved: 0 };
+        }
+
+        tickets.forEach(t => {
+            if (t.createdAt) {
+                const createdDate = new Date(t.createdAt);
+                const createdLabel = `${monthNames[createdDate.getMonth()]} ${createdDate.getFullYear().toString().slice(-2)}`;
+                if (monthlyTrendsMap[createdLabel]) {
+                    monthlyTrendsMap[createdLabel].created += 1;
+                }
+            }
+            if (t.resolvedAt) {
+                const resolvedDate = new Date(t.resolvedAt);
+                const resolvedLabel = `${monthNames[resolvedDate.getMonth()]} ${resolvedDate.getFullYear().toString().slice(-2)}`;
+                if (monthlyTrendsMap[resolvedLabel]) {
+                    monthlyTrendsMap[resolvedLabel].resolved += 1;
+                }
+            }
+        });
+
+        const monthlyTrends = Object.entries(monthlyTrendsMap).map(([month, data]) => ({
+            month,
+            created: data.created,
+            resolved: data.resolved
+        }));
+
+        // Admin Performance
+        const adminRepo = this.dataSource.getRepository(AuthUsersEntity);
+        const allAdmins = await adminRepo.find({ where: { companyId: reqModel.companyId } });
+        const adminMap = new Map<number, string>();
+        allAdmins.forEach(admin => {
+            adminMap.set(admin.id, admin.fullName);
+        });
+
+        const adminPerformanceMap: Record<number, { name: string, assigned: number, resolved: number, avgRating: number, ratingCount: number, totalRatingSum: number }> = {};
+        
+        tickets.forEach(t => {
+            if (t.assignAdminId) {
+                const adminId = Number(t.assignAdminId);
+                const adminName = adminMap.get(adminId) || `Admin #${adminId}`;
+                if (!adminPerformanceMap[adminId]) {
+                    adminPerformanceMap[adminId] = {
+                        name: adminName,
+                        assigned: 0,
+                        resolved: 0,
+                        avgRating: 0,
+                        ratingCount: 0,
+                        totalRatingSum: 0
+                    };
+                }
+                
+                adminPerformanceMap[adminId].assigned += 1;
+                if (t.ticketStatus === TicketStatusEnum.RESOLVED || t.ticketStatus === TicketStatusEnum.CLOSED) {
+                    adminPerformanceMap[adminId].resolved += 1;
+                }
+                if (t.userRating && t.userRating > 0) {
+                    adminPerformanceMap[adminId].ratingCount += 1;
+                    adminPerformanceMap[adminId].totalRatingSum += t.userRating;
+                }
+            }
+        });
+
+        const adminPerformance = Object.entries(adminPerformanceMap).map(([id, data]) => {
+            const avgRating = data.ratingCount > 0
+                ? Number((data.totalRatingSum / data.ratingCount).toFixed(1))
+                : 0;
+            return {
+                adminId: Number(id),
+                name: data.name,
+                assigned: data.assigned,
+                resolved: data.resolved,
+                avgRating: avgRating
+            };
+        }).sort((a, b) => b.resolved - a.resolved);
+
         return {
+            status: true,
+            code: 200,
+            message: "Statistics retrieved successfully",
             total: tickets.length,
             open: tickets.filter(t => t.ticketStatus === TicketStatusEnum.OPEN).length,
             inProgress: tickets.filter(t => t.ticketStatus === TicketStatusEnum.IN_PROGRESS).length,
@@ -467,6 +605,23 @@ export class TicketsService {
                 access: tickets.filter(t => t.categoryEnum === TicketCategoryEnum.ACCESS).length,
                 other: tickets.filter(t => t.categoryEnum === TicketCategoryEnum.OTHER).length,
             },
+            slaStats: {
+                complianceRate: slaComplianceRate,
+                met: slaMetCount,
+                breached: slaBreachedCount,
+                openOverdue: openOverdueCount
+            },
+            csatStats: {
+                average: avgCSAT,
+                distribution: ratingsDistribution,
+                totalRated: ratedTickets.length
+            },
+            resolutionStats: {
+                averageTimeHours: avgResolutionTimeHours,
+                resolutionRate: resolutionRate
+            },
+            monthlyTrends,
+            adminPerformance
         };
     }
 

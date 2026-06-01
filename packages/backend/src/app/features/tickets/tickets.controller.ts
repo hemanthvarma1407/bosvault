@@ -80,6 +80,15 @@ export class TicketsController {
         }
     }
 
+    @Post('getUserTickets')
+    async getUserTickets(@Body() reqModel: { email: string }): Promise<GetAllTicketsModel> {
+        try {
+            return await this.service.getTicketsByUser(reqModel.email);
+        } catch (error) {
+            return returnException(GetAllTicketsModel, error);
+        }
+    }
+
     @Post('statistics')
     @ApiBody({ type: GetTicketStatisticsRequestModel })
     async getStatistics(@Body() reqModel: GetTicketStatisticsRequestModel): Promise<GlobalResponse> {
