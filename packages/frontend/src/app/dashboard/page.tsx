@@ -71,7 +71,7 @@ const DashboardPage: React.FC = () => {
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [companies, setCompanies] = useState<any[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(0);
     const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
     const [widgetSettings, setWidgetSettings] = useState<WidgetSettings>({});
     const hasFetched = useRef(false);
@@ -149,21 +149,14 @@ const DashboardPage: React.FC = () => {
                     setCompanies(companiesList);
                 }
 
-                // 2. Resolve which company to select
-                let targetCompanyId = null;
-                if (companiesList.length > 0) {
-                    targetCompanyId = Number(companiesList[0].id);
-                } else if (user?.companyId) {
-                    targetCompanyId = Number(user.companyId);
-                }
+                // 2. Resolve which company to select: Default to All Companies (0)
+                let targetCompanyId = 0;
 
-                if (targetCompanyId !== null) {
-                    setSelectedCompanyId(targetCompanyId);
-                    // 3. Fetch stats for the resolved company
-                    if (!hasFetched.current) {
-                        hasFetched.current = true;
-                        fetchStats(targetCompanyId);
-                    }
+                setSelectedCompanyId(targetCompanyId);
+                // 3. Fetch stats for the resolved company
+                if (!hasFetched.current) {
+                    hasFetched.current = true;
+                    fetchStats(targetCompanyId);
                 }
             } catch (error) {
                 console.error('Dashboard initialization failed:', error);
@@ -303,10 +296,13 @@ const DashboardPage: React.FC = () => {
                                     hasFetched.current = false;
                                     fetchStats(newCompanyId);
                                 }}
-                                options={companies.map((company) => ({
-                                    value: company.id.toString(),
-                                    label: company.name
-                                }))}
+                                options={[
+                                    { value: '0', label: 'All Companies' },
+                                    ...companies.map((company) => ({
+                                        value: company.id.toString(),
+                                        label: company.name
+                                    }))
+                                ]}
                                 className="h-8 text-[10px] font-bold rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
                             />
                         </div>

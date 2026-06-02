@@ -16,6 +16,7 @@ import { AddLicenseModal } from './AddLicenseModal';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
+import { Select } from '@/components/ui/Select';
 
 
 
@@ -76,7 +77,7 @@ export default function LicensesPage() {
     const [licenses, setLicenses] = useState<License[]>([]);
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
     const [applications, setApplications] = useState<Application[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('');
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('0');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editLicense, setEditLicense] = useState<License | null>(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -100,17 +101,14 @@ export default function LicensesPage() {
             const response: any = await companyService.getAllCompanies();
             if (response.status) {
                 setCompanies(response.data || []);
-                if (response.data?.length > 0 && !selectedCompanyId) {
-                    setSelectedCompanyId(response.data[0].id.toString());
-                }
             }
         } catch (error) {
             console.error('Failed to fetch companies:', error);
         }
-    }, [selectedCompanyId]);
+    }, []);
 
     const fetchLicenses = useCallback(async () => {
-        if (!selectedCompanyId) return;
+        if (selectedCompanyId === undefined || selectedCompanyId === null || selectedCompanyId === '') return;
         try {
             const req = new IdRequestModel(Number(selectedCompanyId));
             const response: any = await licensesService.getAllLicenses(req);
@@ -236,21 +234,19 @@ export default function LicensesPage() {
                     ]}
                 >
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-end max-w-2xl ml-auto">
-                        <div className="relative w-full sm:w-48 group">
-                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-500 group-focus-within:scale-110 transition-transform" />
-                            <select
+                        <div className="w-full sm:w-48">
+                            <Select
                                 value={selectedCompanyId}
                                 onChange={(e) => setSelectedCompanyId(e.target.value)}
-                                className="w-full pl-9 pr-8 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none shadow-sm cursor-pointer uppercase tracking-widest"
-                            >
-                                <option value="">All Companies</option>
-                                {companies.map(c => (
-                                    <option key={c.id} value={c.id.toString()}>{c.companyName}</option>
-                                ))}
-                            </select>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                <Search className="h-3 w-3" />
-                            </div>
+                                options={[
+                                    { value: '0', label: 'All Companies' },
+                                    ...companies.map((c) => ({
+                                        value: c.id.toString(),
+                                        label: c.companyName
+                                    }))
+                                ]}
+                                className="h-8 font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+                            />
                         </div>
 
                         <div className="relative w-full sm:w-72 group">
@@ -271,19 +267,6 @@ export default function LicensesPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     {/* Summary Metrics */}
                     <div className="lg:col-span-1 space-y-4">
-                        <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-sm relative overflow-hidden group">
-                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rounded-full group-hover:scale-150 transition-transform duration-700" />
-                            <div className="relative z-10">
-                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Total Licenses</div>
-                                <div className="text-3xl font-black text-slate-900 dark:text-white flex items-baseline gap-2">
-                                    {licenses.length}
-                                    <span className="text-xs text-slate-400 font-bold">Total</span>
-                                </div>
-                            </div>
-                        </div>
-
-
-
                         <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-sm relative overflow-hidden group">
                             <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700" />
                             <div className="relative z-10">
@@ -344,14 +327,16 @@ export default function LicensesPage() {
                                                         </p>
                                                     </div>
                                                     <div className="hidden sm:flex items-center -space-x-2">
-                                                        {appLicenses.slice(0, 3).map((l, i) => (
+                                                        {appLicenses.filter(l => l.assignedEmployeeId).slice(0, 3).map((l, i) => (
                                                             <div key={i} className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white">
-                                                                {l.assignedEmployee?.firstName?.[0] || '?'}
+                                                                {l.assignedEmployee 
+                                                                    ? (l.assignedEmployee.firstName?.[0] || '') + (l.assignedEmployee.lastName?.[0] || '')
+                                                                    : 'U'}
                                                             </div>
                                                         ))}
-                                                        {appLicenses.length > 3 && (
+                                                        {appLicenses.filter(l => l.assignedEmployeeId).length > 3 && (
                                                             <div className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[8px] font-black text-slate-500">
-                                                                +{appLicenses.length - 3}
+                                                                +{appLicenses.filter(l => l.assignedEmployeeId).length - 3}
                                                             </div>
                                                         )}
                                                     </div>
@@ -392,14 +377,18 @@ export default function LicensesPage() {
                                                                                 </div>
                                                                             </td>
                                                                             <td className="p-4">
-                                                                                {license.assignedEmployee ? (
+                                                                                {license.assignedEmployeeId ? (
                                                                                     <div className="flex items-center gap-3">
                                                                                         <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-600/20">
-                                                                                            {license.assignedEmployee.firstName[0]}{license.assignedEmployee.lastName[0]}
+                                                                                            {license.assignedEmployee 
+                                                                                                ? `${license.assignedEmployee.firstName[0]}${license.assignedEmployee.lastName[0]}`
+                                                                                                : 'U'}
                                                                                         </div>
                                                                                         <div>
                                                                                             <p className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">
-                                                                                                {license.assignedEmployee.firstName} {license.assignedEmployee.lastName}
+                                                                                                {license.assignedEmployee 
+                                                                                                    ? `${license.assignedEmployee.firstName} ${license.assignedEmployee.lastName}`
+                                                                                                    : `Employee #${license.assignedEmployeeId}`}
                                                                                             </p>
                                                                                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Active User</p>
                                                                                         </div>

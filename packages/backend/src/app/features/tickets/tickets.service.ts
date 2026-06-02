@@ -446,7 +446,10 @@ export class TicketsService {
     }
 
     async getStatistics(reqModel: GetTicketStatisticsRequestModel): Promise<any> {
-        const tickets = await this.ticketsRepo.find({ where: { companyId: reqModel.companyId } });
+        const companyId = reqModel.companyId;
+        const tickets = await this.ticketsRepo.find({
+            where: companyId > 0 ? { companyId } : {}
+        });
 
         // SLA calculation: only on tickets that have an SLA deadline
         const resolvedOrClosed = tickets.filter(t => t.ticketStatus === TicketStatusEnum.RESOLVED || t.ticketStatus === TicketStatusEnum.CLOSED);
@@ -536,7 +539,9 @@ export class TicketsService {
 
         // Admin Performance
         const adminRepo = this.dataSource.getRepository(AuthUsersEntity);
-        const allAdmins = await adminRepo.find({ where: { companyId: reqModel.companyId } });
+        const allAdmins = await adminRepo.find({
+            where: companyId > 0 ? { companyId } : {}
+        });
         const adminMap = new Map<number, string>();
         allAdmins.forEach(admin => {
             adminMap.set(admin.id, admin.fullName);

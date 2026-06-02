@@ -9,7 +9,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { Select } from '@/components/ui/Select';
 import { UserRoleEnum, GetTicketStatisticsRequestModel } from '@bosvault/shared-models';
 import {
-    BarChart3, Clock, AlertTriangle, Star, 
+    BarChart3, Clock, Star, 
     ThumbsUp, Award, TrendingUp, ShieldCheck, Users, RefreshCcw
 } from 'lucide-react';
 import {
@@ -67,14 +67,10 @@ export default function TicketInsightsPage() {
     const [stats, setStats] = useState<any>(EmptyStats);
     const [isLoading, setIsLoading] = useState(true);
     const [companies, setCompanies] = useState<any[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(0);
 
     const fetchAnalytics = useCallback(async (companyId?: number) => {
-        const targetId = companyId || selectedCompanyId || user?.companyId;
-        if (!targetId) {
-            setIsLoading(false);
-            return;
-        }
+        const targetId = (companyId !== undefined) ? companyId : (selectedCompanyId !== null ? selectedCompanyId : (user?.companyId ? Number(user.companyId) : 0));
 
         setIsLoading(true);
         try {
@@ -101,18 +97,14 @@ export default function TicketInsightsPage() {
                 const response = await companyService.getAllCompaniesDropdown();
                 if (response && response.status && response.data) {
                     setCompanies(response.data);
-                    const initialId = user?.companyId ? Number(user.companyId) : (response.data.length > 0 ? Number(response.data[0].id) : null);
-                    if (initialId) {
-                        setSelectedCompanyId(initialId);
-                        
-                        // Fetch real statistics
-                        const req = new GetTicketStatisticsRequestModel(initialId);
-                        const statsRes = await ticketService.getStatistics(req);
-                        if (statsRes && statsRes.status !== false) {
-                            setStats(statsRes.data || statsRes);
-                        } else {
-                            setStats(EmptyStats);
-                        }
+                    const initialId = 0; // Default to All Companies
+                    setSelectedCompanyId(initialId);
+                    
+                    // Fetch real statistics
+                    const req = new GetTicketStatisticsRequestModel(initialId);
+                    const statsRes = await ticketService.getStatistics(req);
+                    if (statsRes && statsRes.status !== false) {
+                        setStats(statsRes.data || statsRes);
                     } else {
                         setStats(EmptyStats);
                     }
@@ -198,10 +190,13 @@ export default function TicketInsightsPage() {
                                         setSelectedCompanyId(newId);
                                         fetchAnalytics(newId);
                                     }}
-                                    options={companies.map((c) => ({
-                                        value: c.id.toString(),
-                                        label: c.name
-                                    }))}
+                                    options={[
+                                        { value: '0', label: 'All Companies' },
+                                        ...companies.map((c) => ({
+                                            value: c.id.toString(),
+                                            label: c.name
+                                        }))
+                                    ]}
                                     className="h-9 font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
                                 />
                             </div>
