@@ -186,7 +186,7 @@ export class EmailInfoService {
   </div>
   
   <div style="text-align: center; margin: 30px 0;">
-    <a href="${frontendUrl}/dashboard" style="background: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+    <a href="${frontendUrl}/users-management" style="background: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
       Review Access Request
     </a>
   </div>
@@ -484,24 +484,17 @@ export class EmailInfoService {
   <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #f1f5f9;">
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
-        <td width="40%" style="font-size: 11px; color: #64748b; text-transform: uppercase;">Asset Name</td>
-        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase;">Assigned By</td>
-        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase;">Date</td>
+        <td width="40%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Name</td>
+        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Assigned By</td>
+        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Date</td>
       </tr>
       <tr>
-        <td style="font-weight: bold; font-size: 14px;">${assetName}</td>
-        <td style="font-weight: bold; font-size: 14px;">${assignedBy}</td>
-        <td style="font-weight: bold; font-size: 14px;">${new Date(assignedDate).toLocaleDateString()}</td>
+        <td width="40%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assetName}</td>
+        <td width="30%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assignedBy}</td>
+        <td width="30%" style="font-weight: bold; font-size: 14px; vertical-align: top;">${new Date(assignedDate).toLocaleDateString()}</td>
       </tr>
     </table>
   </div>
-  
-  <div style="text-align: center; margin: 30px 0;">
-    <a href="${frontendUrl}/assets/my-assets" style="background: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-      View My Assets
-    </a>
-  </div>
-  
   <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
   <p style="font-size: 11px; color: #94a3b8; text-align: center;">BOS Vault System • Automated notification • Do not reply</p>
 </div>

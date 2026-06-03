@@ -9,15 +9,12 @@ import { CompanyInfoEntity } from '../masters/company-info/entities/company-info
 import { LicensesMasterEntity } from '../masters/license/entities/license.entity';
 import { EmployeesEntity } from '../employees/entities/employees.entity';
 
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '@bosvault/shared-models';
 import { LicenseService as LicenseMasterService } from '../masters/license/license.service';
 
 @Injectable()
 export class LicensesService {
     constructor(
         private repo: LicenseRepository,
-        private notificationsService: NotificationsService,
         private licenseMasterService: LicenseMasterService
     ) { }
 
@@ -216,22 +213,7 @@ export class LicensesService {
         const saved = await this.repo.save(license);
         // ... existing notification logic
 
-        // Persistent notification for employee
-        try {
-            if (reqModel.assignedEmployeeId) {
-                const employee = await this.repo.manager.getRepository(EmployeesEntity).findOne({ where: { id: reqModel.assignedEmployeeId } });
-                if (employee && employee.userId) {
-                    const app = await this.repo.manager.getRepository(LicensesMasterEntity).findOne({ where: { id: reqModel.applicationId } });
-                    await this.notificationsService.createNotification(employee.userId, {
-                        title: 'License Assigned',
-                        message: `A new license for ${app ? app.name : 'software'} has been assigned to you.`,
-                        type: NotificationType.SUCCESS,
-                        category: 'license',
-                        metadata: { licenseId: saved.id }
-                    });
-                }
-            }
-        } catch (e) { console.error("License notification failed", e); }
+
 
         try {
             await this.licenseMasterService.updateUsedCount(reqModel.applicationId);

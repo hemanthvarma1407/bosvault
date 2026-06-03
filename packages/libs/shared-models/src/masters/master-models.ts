@@ -140,6 +140,7 @@ export class MasterBase {
 }
 
 export class Department extends MasterBase {
+    code?: string;
     companyName?: string;
 
     constructor(
@@ -149,11 +150,13 @@ export class Department extends MasterBase {
         isActive: boolean,
         companyId?: number,
         description?: string,
+        code?: string,
         companyName?: string,
         createdAt?: Date,
         updatedAt?: Date
     ) {
         super(id, userId, name, isActive, companyId, description, createdAt, updatedAt);
+        this.code = code;
         this.companyName = companyName;
     }
 }
@@ -365,8 +368,10 @@ export class CreateMasterModel {
 }
 
 export class CreateDepartmentModel extends CreateMasterModel {
-    constructor(userId: number, companyId: number, name: string, description?: string, isActive?: boolean, id?: number) {
+    code?: string;
+    constructor(userId: number, companyId: number, name: string, description?: string, isActive?: boolean, code?: string, id?: number) {
         super(userId, companyId, name, description, isActive, id);
+        this.code = code;
     }
 }
 
@@ -465,12 +470,14 @@ export class UpdateDepartmentModel {
     name: string;
     description?: string;
     isActive: boolean;
+    code?: string;
 
-    constructor(id: number, name: string, description?: string, isActive?: boolean) {
+    constructor(id: number, name: string, description?: string, isActive?: boolean, code?: string) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.isActive = isActive ?? true;
+        this.code = code;
     }
 }
 

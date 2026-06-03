@@ -435,61 +435,62 @@ const ProcurementPage: React.FC = () => {
                 ) : (
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                            <table className="w-full text-center border-collapse border border-slate-200 dark:border-slate-800">
+                                <thead className="bg-slate-50 dark:bg-slate-800/50">
                                     <tr>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Purchase Order</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Company</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Vendor</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider hidden md:table-cell">Requester</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider hidden sm:table-cell">Date</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Total Amount</th>
-                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Purchase Order</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Company</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Vendor</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider hidden md:table-cell border border-slate-200 dark:border-slate-800 text-center">Requester</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider hidden sm:table-cell border border-slate-200 dark:border-slate-800 text-center">Date</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Total Amount</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Status</th>
+                                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                     {filteredPOs.map((po) => (
                                         <tr key={po.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-3">
+                                            <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
+                                                <div className="flex items-center justify-center gap-3">
                                                     <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 transition-colors">
                                                         <FileText className="text-indigo-600 dark:text-indigo-400" size={18} />
                                                     </div>
                                                     <span className="font-bold text-sm text-slate-900 dark:text-white">{po.poNumber}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 font-medium">
+                                            <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
+                                                <div className="flex items-center justify-center gap-2 text-sm text-slate-600 dark:text-slate-300 font-medium">
                                                     <Building size={14} className="text-slate-400" />
                                                     {po.companyName || 'N/A'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 font-medium">
+                                            <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
+                                                <div className="flex items-center justify-center gap-2 text-sm text-slate-600 dark:text-slate-300 font-medium">
                                                     <Building size={14} className="text-slate-400" />
                                                     {po.vendorName}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell text-sm text-slate-600 dark:text-slate-300">
-                                                <div className="flex items-center gap-2">
+                                            <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell text-sm text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-center">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <User size={14} className="text-slate-400" />
                                                     {po.requesterName}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-sm text-slate-500">
+                                            <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-sm text-slate-500 border border-slate-200 dark:border-slate-800 text-center">
                                                 {po.orderDate ? new Date(po.orderDate).toLocaleDateString() : 'N/A'}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap font-bold text-sm text-slate-900 dark:text-white">
+                                            <td className="px-6 py-4 whitespace-nowrap font-bold text-sm text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-center">
                                                 {po.currency === 'INR' ? '₹' : '$'}{(Number(po.totalAmount) || 0).toFixed(2)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border ${getStatusStyle(po.status)}`}>
                                                     {getStatusIcon(po.status)}
                                                     {(po.status || 'unknown').replace('_', ' ')}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <div className="flex items-center justify-end gap-2">
+                                            <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => setSelectedPO(po)}
                                                         className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
@@ -607,35 +608,35 @@ const ProcurementPage: React.FC = () => {
                                     Order Items
                                 </h4>
                                 <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-                                    <table className="w-full text-left bg-white dark:bg-slate-900">
-                                        <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                                    <table className="w-full text-center bg-white dark:bg-slate-900 border-collapse border border-slate-200 dark:border-slate-800">
+                                        <thead className="bg-slate-50 dark:bg-slate-800/50">
                                             <tr>
-                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Item Name</th>
-                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Type</th>
-                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Qty</th>
-                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Unit Price</th>
-                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Total</th>
+                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Item Name</th>
+                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Type</th>
+                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center border border-slate-200 dark:border-slate-800 text-center">Qty</th>
+                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Unit Price</th>
+                                                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200 dark:border-slate-800 text-center">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                             {selectedPO.items?.length ? selectedPO.items.map((item: any, i: number) => (
                                                 <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                                                    <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{item.itemName}</td>
-                                                    <td className="px-4 py-3 text-sm text-slate-500">{item.assetTypeName || 'N/A'}</td>
-                                                    <td className="px-4 py-3 text-sm text-slate-500 text-center">{Number(item.quantity) || 0}</td>
-                                                    <td className="px-4 py-3 text-sm text-slate-500 text-right">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(item.unitPrice) || 0).toFixed(2)}</td>
-                                                    <td className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 text-right">{selectedPO.currency === 'INR' ? '₹' : '$'}{((Number(item.quantity) || 0) * (Number(item.unitPrice) || 0)).toFixed(2)}</td>
+                                                    <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 text-center">{item.itemName}</td>
+                                                    <td className="px-4 py-3 text-sm text-slate-500 border border-slate-200 dark:border-slate-800 text-center">{item.assetTypeName || 'N/A'}</td>
+                                                    <td className="px-4 py-3 text-sm text-slate-500 text-center border border-slate-200 dark:border-slate-800 text-center">{Number(item.quantity) || 0}</td>
+                                                    <td className="px-4 py-3 text-sm text-slate-500 border border-slate-200 dark:border-slate-800 text-center">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(item.unitPrice) || 0).toFixed(2)}</td>
+                                                    <td className="px-4 py-3 text-sm font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-center">{selectedPO.currency === 'INR' ? '₹' : '$'}{((Number(item.quantity) || 0) * (Number(item.unitPrice) || 0)).toFixed(2)}</td>
                                                 </tr>
                                             )) : (
                                                 <tr>
-                                                    <td colSpan={4} className="px-4 py-8 text-center text-sm text-slate-500">No items available</td>
+                                                    <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500 border border-slate-200 dark:border-slate-800 text-center">No items available</td>
                                                 </tr>
                                             )}
                                         </tbody>
                                         <tfoot className="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
                                             <tr>
-                                                <td colSpan={3} className="px-4 py-3 text-xs font-black text-slate-500 uppercase tracking-wider text-right">Total Amount:</td>
-                                                <td className="px-4 py-3 text-lg font-black text-indigo-600 dark:text-indigo-400 text-right">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(selectedPO.totalAmount) || 0).toFixed(2)}</td>
+                                                <td colSpan={4} className="px-4 py-3 text-xs font-black text-slate-500 uppercase tracking-wider text-right border border-slate-200 dark:border-slate-800">Total Amount:</td>
+                                                <td className="px-4 py-3 text-lg font-black text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-800 text-center">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(selectedPO.totalAmount) || 0).toFixed(2)}</td>
                                             </tr>
                                         </tfoot>
                                     </table>

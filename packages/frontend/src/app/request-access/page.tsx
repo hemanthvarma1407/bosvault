@@ -3,14 +3,14 @@
 import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Mail, User, Shield, ArrowLeft, Send } from 'lucide-react';
+import { Mail, User, ArrowLeft, Send } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { authService } from '@/lib/api/services';
 import Link from 'next/link';
 
 const RequestAccessPage: React.FC = () => {
     const router = useRouter();
-    const [formData, setFormData] = useState({ name: '', email: '', description: '' });
+    const [formData, setFormData] = useState({ name: '', email: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [isDarkMode] = useState(true);
 
@@ -21,7 +21,6 @@ const RequestAccessPage: React.FC = () => {
             const response = await authService.requestAccess({
                 name: formData.name,
                 email: formData.email,
-                description: formData.description,
                 status: 'pending'
             } as any);
 
@@ -55,7 +54,7 @@ const RequestAccessPage: React.FC = () => {
             </div>
 
             {/* Main Content */}
-            <div className="relative z-10 w-full max-w-sm mx-auto px-4 py-6 animate-fade-in">
+            <div className="relative z-10 w-full max-w-[340px] mx-auto px-4 py-6 animate-fade-in">
                 <div className="relative group">
                     {/* Glow Effect */}
                     <div className={`absolute -inset-1 rounded-3xl blur-2xl transition-all duration-1000 ${isDarkMode
@@ -64,18 +63,18 @@ const RequestAccessPage: React.FC = () => {
                         }`}></div>
 
                     {/* Form Container */}
-                    <div className={`relative backdrop-blur-3xl rounded-2xl p-6 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] ${isDarkMode
+                    <div className={`relative backdrop-blur-3xl rounded-2xl p-5 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] ${isDarkMode
                         ? 'bg-slate-900/90 border-slate-700/50'
                         : 'bg-white/95 border-white/50 shadow-blue-900/10'
                         }`}>
 
-                        <div className="mb-5 text-center">
-                            <Link href="/login" className={`inline-flex items-center gap-2 mb-4 text-xs font-bold transition-colors ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'}`}>
+                        <div className="mb-4 text-center">
+                            <Link href="/login" className={`inline-flex items-center gap-2 mb-3 text-xs font-bold transition-colors ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'}`}>
                                 <ArrowLeft className="h-3.5 w-3.5" />
                                 Back to Login
                             </Link>
-                            <h2 className={`text-2xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Request Access</h2>
-                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Send your details to the administrator</p>
+                            <h2 className={`text-xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Request Access</h2>
+                            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Send your details to the administrator</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-3">
@@ -127,33 +126,11 @@ const RequestAccessPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-1.5">
-                                <label className={`block text-xs font-bold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                                    Request Reason (Description)
-                                </label>
-                                <div className="relative group/input">
-                                    <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-                                        <Shield className="h-3.5 w-3.5 text-gray-500 group-focus-within/input:text-blue-400 transition-colors" />
-                                    </div>
-                                    <textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        placeholder="I need access to manage..."
-                                        rows={3}
-                                        disabled={isLoading}
-                                        className={`w-full pl-9 pr-4 py-2.5 text-sm rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50 ${isDarkMode
-                                            ? 'bg-slate-800/50 border border-slate-600 text-white placeholder-gray-500 hover:border-slate-500'
-                                            : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 hover:border-gray-400'
-                                            }`}
-                                    />
-                                </div>
-                            </div>
 
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-base uppercase"
+                                className="w-full py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-sm uppercase"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
                                 {isLoading ? (

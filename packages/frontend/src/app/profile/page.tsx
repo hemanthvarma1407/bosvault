@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTheme, Theme } from '@/contexts/ThemeContext';
 import { 
     Shield, Edit, Key, AlertCircle, Eye, EyeOff, 
-    ChevronRight, Mail, User, Sliders, Bell, Globe, 
+    ChevronRight, Mail, User, Sliders, Globe, 
     Activity, Phone, Calendar, Laptop, RefreshCw, Layers, Type,
     Ticket, Clock, Star, FileText, CheckCircle
 } from 'lucide-react';
@@ -88,8 +88,8 @@ const ProfilePage: React.FC = () => {
             setEditedData({
                 fullName: user?.fullName || localStorage.getItem('profile_name') || '',
                 email: user?.email || localStorage.getItem('profile_email') || '',
-                phone: savedPhone,
-                department: savedDept
+                phone: user?.phNumber || savedPhone,
+                department: user?.department || savedDept
             });
 
             setDensity(savedDensity);
@@ -161,6 +161,7 @@ const ProfilePage: React.FC = () => {
             const model = new UpdateUserModel(user.id);
             model.fullName = editedData.fullName;
             model.email = editedData.email;
+            model.phNumber = editedData.phone;
             const res = await authService.updateUser(model);
             if (res.status) {
                 // Save custom properties locally
@@ -175,6 +176,8 @@ const ProfilePage: React.FC = () => {
                     const parsed = JSON.parse(storedUser);
                     parsed.fullName = editedData.fullName;
                     parsed.email = editedData.email;
+                    parsed.phNumber = editedData.phone;
+                    parsed.department = editedData.department;
                     localStorage.setItem('auth_user', JSON.stringify(parsed));
                 }
 
@@ -193,19 +196,7 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-    // Toggle Notifications with Instant Alerts Feedback
-    const handleToggleNotification = (key: keyof typeof notifications, label: string) => {
-        const nextValue = !notifications[key];
-        const updated = {
-            ...notifications,
-            [key]: nextValue
-        };
-        setNotifications(updated);
-        localStorage.setItem('profile_notifications', JSON.stringify(updated));
-        
-        const stateWord = nextValue ? 'enabled' : 'disabled';
-        AlertMessages.getSuccessMessage(`${label} notifications have been ${stateWord} successfully.`);
-    };
+
 
     const handleSaveAppSettings = () => {
         setSaveSettingsLoading(true);
@@ -426,7 +417,9 @@ const ProfilePage: React.FC = () => {
                                         <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                                             <Calendar className="h-3 w-3" /> Profile Creation Time
                                         </label>
-                                        <div className="text-sm font-black text-slate-850 dark:text-slate-200">October 24, 2024 (Real Verified Member)</div>
+                                        <div className="text-sm font-black text-slate-850 dark:text-slate-200">
+                                            {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'October 24, 2024'} (Real Verified Member)
+                                        </div>
                                     </div>
 
                                     {isEditing && (
@@ -674,27 +667,6 @@ const ProfilePage: React.FC = () => {
                                             ))}
                                         </div>
                                     </div>
-
-                                    {/* Grid Density Selector */}
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Grid Padding Density</label>
-                                        <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl">
-                                            {(['comfortable', 'compact'] as const).map((d) => (
-                                                <button
-                                                    key={d}
-                                                    type="button"
-                                                    onClick={() => setDensity(d)}
-                                                    className={`py-1.5 text-xs font-extrabold capitalize rounded-lg transition-all ${
-                                                        density === d 
-                                                            ? 'bg-white dark:bg-slate-850 shadow-sm text-indigo-600 dark:text-indigo-400' 
-                                                            : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                                                    }`}
-                                                >
-                                                    {d}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -730,85 +702,6 @@ const ProfilePage: React.FC = () => {
                                                 <option value="French (FR)">Français (FR)</option>
                                                 <option value="German (DE)">Deutsch (DE)</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr className="border-slate-100 dark:border-slate-850" />
-
-                                {/* Notification Preferences */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center gap-2">
-                                        <Bell className="w-4 h-4 text-amber-500" />
-                                        <h4 className="text-xs font-black text-slate-950 dark:text-white uppercase tracking-wider">Alerts & Notification Hub</h4>
-                                    </div>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed mb-4">
-                                        Choose when and where you would like to receive notifications regarding support updates, system security, and digests.
-                                    </p>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-xl">
-                                            <div className="space-y-0.5">
-                                                <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block">Email Alerts</span>
-                                                <span className="text-[10px] text-slate-400 block">Critical system warnings</span>
-                                            </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={notifications.emailAlerts}
-                                                    onChange={() => handleToggleNotification('emailAlerts', 'Email Alert')}
-                                                    className="sr-only peer" 
-                                                />
-                                                <div className="w-9 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500" />
-                                            </label>
-                                        </div>
-
-                                        <div className="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-xl">
-                                            <div className="space-y-0.5">
-                                                <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block">Slack Sync</span>
-                                                <span className="text-[10px] text-slate-400 block">Immediate support logs</span>
-                                            </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={notifications.slackAlerts}
-                                                    onChange={() => handleToggleNotification('slackAlerts', 'Slack Sync')}
-                                                    className="sr-only peer" 
-                                                />
-                                                <div className="w-9 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500" />
-                                            </label>
-                                        </div>
-
-                                        <div className="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-xl">
-                                            <div className="space-y-0.5">
-                                                <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block">Browser Push Notifications</span>
-                                                <span className="text-[10px] text-slate-400 block">Real-time chat reminders</span>
-                                            </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={notifications.browserPush}
-                                                    onChange={() => handleToggleNotification('browserPush', 'Browser Push')}
-                                                    className="sr-only peer" 
-                                                />
-                                                <div className="w-9 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500" />
-                                            </label>
-                                        </div>
-
-                                        <div className="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 rounded-xl">
-                                            <div className="space-y-0.5">
-                                                <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 block">Weekly Summary Digest</span>
-                                                <span className="text-[10px] text-slate-400 block">Detailed compliance digests</span>
-                                            </div>
-                                            <label className="relative inline-flex items-center cursor-pointer">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={notifications.weeklyDigest}
-                                                    onChange={() => handleToggleNotification('weeklyDigest', 'Weekly Digest')}
-                                                    className="sr-only peer" 
-                                                />
-                                                <div className="w-9 h-5 bg-slate-200 dark:bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500" />
-                                            </label>
                                         </div>
                                     </div>
                                 </div>

@@ -22,7 +22,9 @@ const LoginPage: React.FC = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.push('/welcome');
+            const params = new URLSearchParams(window.location.search);
+            const redirectTo = params.get('redirectTo');
+            router.push(redirectTo || '/welcome');
         }
         // Load saved email on mount
         const savedEmail = localStorage.getItem('last_login_email');
@@ -48,7 +50,9 @@ const LoginPage: React.FC = () => {
                 // Save email for next time
                 localStorage.setItem('last_login_email', formData.email);
                 AlertMessages.getSuccessMessage('Logged in successfully!');
-                router.push('/welcome');
+                const params = new URLSearchParams(window.location.search);
+                const redirectTo = params.get('redirectTo');
+                router.push(redirectTo || '/welcome');
             } else {
                 AlertMessages.getErrorMessage('Login Failed: Unable to retrieve user details.');
             }

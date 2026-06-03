@@ -46,7 +46,7 @@ const ForgotPasswordPage: React.FC = () => {
             </div>
 
             {/* Main Content */}
-            <div className="relative z-10 w-full max-w-sm mx-auto px-4 py-6 animate-fade-in">
+            <div className="relative z-10 w-full max-w-[340px] mx-auto px-4 py-6 animate-fade-in">
                 <div className="relative group">
                     {/* Glow Effect */}
                     <div className={`absolute -inset-1 rounded-3xl blur-2xl transition-all duration-1000 ${isDarkMode
@@ -55,18 +55,18 @@ const ForgotPasswordPage: React.FC = () => {
                         }`}></div>
 
                     {/* Form Container */}
-                    <div className={`relative backdrop-blur-3xl rounded-2xl p-6 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] ${isDarkMode
+                    <div className={`relative backdrop-blur-3xl rounded-2xl p-5 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] ${isDarkMode
                         ? 'bg-slate-900/90 border-slate-700/50'
                         : 'bg-white/95 border-white/50 shadow-blue-900/10'
                         }`}>
 
-                        <div className="mb-5 text-center">
-                            <Link href="/login" className={`inline-flex items-center gap-2 mb-4 text-xs font-bold transition-colors ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'}`}>
+                        <div className="mb-4 text-center">
+                            <Link href="/login" className={`inline-flex items-center gap-2 mb-3 text-xs font-bold transition-colors ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'}`}>
                                 <ArrowLeft className="h-3.5 w-3.5" />
                                 Back to Login
                             </Link>
-                            <h2 className={`text-2xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Request Password</h2>
-                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Enter your email to request a password from the administrator</p>
+                            <h2 className={`text-xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Request Password</h2>
+                            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Enter your email to request a password from the administrator</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-3">
@@ -96,7 +96,7 @@ const ForgotPasswordPage: React.FC = () => {
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-base uppercase"
+                                className="w-full py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-sm uppercase"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
                                 {isLoading ? (

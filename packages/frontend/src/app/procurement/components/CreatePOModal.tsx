@@ -164,7 +164,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <Select
                         label="Company"
-                        value={formData.companyId}
+                        value={formData.companyId ?? 0}
                         onChange={(e) => setFormData({ ...formData, companyId: Number(e.target.value) })}
                         required
                         options={[
@@ -176,7 +176,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                     <div className="space-y-2">
                         <Select
                             label="Vendor"
-                            value={formData.vendorId}
+                            value={formData.vendorId ?? 0}
                             onChange={(e) => {
                                 const val = Number(e.target.value);
                                 setFormData({ ...formData, vendorId: val, vendorName: val !== -1 ? '' : formData.vendorName });
@@ -216,17 +216,26 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
                     <Select
                         label="Approver"
-                        value={formData.approverId}
+                        value={formData.approverId ?? 0}
                         onChange={(e) => setFormData({ ...formData, approverId: Number(e.target.value) })}
                         options={[
                             { label: 'No Specific Approver', value: 0 },
-                            ...approvers.filter(a => a.userId).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: Number(a.userId) }))
+                            ...(() => {
+                                const seen = new Set();
+                                return approvers.filter(a => {
+                                    if (!a.userId) return false;
+                                    const uid = Number(a.userId);
+                                    if (seen.has(uid)) return false;
+                                    seen.add(uid);
+                                    return true;
+                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: Number(a.userId) }));
+                            })()
                         ]}
                     />
 
                     <Select
                         label="Currency"
-                        value={formData.currency}
+                        value={formData.currency ?? 'USD'}
                         onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                         required
                         options={[
@@ -262,7 +271,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                                     <div className="space-y-1">
                                         <Select
                                             label="Asset Type"
-                                            value={item.assetTypeId}
+                                            value={item.assetTypeId ?? 0}
                                             onChange={(e) => {
                                                 const val = Number(e.target.value);
                                                 updateItem(index, 'assetTypeId', val);

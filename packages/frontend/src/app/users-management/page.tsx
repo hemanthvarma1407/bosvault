@@ -789,13 +789,15 @@ export default function UsersManagementPage() {
                                 </div>
                             </div>
                         )}
-                        <PhoneInput
-                            label="Phone Number"
-                            value={formData.phNumber}
-                            onChange={(val) => setFormData({ ...formData, phNumber: val })}
-                            required
-                            disabled={submitting}
-                        />
+                        {!fromRequestId && (
+                            <PhoneInput
+                                label="Phone Number"
+                                value={formData.phNumber}
+                                onChange={(val) => setFormData({ ...formData, phNumber: val })}
+                                required
+                                disabled={submitting}
+                            />
+                        )}
                         <Select
                             label="Role"
                             value={formData.role}

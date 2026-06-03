@@ -24,7 +24,8 @@ export function RouteGuard({
         if (!isLoading) {
             // Check if user is authenticated
             if (!isAuthenticated) {
-                window.location.href = '/login';
+                const currentPath = window.location.pathname + window.location.search;
+                window.location.href = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
                 return;
             }
 

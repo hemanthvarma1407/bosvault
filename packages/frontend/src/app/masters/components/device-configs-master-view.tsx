@@ -224,7 +224,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={isEditMode ? "Edit Device Configuration" : "Add Device Configuration"}>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input label="Laptop Company" value={formData.laptopCompany} onChange={(e) => setFormData({ ...formData, laptopCompany: e.target.value })} className="h-14" required />
+                    <Input label="Company" value={formData.laptopCompany} onChange={(e) => setFormData({ ...formData, laptopCompany: e.target.value })} className="h-14" required />
 
                     <Input label="Model" value={formData.model} onChange={(e) => setFormData({ ...formData, model: e.target.value })} className="h-14" required />
 

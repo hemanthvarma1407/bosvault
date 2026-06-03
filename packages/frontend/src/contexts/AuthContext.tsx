@@ -12,6 +12,9 @@ interface User {
     email: string;
     companyId: number;
     role?: string;
+    phNumber?: string;
+    department?: string;
+    createdAt?: Date | string;
 }
 
 interface AuthContextType {
@@ -51,9 +54,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 // Fetch latest profile and menus to ensure we're not showing stale data
                 authService.getMe().then(response => {
-                    if (response.status && response.menus) {
-                        setAllowedMenus(response.menus);
-                        localStorage.setItem('auth_menus', JSON.stringify(response.menus));
+                    if (response.status) {
+                        if (response.menus) {
+                            setAllowedMenus(response.menus);
+                            localStorage.setItem('auth_menus', JSON.stringify(response.menus));
+                        }
+                        const userData: User = {
+                            id: response.userInfo.id,
+                            fullName: response.userInfo.fullName,
+                            email: response.userInfo.email,
+                            companyId: response.userInfo.companyId,
+                            role: response.userInfo.role,
+                            phNumber: response.userInfo.phNumber,
+                            department: response.userInfo.department,
+                            createdAt: response.userInfo.createdAt,
+                        };
+                        setUser(userData);
+                        localStorage.setItem('auth_user', JSON.stringify(userData));
                     }
                 }).catch(err => {
                     console.error('Failed to refresh menus:', err);
@@ -96,6 +113,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     email: response.userInfo.email,
                     companyId: response.userInfo.companyId,
                     role: response.userInfo.role,
+                    phNumber: response.userInfo.phNumber,
+                    department: response.userInfo.department,
+                    createdAt: response.userInfo.createdAt,
                 };
                 setUser(userData);
                 setToken(tokenToSave);
@@ -146,6 +166,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     email: response.userInfo.email,
                     companyId: response.userInfo.companyId,
                     role: response.userInfo.role,
+                    phNumber: response.userInfo.phNumber,
+                    department: response.userInfo.department,
+                    createdAt: response.userInfo.createdAt,
                 };
                 setUser(userData);
                 setToken(accessToken);

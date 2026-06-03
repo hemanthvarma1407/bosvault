@@ -113,13 +113,19 @@ export class AuthUsersService {
                 throw new ErrorResponse(0, "Email already exists")
             }
 
-            if (!reqModel.companyId) {
+            if (reqModel.email !== 'it@5yinc.com' && !reqModel.companyId) {
                 throw new ErrorResponse(0, "Invalid company ID")
             }
 
-            // Look up the employees table to find a matching employee by email
-            const empRecord = await this.dataSource.query(`SELECT id FROM employees WHERE email = $1 AND company_id = $2 AND deleted_at IS NULL LIMIT 1`, [reqModel.email, reqModel.companyId]);
-            const employeeId = empRecord && empRecord.length > 0 ? String(empRecord[0].id) : null;
+            let employeeId: string | null = null;
+            if (reqModel.email !== 'it@5yinc.com') {
+                // Look up the employees table to find a matching employee by email
+                const empRecord = await this.dataSource.query(`SELECT id FROM employees WHERE email = $1 AND company_id = $2 AND deleted_at IS NULL LIMIT 1`, [reqModel.email, reqModel.companyId]);
+                if (!empRecord || empRecord.length == 0) {
+                    throw new ErrorResponse(0, "Employee not exists")
+                }
+                employeeId = String(empRecord[0].id);
+            }
             await transManager.startTransaction()
             const passwordHash = await bcrypt.hash(reqModel.password, 10)
             const newUser = new AuthUsersEntity()
@@ -157,50 +163,33 @@ export class AuthUsersService {
                 throw new ErrorResponse(401, "Invalid credentials");
             }
 
-            // Check Password Expiry
-            if (user.passwordChangedAt) {
-                const now = new Date();
-                const diffTime = Math.abs(now.getTime() - user.passwordChangedAt.getTime());
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                const adminRoles = [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN];
-                const isItemAdmin = adminRoles.includes(user.userRole);
-
-                const expiryLimitDays = isItemAdmin ? 1 : 7;
-
-                // if (diffDays > expiryLimitDays) {
-                //     throw new ErrorResponse(401, `Password expired (${isItemAdmin ? '1 day' : '7 days'} limit). Please reset your password.`);
-                // }
-            }
-
             // Verify Password
-            // let isMatch = await bcrypt.compare(reqModel.password, user.passwordHash);
-            // if (!isMatch) {
-            //     // Temporary migration check for known accounts if hashing was just enabled
-            //     const migrationAccounts = { 'it@5yinc.com': '9645e517723aae3803941ed7c1a0d42cf7b37c07b7b28e872c83d6b1e9215cfa' };
-            //     if (migrationAccounts[user.email] === reqModel.password) {
-            //         // Update user's password hash in DB to the new format (bcrypt of the SHA256)
-            //         user.passwordHash = await bcrypt.hash(reqModel.password, 10);
-            //         await this.authUsersRepo.save(user);
-            //         isMatch = true;
-            //     }
+            let isMatch = await bcrypt.compare(reqModel.password, user.passwordHash);
+            if (!isMatch) {
+                // Temporary migration check for known accounts if hashing was just enabled
+                const migrationAccounts = { 'it@5yinc.com': '9645e517723aae3803941ed7c1a0d42cf7b37c07b7b28e872c83d6b1e9215cfa' };
+                if (migrationAccounts[user.email] === reqModel.password) {
+                    // Update user's password hash in DB to the new format (bcrypt of the SHA256)
+                    user.passwordHash = await bcrypt.hash(reqModel.password, 10);
+                    await this.authUsersRepo.save(user);
+                    isMatch = true;
+                }
 
-            //     if (!isMatch) {
-            //         throw new ErrorResponse(401, "Invalid credentials");
-            //     }
-            // }
+                if (!isMatch) {
+                    throw new ErrorResponse(401, "Invalid credentials");
+                }
+            }
 
             const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole };
             const accessToken = this.generateAccessToken(payload);
             const refreshToken = this.generateRefreshToken({ ...payload, sub: user.id });
-            // Store refresh token in database
             const tokenEntity = new AuthTokensEntity();
             tokenEntity.userId = user.id;
             tokenEntity.token = refreshToken;
             tokenEntity.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             await this.authTokensRepo.save(tokenEntity);
             const menus = this.getMenusForRole(user.userRole);
-            const userInfo = new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber, user.userRole);
+            const userInfo = await this.buildUserResponse(user);
             return new LoginResponseModel(true, 0, "User Logged In Successfully", userInfo, accessToken, refreshToken, menus);
         } catch (err) {
             throw err;
@@ -240,7 +229,7 @@ export class AuthUsersService {
             newTokenEntity.token = newRefreshToken;
             newTokenEntity.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             await this.authTokensRepo.save(newTokenEntity);
-            const userInfo = new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber, user.userRole);
+            const userInfo = await this.buildUserResponse(user);
             return new LoginResponseModel(true, 0, "Token Refreshed Successfully", userInfo, newAccessToken, newRefreshToken);
         } catch (err) {
             throw err;
@@ -391,8 +380,8 @@ export class AuthUsersService {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
             let existingUser;
-            if (reqModel.companyId) {
-                existingUser = await this.authUsersRepo.findOne({ where: { id: reqModel.companyId } });
+            if (reqModel.id) {
+                existingUser = await this.authUsersRepo.findOne({ where: { id: reqModel.id } });
             } else if (reqModel.email) {
                 existingUser = await this.authUsersRepo.findOne({ where: { email: reqModel.email } });
             }
@@ -404,12 +393,16 @@ export class AuthUsersService {
             await transManager.startTransaction();
 
             const updateData: Partial<AuthUsersEntity> = {};
-            if (reqModel.fullName) updateData.fullName = reqModel.fullName;
-            if (reqModel.phNumber) updateData.phNumber = reqModel.phNumber;
-            if (reqModel.role) updateData.userRole = reqModel.role as any;
-            if (reqModel.companyId) updateData.companyId = reqModel.companyId;
+            updateData.fullName = reqModel.fullName;
+            updateData.phNumber = reqModel.phNumber;
+            updateData.userRole = reqModel.role as any;
+            updateData.companyId = reqModel.companyId;
+            updateData.email = reqModel.email;
+            if (reqModel.password) {
+                updateData.passwordHash = await bcrypt.hash(reqModel.password, 10);
+            }
 
-            await this.authUsersRepo.update({ id: existingUser.id }, updateData);
+            await transManager.getRepository(AuthUsersEntity).update({ id: existingUser.id }, updateData);
 
             await transManager.completeTransaction();
             return new GlobalResponse(true, 0, "User Updated Successfully");
@@ -563,7 +556,7 @@ export class AuthUsersService {
         tokenEntity.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         await this.authTokensRepo.save(tokenEntity);
         const menus = this.getMenusForRole(user.userRole);
-        const userInfo = new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber, user.userRole);
+        const userInfo = await this.buildUserResponse(user);
         return new LoginResponseModel(true, 0, "User Logged In via OAuth Successfully", userInfo, accessToken, refreshToken, menus);
     }
 
@@ -579,7 +572,7 @@ export class AuthUsersService {
             }
 
             const menus = this.getMenusForRole(user.userRole);
-            const userInfo = new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber, user.userRole);
+            const userInfo = await this.buildUserResponse(user);
 
             return new LoginResponseModel(true, 0, "Profile retrieved successfully", userInfo, undefined, undefined, menus);
         } catch (error) {
@@ -666,5 +659,20 @@ export class AuthUsersService {
         };
 
         return filterMenus(DEFAULT_MENUS);
+    }
+
+    private async buildUserResponse(user: AuthUsersEntity): Promise<UserResponseModel> {
+        let department = 'Engineering Support';
+        if (user.employeeId) {
+            try {
+                const empDept = await this.dataSource.query(` SELECT d.name as name  FROM employees e JOIN departments d ON e.department_id = d.id WHERE e.id = $1 AND e.deleted_at IS NULL LIMIT 1`, [parseInt(user.employeeId)]);
+                if (empDept && empDept.length > 0) {
+                    department = empDept[0].name;
+                }
+            } catch (e) {
+                console.error("Failed to query user department:", e);
+            }
+        }
+        return new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber || '', user.userRole, department, user.createdAt);
     }
 }

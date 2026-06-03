@@ -56,7 +56,7 @@ export class DepartmentService {
             }
 
             await transManager.startTransaction();
-            await transManager.getRepository(DepartmentsMasterEntity).update(reqModel.id, { name: reqModel.name, description: reqModel.description, isActive: reqModel.isActive });
+            await transManager.getRepository(DepartmentsMasterEntity).update(reqModel.id, { name: reqModel.name, code: reqModel.code, description: reqModel.description, isActive: reqModel.isActive });
             await transManager.completeTransaction();
             return new GlobalResponse(true, 200, 'Department updated successfully');
         } catch (error) {

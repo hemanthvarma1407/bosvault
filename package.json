@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "npx rimraf dist .nx/cache node_modules/.cache",
-    "build:shared": "npx tsc --build packages/libs/shared-models/tsconfig.lib.json && npx tsc --build packages/libs/backend-utils/tsconfig.lib.json",
+    "build:shared": "npx tsc --build packages/libs/shared-models/tsconfig.lib.json && npx tsc --build packages/libs/backend-utils/tsconfig.lib.json && npx tsc --build packages/libs/shared-services/tsconfig.lib.json",
     "build:backend": "npm run build:shared && npx nx build backend --skip-nx-cache",
     "build:frontend": "npx nx build frontend",
     "build:all": "npm run build:shared && npm run build:backend && npm run build:frontend",

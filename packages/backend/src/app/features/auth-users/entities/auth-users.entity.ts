@@ -13,7 +13,7 @@ export class AuthUsersEntity {
   companyId: number;
 
   @Column('varchar', { name: 'employee_id', length: 255, nullable: true, unique: true, comment: 'User employee id' })
-  employeeId: string;
+  employeeId: string | null;
 
   @Column('varchar', { name: 'email', length: 255, nullable: false, unique: true, comment: 'User email address' })
   email: string;

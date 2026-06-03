@@ -108,9 +108,11 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                                 <div className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
                                                     {assetName}
                                                 </div>
-                                                <div className="text-xs text-slate-500 font-medium">
-                                                    {asset.model || 'Unknown Type'}
-                                                </div>
+                                                {asset.model && (
+                                                    <div className="text-xs text-slate-500 font-medium">
+                                                        {asset.model}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </td>

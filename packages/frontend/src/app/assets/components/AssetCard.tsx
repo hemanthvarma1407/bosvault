@@ -87,7 +87,9 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${statusConfig.bg} ${statusConfig.color} border-current/10 whitespace-nowrap`}>
                                         {['IN_USE', 'INUSE'].includes((asset.status || '').toUpperCase()) ? 'In Use' : (asset.status || 'Available').replace(/_/g, ' ')}
                                     </span>
-                                    <span className="text-[11px] text-slate-500 font-medium truncate">{asset.model || 'Unknown Type'}</span>
+                                    {asset.model && (
+                                        <span className="text-[11px] text-slate-500 font-medium truncate">{asset.model}</span>
+                                    )}
                                 </div>
                             </div>
                         </div>

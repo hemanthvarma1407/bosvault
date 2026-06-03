@@ -132,7 +132,27 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            const updated = { ...prev, [name]: value };
+            if (name === 'deviceId') {
+                updated.deviceConfigId = '';
+                updated.configuration = '';
+            }
+            if (name === 'deviceConfigId') {
+                const selectedConfig = deviceConfigs.find(dc => dc.id.toString() === value);
+                if (selectedConfig) {
+                    let configText = selectedConfig.configuration || '';
+                    const extraParts: string[] = [];
+                    if (selectedConfig.ram) extraParts.push(`RAM: ${selectedConfig.ram}`);
+                    if (selectedConfig.storage) extraParts.push(`Storage: ${selectedConfig.storage}`);
+                    if (extraParts.length > 0) {
+                        configText = configText ? `${configText} (${extraParts.join(', ')})` : extraParts.join(', ');
+                    }
+                    updated.configuration = configText;
+                }
+            }
+            return updated;
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -164,6 +184,8 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
             setIsLoading(false);
         }
     };
+
+    const selectedAssetType = assetTypes.find(t => t.id.toString() === formData.deviceId);
 
     return (
         <Modal
@@ -204,19 +226,16 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
                         onChange={handleChange}
                         options={[
                             { value: '', label: 'Select Configuration' },
-                            ...deviceConfigs.map(b => ({ value: b.id, label: b.name }))
+                            ...(selectedAssetType
+                                ? deviceConfigs.filter(dc => dc.assetType?.toLowerCase() === selectedAssetType.name?.toLowerCase())
+                                : deviceConfigs
+                            ).map(b => ({ value: b.id, label: b.name }))
                         ]}
                     />
                 </div>
 
                 {/* Details Row 2 */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <Input
-                        label="Model"
-                        name="model"
-                        value={formData.model}
-                        onChange={handleChange}
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <Input
                         label="Serial Number"
                         name="serialNumber"
@@ -239,7 +258,7 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
                 </div>
 
                 {/* Details Row 3 */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <Input
                         label="Purchase Date"
                         name="purchaseDate"
@@ -252,12 +271,6 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
                         name="warrantyExpiry"
                         type="date"
                         value={formData.warrantyExpiry}
-                        onChange={handleChange}
-                    />
-                    <Input
-                        label="Box Number"
-                        name="boxNo"
-                        value={formData.boxNo}
                         onChange={handleChange}
                     />
                 </div>

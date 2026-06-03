@@ -105,14 +105,18 @@ export class UserResponseModel {
     email: string;
     phNumber: string;
     role: UserRoleEnum;
+    department?: string;
+    createdAt?: Date;
 
-    constructor(id: number, fullName: string, companyId: number, email: string, phNumber: string, role: UserRoleEnum) {
+    constructor(id: number, fullName: string, companyId: number, email: string, phNumber: string, role: UserRoleEnum, department?: string, createdAt?: Date) {
         this.id = id;
         this.fullName = fullName;
         this.companyId = companyId;
         this.email = email;
         this.phNumber = phNumber;
         this.role = role;
+        this.department = department;
+        this.createdAt = createdAt;
     }
 }
 

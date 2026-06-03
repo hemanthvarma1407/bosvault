@@ -25,7 +25,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
     const [editingDepartmentId, setEditingDepartmentId] = useState<number | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [departmentToDelete, setDepartmentToDelete] = useState<{ id: number; name: string } | null>(null);
-    const [formData, setFormData] = useState({ name: '', description: '', status: '', isActive: true });
+    const [formData, setFormData] = useState({ name: '', code: '', description: '', status: '', isActive: true });
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const initialized = useRef(false);
@@ -55,7 +55,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
         e.preventDefault();
         try {
             if (isEditMode && editingDepartmentId) {
-                const model = new UpdateDepartmentModel(editingDepartmentId, formData.name, formData.description, formData.isActive);
+                const model = new UpdateDepartmentModel(editingDepartmentId, formData.name, formData.description, formData.isActive, formData.code);
                 const response = await departmentService.updateDepartment(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -65,7 +65,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                     AlertMessages.getErrorMessage(response.message);
                 }
             } else {
-                const model = new CreateDepartmentModel(user?.id || 0, user?.companyId || 0, formData.name, formData.description, formData.isActive);
+                const model = new CreateDepartmentModel(user?.id || 0, user?.companyId || 0, formData.name, formData.description, formData.isActive, formData.code);
                 const response = await departmentService.createDepartment(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -85,6 +85,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
         setEditingDepartmentId(dept.id);
         setFormData({
             name: dept.name,
+            code: dept.code || '',
             description: dept.description || '',
             status: '',
             isActive: dept.isActive
@@ -119,7 +120,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
         setIsModalOpen(false);
         setIsEditMode(false);
         setEditingDepartmentId(null);
-        setFormData({ name: '', description: '', status: '', isActive: true });
+        setFormData({ name: '', code: '', description: '', status: '', isActive: true });
     };
 
     return (
@@ -144,17 +145,19 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                             <thead className="bg-slate-50/80 dark:bg-slate-800/80 sticky top-0 z-10">
                                 <tr>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Name</th>
+                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Code</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Status</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-900">
                                 {departments?.length === 0 ? (
-                                    <tr><td colSpan={3} className="p-8 text-center text-slate-500">No departments found</td></tr>
+                                    <tr><td colSpan={4} className="p-8 text-center text-slate-500">No departments found</td></tr>
                                 ) : (
                                     departments?.map((d: Department) => (
                                         <tr key={d.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white">{d.name}</td>
+                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white">{d.code || '-'}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide border ${d.isActive
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
@@ -187,6 +190,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={isEditMode ? "Edit Department" : "Add Department"}>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <Input label="Department Code" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} className="h-14" />
                     <Input label="Department Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-14" required />
                     <Input label="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-14" />
 
@@ -240,12 +244,18 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
 
                         <div className="space-y-4">
                             <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Department Code</label>
+                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    {selectedDepartment.code || '-'}
+                                </p>
+                            </div>
+
+                            <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Description</label>
                                 <p className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
                                     {selectedDepartment.description || 'No description provided for this department.'}
                                 </p>
                             </div>
-
                         </div>
 
                         <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
