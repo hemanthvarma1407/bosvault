@@ -7,7 +7,7 @@ import { getSocket } from '@/lib/socket';
 import { ticketService } from '@/lib/api/services';
 import { TicketStatusEnum } from '@bosvault/shared-models';
 import { configVariables } from '@bosvault/shared-services';
-import { Bot, PlusCircle, Lock, ArrowLeft, Send, Eye, FileText } from 'lucide-react';
+import { Bot, PlusCircle, Lock, ArrowLeft, Send, Eye, FileText, File } from 'lucide-react';
 import { UserRoleEnum } from '@bosvault/shared-models';
 
 interface Message {
@@ -84,6 +84,8 @@ const SupportChatPage: React.FC = () => {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages]);
+
+    const allAttachments = messages.flatMap(m => m.attachments || []);
 
     const handleSendMessage = (attachments?: any[]) => {
         if ((!inputMessage.trim() && (!attachments || attachments.length === 0)) || !ticketId || !user) return;
@@ -248,9 +250,33 @@ const SupportChatPage: React.FC = () => {
 
                                                 {/* Attachments */}
                                                 {message.attachments && message.attachments.length > 0 && (
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
                                                         {message.attachments.map((file, idx) => {
                                                             const attachmentUrl = `${configVariables.APP_AVS_SERVICE_URL}/tickets/attachment/${file.fileName || file.url?.split('/').pop()}`;
+                                                            const isImage = file.type?.startsWith('image/') || 
+                                                                file.fileName?.match(/\.(jpeg|jpg|gif|png|webp)$/i) || 
+                                                                file.url?.match(/\.(jpeg|jpg|gif|png|webp)$/i) || 
+                                                                file.name?.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+
+                                                            if (isImage) {
+                                                                return (
+                                                                    <div key={idx} className="relative group/image max-w-[280px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+                                                                        <img src={attachmentUrl} alt={file.name || "Screenshot"} className="w-full h-auto object-cover max-h-[200px]" />
+                                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                                            <a
+                                                                                href={attachmentUrl}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="p-2 bg-white/20 hover:bg-white/40 text-white rounded-full backdrop-blur-sm transition-all"
+                                                                                title="View full size"
+                                                                            >
+                                                                                <Eye size={18} />
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            }
+
                                                             return (
                                                                 <a
                                                                     key={idx}
@@ -259,18 +285,12 @@ const SupportChatPage: React.FC = () => {
                                                                     rel="noopener noreferrer"
                                                                     className="flex items-center gap-3 p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/10 transition-all cursor-pointer group/file"
                                                                 >
-                                                                    <div className="w-10 h-10 rounded border border-slate-100 dark:border-slate-700 overflow-hidden flex-shrink-0">
-                                                                        {file.type.startsWith('image/') ? (
-                                                                            <img src={attachmentUrl} alt="" className="w-full h-full object-cover" />
-                                                                        ) : (
-                                                                            <div className="w-full h-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-blue-500">
-                                                                                <FileText size={20} />
-                                                                            </div>
-                                                                        )}
+                                                                    <div className="w-10 h-10 rounded border border-slate-100 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-blue-500">
+                                                                        <FileText size={20} />
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
-                                                                        <p className="text-[11px] font-bold truncate text-slate-700 dark:text-slate-200 group-hover/file:text-blue-600">{file.name}</p>
-                                                                        <p className="text-[9px] opacity-60">{(file.size / 1024).toFixed(0)}kb</p>
+                                                                        <p className="text-[11px] font-bold truncate text-slate-700 dark:text-slate-200 group-hover/file:text-blue-600">{file.name || file.fileName}</p>
+                                                                        <p className="text-[9px] opacity-60">{file.size ? `${(file.size / 1024).toFixed(0)}kb` : ''}</p>
                                                                     </div>
                                                                     <Eye size={14} className="text-slate-300 group-hover/file:text-blue-500 mr-1" />
                                                                 </a>
@@ -366,6 +386,20 @@ const SupportChatPage: React.FC = () => {
                         </section>
 
                         <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Time & Effort</h3>
+                            <div className="space-y-4">
+                                <div className="grid grid-cols-2 gap-2">
+                                    <span className="text-[11px] font-bold text-slate-500">Original Estimate</span>
+                                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{ticket?.originalEstimate || '-'}</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <span className="text-[11px] font-bold text-slate-500">Time Spent</span>
+                                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{ticket?.timeSpent || '-'}</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">People</h3>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-2">
@@ -397,6 +431,54 @@ const SupportChatPage: React.FC = () => {
                                     <span className="text-[11px] font-medium text-slate-500">{new Date(ticket?.createdAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
+                        </section>
+
+                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attachments</h3>
+                                {!isClosed && (
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline"
+                                    >
+                                        + Add
+                                    </button>
+                                )}
+                            </div>
+                            {allAttachments.length === 0 ? (
+                                <p className="text-[11px] text-slate-400 italic">No attachments uploaded yet</p>
+                            ) : (
+                                <div className="space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar">
+                                    {allAttachments.map((file, idx) => {
+                                        const attachmentUrl = `${configVariables.APP_AVS_SERVICE_URL}/tickets/attachment/${file.fileName || file.url?.split('/').pop()}`;
+                                        return (
+                                            <a
+                                                key={idx}
+                                                href={attachmentUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                                            >
+                                                <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 flex-shrink-0">
+                                                    {file.type?.startsWith('image/') ? (
+                                                        <img src={attachmentUrl} alt="" className="w-full h-full object-cover rounded" />
+                                                    ) : (
+                                                        <File size={16} />
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title={file.name || file.fileName}>
+                                                        {file.name || file.fileName}
+                                                    </p>
+                                                    <p className="text-[9px] text-slate-400 font-medium">
+                                                        {file.size ? `${(file.size / 1024).toFixed(1)} KB` : 'Download'}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </section>
                     </div>
 

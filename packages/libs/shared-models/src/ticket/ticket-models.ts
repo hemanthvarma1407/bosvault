@@ -37,6 +37,8 @@ export class CreateTicketModel {
     userRating?: number;
     userFeedback?: string;
     userEmail?: string;
+    originalEstimate?: string;
+    timeSpent?: string;
 
     constructor(
         ticketCode: string,
@@ -252,6 +254,8 @@ export class TicketResponseModel {
     closureRemarks?: string;
     userRating?: number;
     userFeedback?: string;
+    originalEstimate?: string;
+    timeSpent?: string;
 
     constructor(
         id: number,

@@ -113,6 +113,41 @@ export class ProcurementService {
                 throw new ErrorResponse(404, 'Purchase Order not found');
             }
 
+            if (existingPO.status === POStatusEnum.APPROVED) {
+                const dbItems = await this.poItemRepo.find({ where: { purchaseOrderId: existingPO.id } });
+                const itemsChanged = (items || []).length !== dbItems.length || (items || []).some((item, index) => {
+                    const dbItem = dbItems[index];
+                    return !dbItem ||
+                        dbItem.itemName !== item.itemName ||
+                        Number(dbItem.quantity) !== Number(item.quantity) ||
+                        Number(dbItem.unitPrice) !== Number(item.unitPrice) ||
+                        Number(dbItem.assetTypeId || 0) !== Number(item.assetTypeId || 0) ||
+                        (dbItem.assetTypeName || '') !== (item.assetTypeName || '');
+                });
+
+                const existingDeliveryTime = existingPO.expectedDeliveryDate ? new Date(existingPO.expectedDeliveryDate).getTime() : null;
+                const newDeliveryTime = expectedDeliveryDate ? new Date(expectedDeliveryDate).getTime() : null;
+                const deliveryDateChanged = existingDeliveryTime !== newDeliveryTime;
+
+                const existingOrderTime = existingPO.orderDate ? new Date(existingPO.orderDate).getTime() : null;
+                const newOrderTime = orderDate ? new Date(orderDate).getTime() : null;
+                const orderDateChanged = existingOrderTime !== newOrderTime;
+
+                const otherFieldsChanged =
+                    Number(existingPO.vendorId) !== Number(vendorId) ||
+                    Number(existingPO.companyId) !== Number(companyId) ||
+                    Number(existingPO.approverId || 0) !== Number(approverId || 0) ||
+                    orderDateChanged ||
+                    deliveryDateChanged ||
+                    (existingPO.notes || '') !== (notes || '') ||
+                    existingPO.currency !== currency ||
+                    (existingPO.vendorName || '') !== (vendorName || '');
+
+                if (itemsChanged || otherFieldsChanged) {
+                    throw new ErrorResponse(400, 'Approved Purchase Order cannot be edited');
+                }
+            }
+
             await transManager.startTransaction();
             const transRepo = transManager.getRepository(PurchaseOrderEntity);
             const itemRepo = transManager.getRepository(PurchaseOrderItemEntity);
@@ -293,6 +328,14 @@ export class ProcurementService {
     async deletePurchaseOrder(id: number): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
+            const existingPO = await this.poRepo.findOne({ where: { id: id } });
+            if (!existingPO) {
+                throw new ErrorResponse(404, 'Purchase Order not found');
+            }
+            if (existingPO.status === POStatusEnum.APPROVED) {
+                throw new ErrorResponse(400, 'Approved Purchase Order cannot be deleted');
+            }
+
             await transManager.startTransaction();
             const poItemRepo = transManager.getRepository(PurchaseOrderItemEntity);
             const poRepo = transManager.getRepository(PurchaseOrderEntity);

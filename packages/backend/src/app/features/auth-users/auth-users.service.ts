@@ -166,11 +166,11 @@ export class AuthUsersService {
             // Verify Password
             let isMatch = await bcrypt.compare(reqModel.password, user.passwordHash);
             if (!isMatch) {
-                // Temporary migration check for known accounts if hashing was just enabled
-                const migrationAccounts = { 'it@5yinc.com': '9645e517723aae3803941ed7c1a0d42cf7b37c07b7b28e872c83d6b1e9215cfa' };
-                if (migrationAccounts[user.email] === reqModel.password) {
+                // Check if stored password hash matches legacy SHA256 of input password
+                const inputHash = crypto.createHash('sha256').update(reqModel.password).digest('hex');
+                if (user.passwordHash === inputHash) {
                     // Update user's password hash in DB to the new format (bcrypt of the SHA256)
-                    user.passwordHash = await bcrypt.hash(reqModel.password, 10);
+                    user.passwordHash = await bcrypt.hash(inputHash, 10);
                     await this.authUsersRepo.save(user);
                     isMatch = true;
                 }
@@ -249,13 +249,25 @@ export class AuthUsersService {
         }
     }
 
-    async setVaultPassword(userId: number, password: string): Promise<void> {
+    async setVaultPassword(userId: number, password: string, otp: string): Promise<void> {
         try {
             const user = await this.authUsersRepo.findOne({ where: { id: userId } });
             if (!user) {
                 throw new ErrorResponse(0, "User not found");
             }
+            if (!otp) {
+                throw new ErrorResponse(0, "OTP is required to set vault password");
+            }
+            if (!user.vaultResetOtp || user.vaultResetOtp !== otp) {
+                throw new ErrorResponse(0, "Invalid OTP");
+            }
+            if (!user.vaultResetOtpExpiry || user.vaultResetOtpExpiry < new Date()) {
+                throw new ErrorResponse(0, "OTP has expired");
+            }
+
             user.vaultPasswordHash = await bcrypt.hash(password, 10);
+            user.vaultResetOtp = null;
+            user.vaultResetOtpExpiry = null;
             await this.authUsersRepo.save(user);
         } catch (error) {
             throw error;
@@ -500,7 +512,11 @@ export class AuthUsersService {
                 throw new ErrorResponse(400, "User email not found.");
             }
 
-            user.passwordHash = await bcrypt.hash(model.newPassword, 10);
+            let finalPassword = model.newPassword;
+            if (finalPassword.length !== 64 || !/^[0-9a-fA-F]{64}$/.test(finalPassword)) {
+                finalPassword = crypto.createHash('sha256').update(finalPassword).digest('hex');
+            }
+            user.passwordHash = await bcrypt.hash(finalPassword, 10);
             // Optionally clear reset token fields if they were used in a mixed flow, though not strictly necessary here
             user.resetToken = null;
             user.resetTokenExpiry = null;

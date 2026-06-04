@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ticketService, authService, departmentService } from '@/lib/api/services';
+import { ticketService, authService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { Button } from '@/components/ui/Button';
 import { RouteGuard } from '@/components/auth/RouteGuard';
@@ -116,7 +116,6 @@ const SupportHubPage: React.FC = () => {
     const [editingTicket, setEditingTicket] = useState<TicketData | null>(null);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [ticketToDelete, setTicketToDelete] = useState<TicketData | null>(null);
-    const [departments, setDepartments] = useState<any[]>([]);
     
     // Attachments State
     const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
@@ -159,16 +158,7 @@ const SupportHubPage: React.FC = () => {
         }
     }, [user?.companyId]);
 
-    const fetchDepartments = useCallback(async () => {
-        try {
-            const response = await departmentService.getAllDepartmentsDropdown();
-            if (response.status && response.data) {
-                setDepartments(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch departments:', error);
-        }
-    }, []);
+
 
     const formatDate = (dateString?: string | Date) => {
         if (!dateString) return '-';
@@ -182,8 +172,7 @@ const SupportHubPage: React.FC = () => {
     useEffect(() => {
         fetchTickets();
         fetchAdmins();
-        fetchDepartments();
-    }, [fetchTickets, fetchAdmins, fetchDepartments]);
+    }, [fetchTickets, fetchAdmins]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -586,22 +575,13 @@ const SupportHubPage: React.FC = () => {
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input
-                                    label="Subject"
-                                    name="subject"
-                                    value={formData.subject}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Select
-                                    label="Priority"
-                                    name="priorityEnum"
-                                    value={formData.priorityEnum}
-                                    onChange={handleChange}
-                                    options={Object.values(TicketPriorityEnum).map(p => ({ value: p, label: p.toUpperCase() }))}
-                                />
-                            </div>
+                            <Input
+                                label="Subject"
+                                name="subject"
+                                value={formData.subject}
+                                onChange={handleChange}
+                                required
+                            />
 
                             <TextArea
                                 label="Description"
@@ -616,7 +596,7 @@ const SupportHubPage: React.FC = () => {
                                     <Monitor className="h-3 w-3" />
                                     Classification
                                 </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2 text-center">Category</label>
                                         <select
@@ -650,55 +630,22 @@ const SupportHubPage: React.FC = () => {
                                             ))}
                                         </select>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2 text-center">Department</label>
-                                        <select
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500 text-center"
-                                            value={formData.department}
-                                            onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                            disabled={!!editingTicket}
-                                        >
-                                            <option value="">Select Department</option>
-                                            {departments.map((dept) => (
-                                                <option key={dept.id} value={dept.name}>{dept.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-100 dark:border-slate-800">
-                                <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                                    <Mail className="h-3 w-3" />
-                                    Contact & Location
-                                </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    <Input
-                                        label="Contact Number"
-                                        name="contactNumber"
-                                        value={formData.contactNumber}
-                                        onChange={handleChange}
-                                    />
-                                    <Input
-                                        label="Location"
-                                        name="location"
-                                        value={formData.location}
-                                        onChange={handleChange}
-                                    />
                                     {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'SUPPORT_ADMIN' || user?.role === 'MANAGER') && (
-                                        <Select
-                                            label="Assign To"
-                                            name="assignAdminId"
-                                            value={formData.assignAdminId}
-                                            onChange={handleChange}
-                                            options={[
-                                                { value: '', label: 'Auto' },
-                                                ...admins.map(admin => ({
-                                                    value: String(admin.id),
-                                                    label: admin.fullName
-                                                }))
-                                            ]}
-                                        />
+                                        <div className="md:col-span-2">
+                                            <Select
+                                                label="Assign To"
+                                                name="assignAdminId"
+                                                value={formData.assignAdminId}
+                                                onChange={handleChange}
+                                                options={[
+                                                    { value: '', label: 'Auto' },
+                                                    ...admins.map(admin => ({
+                                                        value: String(admin.id),
+                                                        label: admin.fullName
+                                                    }))
+                                                ]}
+                                            />
+                                        </div>
                                     )}
                                 </div>
                             </div>

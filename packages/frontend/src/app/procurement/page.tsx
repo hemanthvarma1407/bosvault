@@ -500,15 +500,17 @@ const ProcurementPage: React.FC = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => setEditPO(po)}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                                                        title="Edit PO"
+                                                        disabled={po.status === POStatusEnum.APPROVED}
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-transparent"
+                                                        title={po.status === POStatusEnum.APPROVED ? "Approved PO cannot be edited" : "Edit PO"}
                                                     >
                                                         <Pen size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeletePO(po.id)}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
-                                                        title="Delete PO"
+                                                        disabled={po.status === POStatusEnum.APPROVED}
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-transparent"
+                                                        title={po.status === POStatusEnum.APPROVED ? "Approved PO cannot be deleted" : "Delete PO"}
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>

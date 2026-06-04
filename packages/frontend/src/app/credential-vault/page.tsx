@@ -27,6 +27,8 @@ const CredentialVaultPage: React.FC = () => {
     const [newVaultPassword, setNewVaultPassword] = useState('');
     const [confirmNewVaultPassword, setConfirmNewVaultPassword] = useState('');
     const [isProcessingReset, setIsProcessingReset] = useState(false);
+    const [setupStep, setSetupStep] = useState<'input' | 'verify'>('input');
+    const [setupOtp, setSetupOtp] = useState('');
 
     useEffect(() => {
         const vaultSession = sessionStorage.getItem('vault_unlocked');
@@ -82,20 +84,46 @@ const CredentialVaultPage: React.FC = () => {
         }
     };
 
-    const handleSetPassword = async (e?: React.FormEvent) => {
+    const handleRequestSetupOtp = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!password) return;
         if (password !== confirmPassword) {
             AlertMessages.getErrorMessage('Passwords do not match');
             return;
         }
+        if (!resetEmail) {
+            AlertMessages.getErrorMessage('User email not found');
+            return;
+        }
 
         setIsVerifying(true);
         try {
-            const response = await authService.setVaultPassword(password);
+            const response = await authService.requestVaultOtp({ email: resetEmail });
+            if (response.status) {
+                AlertMessages.getSuccessMessage('Verification OTP sent to your email');
+                setSetupStep('verify');
+            } else {
+                AlertMessages.getErrorMessage(response.message);
+            }
+        } catch (error: any) {
+            AlertMessages.getErrorMessage(error.message || 'Failed to request OTP');
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    const handleConfirmSetup = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!password || !setupOtp) return;
+
+        setIsVerifying(true);
+        try {
+            const response = await authService.setVaultPassword(password, setupOtp);
             if (response.status) {
                 AlertMessages.getSuccessMessage('Vault password set successfully');
                 setIsFirstTime(false);
+                setSetupStep('input');
+                setSetupOtp('');
                 unlockVault();
             } else {
                 AlertMessages.getErrorMessage(response.message);
@@ -323,28 +351,64 @@ const CredentialVaultPage: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="w-full space-y-6 animate-in slide-in-from-left-4 duration-300">
-                                        <form onSubmit={isFirstTime ? handleSetPassword : handleUnlock} className="space-y-4">
-                                            <div className="relative group">
-                                                <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-                                                <input
-                                                    type="password"
-                                                    placeholder={isFirstTime ? "Create Master Key" : "Enter Security Key"}
-                                                    className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
-                                                    value={password}
-                                                    onChange={(e) => setPassword(e.target.value)}
-                                                    autoFocus
-                                                />
-                                            </div>
-
-                                            {isFirstTime && (
+                                        <form onSubmit={isFirstTime ? (setupStep === 'input' ? handleRequestSetupOtp : handleConfirmSetup) : handleUnlock} className="space-y-4">
+                                            {isFirstTime ? (
+                                                setupStep === 'verify' ? (
+                                                    <>
+                                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-500/20 rounded-2xl flex items-center gap-3">
+                                                            <ShieldCheck className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                                                            <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 text-left leading-relaxed">
+                                                                Enter the 6-Digit OTP sent to {resetEmail.replace(/(.{3}).*(@.*)/, '$1***$2')} to confirm setup.
+                                                            </p>
+                                                        </div>
+                                                        <div className="relative group">
+                                                            <ShieldAlert className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                            <input
+                                                                type="text"
+                                                                placeholder="6-Digit OTP"
+                                                                maxLength={6}
+                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                                value={setupOtp}
+                                                                onChange={(e) => setSetupOtp(e.target.value)}
+                                                                autoFocus
+                                                            />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="relative group">
+                                                            <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                            <input
+                                                                type="password"
+                                                                placeholder="Create Master Key"
+                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                                value={password}
+                                                                onChange={(e) => setPassword(e.target.value)}
+                                                                autoFocus
+                                                            />
+                                                        </div>
+                                                        <div className="relative group">
+                                                            <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                                                            <input
+                                                                type="password"
+                                                                placeholder="Confirm Master Key"
+                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-emerald-500 transition-all placeholder:text-slate-400"
+                                                                value={confirmPassword}
+                                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </>
+                                                )
+                                            ) : (
                                                 <div className="relative group">
-                                                    <ShieldCheck className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                                                    <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                                     <input
                                                         type="password"
-                                                        placeholder="Confirm Master Key"
-                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-emerald-500 transition-all placeholder:text-slate-400"
-                                                        value={confirmPassword}
-                                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                                        placeholder="Enter Security Key"
+                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        autoFocus
                                                     />
                                                 </div>
                                             )}
@@ -352,11 +416,21 @@ const CredentialVaultPage: React.FC = () => {
                                             <div className="space-y-3">
                                                 <Button
                                                     type="submit"
-                                                    disabled={isVerifying || !password || (isFirstTime && !confirmPassword)}
+                                                    disabled={isVerifying || !password || (isFirstTime && setupStep === 'input' && !confirmPassword) || (isFirstTime && setupStep === 'verify' && !setupOtp)}
                                                     className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
                                                 >
-                                                    {isVerifying ? 'Verifying...' : isFirstTime ? 'Setup & Access' : 'Authenticate Vault'}
+                                                    {isVerifying ? 'Verifying...' : isFirstTime ? (setupStep === 'input' ? 'Send OTP & Continue' : 'Confirm OTP & Setup') : 'Authenticate Vault'}
                                                 </Button>
+
+                                                {isFirstTime && setupStep === 'verify' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setSetupStep('input'); setSetupOtp(''); }}
+                                                        className="text-[10px] font-black text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 uppercase tracking-widest transition-colors py-2 block w-full text-center"
+                                                    >
+                                                        Back
+                                                    </button>
+                                                )}
 
                                                 {!isFirstTime && (
                                                     <button

@@ -288,6 +288,8 @@ export class TicketsService {
                 ticket.userRating,
                 ticket.userFeedback
             );
+            response.originalEstimate = ticket.originalEstimate;
+            response.timeSpent = ticket.timeSpent;
             return new GetTicketByIdModel(true, 200, 'Ticket retrieved successfully', response);
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse(500, 'Failed to fetch ticket');
@@ -345,6 +347,10 @@ export class TicketsService {
                 t.userRating,
                 t.userFeedback
             ));
+            responses.forEach((r, idx) => {
+                r.originalEstimate = tickets[idx].originalEstimate;
+                r.timeSpent = tickets[idx].timeSpent;
+            });
             return new GetAllTicketsModel(true, 200, 'Tickets retrieved successfully', responses);
         } catch (error) {
             throw new ErrorResponse(500, 'Failed to fetch tickets');
@@ -430,6 +436,10 @@ export class TicketsService {
                 t.userRating,
                 t.userFeedback
             ));
+            responses.forEach((r, idx) => {
+                r.originalEstimate = tickets[idx].originalEstimate;
+                r.timeSpent = tickets[idx].timeSpent;
+            });
             return new GetAllTicketsModel(true, 200, 'User tickets retrieved successfully', responses);
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse(500, 'Failed to fetch user tickets');

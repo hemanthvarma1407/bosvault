@@ -169,9 +169,9 @@ export class AuthUsersController {
 
     @UseGuards(JwtAuthGuard)
     @Post('set-vault-password')
-    async setVaultPassword(@Req() req: any, @Body() body: { password: string }): Promise<GlobalResponse> {
+    async setVaultPassword(@Req() req: any, @Body() body: { password: string; otp: string }): Promise<GlobalResponse> {
         try {
-            await this.service.setVaultPassword(req.user.userId, body.password);
+            await this.service.setVaultPassword(req.user.userId, body.password, body.otp);
             return new GlobalResponse(true, 0, "Vault password set successfully");
         } catch (error) {
             return returnException(GlobalResponse, error);

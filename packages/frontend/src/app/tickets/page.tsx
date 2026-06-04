@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ticketService, authService, departmentService } from '@/lib/api/services';
+import { ticketService, authService } from '@/lib/api/services';
 import { Button } from '@/components/ui/Button';
 import { StatCard } from '@/components/ui/StatCard';
 import { Modal } from '@/components/ui/Modal';
@@ -84,6 +84,8 @@ interface TicketData {
     assignedGroup: string;
     assignAdminId: string;
     timeSpentMinutes?: number;
+    originalEstimate?: string;
+    timeSpent?: string;
 }
 
 const TicketsPage: React.FC = () => {
@@ -115,7 +117,6 @@ const TicketsPage: React.FC = () => {
     // Default to 'my' for non-admins
     const [viewMode, setViewMode] = useState<'all' | 'my'>('my');
     const [showFilters, setShowFilters] = useState(false);
-    const [departments, setDepartments] = useState<any[]>([]);
 
     // Update viewMode when user role is known
     useEffect(() => {
@@ -136,6 +137,8 @@ const TicketsPage: React.FC = () => {
         severityEnum: TicketSeverityEnum.LOW,
         ticketStatus: TicketStatusEnum.OPEN,
         ticketCode: '',
+        originalEstimate: '',
+        timeSpent: '',
 
         // User Details
         department: '',
@@ -222,22 +225,12 @@ const TicketsPage: React.FC = () => {
         }
     }, [viewMode, getCompanyId, isAdmin]);
 
-    const fetchDepartments = useCallback(async () => {
-        try {
-            const response = await departmentService.getAllDepartmentsDropdown();
-            if (response.status && response.data) {
-                setDepartments(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch departments:', error);
-        }
-    }, []);
+
 
     useEffect(() => {
         fetchTickets();
         fetchAdmins();
-        fetchDepartments();
-    }, [fetchTickets, fetchAdmins, fetchDepartments]);
+    }, [fetchTickets, fetchAdmins]);
 
     // WebSocket for real-time ticket updates (Admins only)
     useEffect(() => {
@@ -310,6 +303,8 @@ const TicketsPage: React.FC = () => {
                     formData.userRating ? Number(formData.userRating) : undefined, // 30: userRating
                     formData.userFeedback // 31: userFeedback
                 );
+                req.originalEstimate = formData.originalEstimate;
+                req.timeSpent = formData.timeSpent;
                 const response = await ticketService.updateTicket(req);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message || 'Ticket updated successfully');
@@ -351,6 +346,8 @@ const TicketsPage: React.FC = () => {
                     formData.userRating ? Number(formData.userRating) : undefined, // 29: userRating
                     formData.userFeedback // 30: userFeedback
                 );
+                req.originalEstimate = formData.originalEstimate;
+                req.timeSpent = formData.timeSpent;
                 const response = await ticketService.createTicket(req);
 
                 if (response.status) {
@@ -402,7 +399,9 @@ const TicketsPage: React.FC = () => {
 
             adminComments: ticket.adminComments || '',
             userComments: ticket.userComments || '',
-            internalNotes: ticket.internalNotes || ''
+            internalNotes: ticket.internalNotes || '',
+            originalEstimate: ticket.originalEstimate || '',
+            timeSpent: ticket.timeSpent || ''
         });
         setIsModalOpen(true);
     };
@@ -462,7 +461,9 @@ const TicketsPage: React.FC = () => {
             adminComments: '',
             userComments: '',
             internalNotes: '',
-            assignAdminId: ''
+            assignAdminId: '',
+            originalEstimate: '',
+            timeSpent: ''
         });
     };
 
@@ -673,7 +674,7 @@ const TicketsPage: React.FC = () => {
 
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-center border-collapse border border-slate-200 dark:border-slate-700">
+                        <table className="w-full min-w-max text-center border-collapse border border-slate-200 dark:border-slate-700">
                             <thead>
                                 <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
                                     <th className="py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center">Ticket Code</th>
@@ -683,7 +684,7 @@ const TicketsPage: React.FC = () => {
                                     <th className="py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center">Priority</th>
                                     <th className="py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center">Requester</th>
                                     <th className="py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center">Date</th>
-                                    <th className="py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center">Actions</th>
+                                    <th className="sticky right-0 bg-slate-50 dark:bg-slate-900 py-4 px-6 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-center z-10 shadow-[-4px_0_12px_-4px_rgba(0,0,0,0.1)]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -776,7 +777,7 @@ const TicketsPage: React.FC = () => {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
+                                                <td className="sticky right-0 bg-white dark:bg-slate-800 py-4 px-6 border border-slate-200 dark:border-slate-700 text-center z-10 shadow-[-4px_0_12px_-4px_rgba(0,0,0,0.1)] group-hover:bg-slate-50 dark:group-hover:bg-slate-700/50">
                                                     <div className="flex items-center justify-center gap-1 opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => router.push(`/support?ticketId=${ticket.id}&ticketTitle=${encodeURIComponent(ticket.subject)}`)}
@@ -900,69 +901,11 @@ const TicketsPage: React.FC = () => {
                                             value={formData.priorityEnum}
                                             onChange={(e) => setFormData({ ...formData, priorityEnum: e.target.value as TicketPriorityEnum })}
                                             className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
-                                            disabled={!!editingTicket}
                                         >
                                             {Object.values(TicketPriorityEnum).map((prio) => (
                                                 <option key={prio} value={prio}>{prio.toUpperCase()}</option>
                                             ))}
                                         </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Severity</label>
-                                        <select
-                                            value={formData.severityEnum}
-                                            onChange={(e) => setFormData({ ...formData, severityEnum: e.target.value as TicketSeverityEnum })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
-                                            disabled={!!editingTicket}
-                                        >
-                                            {Object.values(TicketSeverityEnum).map((sev) => (
-                                                <option key={sev} value={sev}>{sev.toUpperCase()}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* Requester Info Section */}
-                                    <div className="md:col-span-2 border-t border-slate-100 dark:border-slate-800 pt-4">
-                                        <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Requester & Assignment</h4>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Department</label>
-                                        <select
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
-                                            value={formData.department}
-                                            onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                            disabled={!!editingTicket}
-                                        >
-                                            <option value="">Select Department</option>
-                                            {departments.map((dept) => (
-                                                <option key={dept.id} value={dept.name}>{dept.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Location</label>
-                                        <input
-                                            type="text"
-                                            value={formData.location}
-                                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
-                                            disabled={!!editingTicket}
-                                            placeholder="Workstation, Floor, etc."
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Contact Number</label>
-                                        <input
-                                            type="text"
-                                            value={formData.contactNumber}
-                                            onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
-                                            disabled={!!editingTicket}
-                                        />
                                     </div>
 
                                     <div>
@@ -989,6 +932,48 @@ const TicketsPage: React.FC = () => {
                                             {admins.map((admin) => (
                                                 <option key={admin.id} value={admin.id}>{admin.fullName}</option>
                                             ))}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Original Estimate</label>
+                                        <input
+                                            type="text"
+                                            value={formData.originalEstimate}
+                                            onChange={(e) => setFormData({ ...formData, originalEstimate: e.target.value })}
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            placeholder="e.g., 2h, 1d, 45m"
+                                            disabled={!isAdmin}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2">Time Spent</label>
+                                        <select
+                                            value={formData.timeSpent}
+                                            onChange={(e) => setFormData({ ...formData, timeSpent: e.target.value })}
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            disabled={!isAdmin}
+                                        >
+                                            <option value="">Select Time Spent</option>
+                                            <option value="15m">15m</option>
+                                            <option value="30m">30m</option>
+                                            <option value="45m">45m</option>
+                                            <option value="1h">1h</option>
+                                            <option value="1h 30m">1h 30m</option>
+                                            <option value="2h">2h</option>
+                                            <option value="2h 30m">2h 30m</option>
+                                            <option value="3h">3h</option>
+                                            <option value="4h">4h</option>
+                                            <option value="5h">5h</option>
+                                            <option value="6h">6h</option>
+                                            <option value="7h">7h</option>
+                                            <option value="8h">8h</option>
+                                            <option value="12h">12h</option>
+                                            <option value="1d">1d</option>
+                                            <option value="2d">2d</option>
+                                            <option value="3d">3d</option>
+                                            <option value="1w">1w</option>
                                         </select>
                                     </div>
 

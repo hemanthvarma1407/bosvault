@@ -8,19 +8,19 @@ export class NotificationsService extends CommonAxiosService {
     }
 
     async getNotifications(config?: AxiosRequestConfig): Promise<GlobalResponse & { data: NotificationPayload[] }> {
-        return await this.axiosGetCall(this.getURL('user'), config);
+        return await this.axiosGetCall(this.getURL(''), config);
     }
 
     async getUnreadCount(config?: AxiosRequestConfig): Promise<GlobalResponse & { data: number }> {
-        return await this.axiosGetCall(this.getURL('unread'), config);
+        return await this.axiosGetCall(this.getURL('unread-count'), config);
     }
 
     async markAsRead(id: string, config?: AxiosRequestConfig): Promise<GlobalResponse> {
-        return await this.axiosPostCall(this.getURL(`read/${id}`), {}, config);
+        return await this.axiosPostCall(this.getURL(`${id}/read`), {}, config);
     }
 
     async markAllAsRead(config?: AxiosRequestConfig): Promise<GlobalResponse> {
-        return await this.axiosPostCall(this.getURL('read-all'), {}, config);
+        return await this.axiosPostCall(this.getURL('mark-all-read'), {}, config);
     }
 
     async deleteNotification(id: string, config?: AxiosRequestConfig): Promise<GlobalResponse> {

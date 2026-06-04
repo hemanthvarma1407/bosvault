@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ChevronDown, LogOut, Moon, Sun, Bell, Globe, Terminal, Monitor } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getSocket } from '@/lib/socket';
+import { notificationsService } from '@/lib/api/services';
 
 interface TopBarProps {
     onMenuClick?: () => void;
@@ -14,7 +15,6 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState<any[]>([]);
-    const [unreadCount, setUnreadCount] = useState(0);
     const { user, logout } = useAuth();
     const { theme, setTheme } = useTheme();
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -22,24 +22,70 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const menuRef = useRef<HTMLDivElement>(null);
     const notificationRef = useRef<HTMLDivElement>(null);
 
-    // Socket listener for notifications
+    const unreadCount = notifications.filter(n => !n.read && !n.isRead).length;
+
+    // Fetch initial notifications and listen to socket
     useEffect(() => {
         if (!user) return;
-        const socket = getSocket();
 
-        // Admin join logic removed as isAdmin is currently unused in this simplified view
-        // But we keep user join for personalized notifications
+        const fetchNotifications = async () => {
+            try {
+                const response = await notificationsService.getNotifications();
+                if (Array.isArray(response)) {
+                    setNotifications(response);
+                } else if (response && Array.isArray((response as any).data)) {
+                    setNotifications((response as any).data);
+                }
+            } catch (error) {
+                console.error('[TopBar] Failed to fetch notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+
+        const socket = getSocket();
         socket.emit('joinUser', { userId: user.id });
 
         socket.on('notification', (notif: any) => {
-            setNotifications(prev => [notif, ...prev].slice(0, 10));
-            setUnreadCount(prev => prev + 1);
+            setNotifications(prev => {
+                // Prevent duplicate notifications in stream
+                if (prev.some(n => n.id === notif.id)) return prev;
+                const newNotif = {
+                    ...notif,
+                    read: notif.read || false,
+                    isRead: notif.isRead || false
+                };
+                return [newNotif, ...prev].slice(0, 15);
+            });
         });
 
         return () => {
             socket.off('notification');
         };
     }, [user]);
+
+    const toggleNotifications = async () => {
+        const nextShow = !showNotifications;
+        setShowNotifications(nextShow);
+        if (nextShow && unreadCount > 0) {
+            try {
+                await notificationsService.markAllAsRead();
+                setNotifications(prev => prev.map(n => ({ ...n, read: true, isRead: true })));
+            } catch (error) {
+                console.error('Failed to mark notifications as read:', error);
+            }
+        }
+    };
+
+    const handleFlushAll = async () => {
+        try {
+            await notificationsService.markAllAsRead();
+            setNotifications([]);
+        } catch (error) {
+            console.error('Failed to flush notifications:', error);
+            setNotifications([]);
+        }
+    };
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -103,12 +149,14 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 {/* Notifications */}
                 <div className="relative" ref={notificationRef}>
                     <button
-                        onClick={() => { setShowNotifications(!showNotifications); setUnreadCount(0); }}
-                        className={`p-2 rounded-lg transition-all ${showNotifications ? 'bg-slate-100 dark:bg-slate-900 text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900'}`}
+                        onClick={toggleNotifications}
+                        className={`relative p-2 rounded-lg transition-all ${showNotifications ? 'bg-slate-100 dark:bg-slate-900 text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900'}`}
                     >
                         <Bell className="h-4 w-4" />
                         {unreadCount > 0 && (
-                            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full border border-white dark:border-slate-950" />
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-black text-white border border-white dark:border-slate-950 animate-pulse">
+                                {unreadCount}
+                            </span>
                         )}
                     </button>
 
@@ -116,7 +164,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50 overflow-hidden">
                             <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Stream</h3>
-                                <button onClick={() => setNotifications([])} className="text-[10px] font-black text-blue-500 hover:text-blue-600">Flush All</button>
+                                <button onClick={handleFlushAll} className="text-[10px] font-black text-blue-500 hover:text-blue-600">Flush All</button>
                             </div>
                             <div className="max-h-[360px] overflow-y-auto scrollbar-hide">
                                 {notifications.length === 0 ? (

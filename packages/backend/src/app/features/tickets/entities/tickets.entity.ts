@@ -99,4 +99,10 @@ export class TicketsEntity extends CommonBaseEntity {
 
     @Column('text', { name: 'user_feedback', nullable: true, comment: 'User feedback text' })
     userFeedback: string;
+
+    @Column('varchar', { name: 'original_estimate', nullable: true, length: 100, comment: 'Original estimated effort for the task' })
+    originalEstimate: string;
+
+    @Column('varchar', { name: 'time_spent', nullable: true, length: 100, comment: 'Actual time logged by team members' })
+    timeSpent: string;
 }

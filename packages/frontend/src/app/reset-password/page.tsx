@@ -8,6 +8,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { authService } from '@/lib/api/services';
 import { ResetPasswordModel } from '@bosvault/shared-models';
+import { hashPassword } from '@/lib/utils';
 
 function ResetPasswordContent() {
     const router = useRouter();
@@ -45,7 +46,8 @@ function ResetPasswordContent() {
 
         setIsResetting(true);
         try {
-            const model = new ResetPasswordModel(token, newPassword);
+            const hashedPassword = await hashPassword(newPassword);
+            const model = new ResetPasswordModel(token, hashedPassword);
             const response = await authService.resetPassword(model);
 
             if (response.status) {
