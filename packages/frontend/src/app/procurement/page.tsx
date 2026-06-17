@@ -28,7 +28,18 @@ const ProcurementPage: React.FC = () => {
 
     // Derived Metrics
     const totalPOs = pos.length;
-    const totalSpend = pos.reduce((sum, po) => sum + (po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ORDERED || po.status === POStatusEnum.RECEIVED ? (Number(po.totalAmount) || 0) : 0), 0);
+    const totalSpendUSD = pos.reduce((sum, po) => {
+        if ((po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ORDERED || po.status === POStatusEnum.RECEIVED) && po.currency !== 'INR') {
+            return sum + (Number(po.totalAmount) || 0);
+        }
+        return sum;
+    }, 0);
+    const totalSpendINR = pos.reduce((sum, po) => {
+        if ((po.status === POStatusEnum.APPROVED || po.status === POStatusEnum.ORDERED || po.status === POStatusEnum.RECEIVED) && po.currency === 'INR') {
+            return sum + (Number(po.totalAmount) || 0);
+        }
+        return sum;
+    }, 0);
     const activeVendors = new Set(pos.map(po => po.vendorId)).size;
 
     const filteredPOs = pos.filter(po => {
@@ -359,7 +370,10 @@ const ProcurementPage: React.FC = () => {
                         </div>
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Spend</p>
-                            <h3 className="text-2xl font-black text-slate-900 dark:text-white">${totalSpend.toFixed(2)}</h3>
+                            <div className="flex flex-col leading-none gap-1">
+                                {(totalSpendUSD > 0 || totalSpendINR === 0) && <h3 className="text-xl font-black text-slate-900 dark:text-white">${totalSpendUSD.toFixed(2)}</h3>}
+                                {totalSpendINR > 0 && <h3 className="text-xl font-black text-slate-900 dark:text-white">₹{totalSpendINR.toFixed(2)}</h3>}
+                            </div>
                         </div>
                     </Card>
                     <Card className="p-5 flex items-center gap-4 border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow uppercase">

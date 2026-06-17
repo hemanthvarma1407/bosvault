@@ -1,6 +1,7 @@
-import { AuthUsersService, EmployeesService, AssetInfoService, AssetTabsService, TicketsService, LicensesService, ReportsService, DashboardService, DocumentsService, CompanyService, ProcurementService, DepartmentService, AssetTypeService, DeviceConfigService, VendorService, ApplicationService, SlackUserService, EmailService, LicenseMasterService, NotificationsService, ContractsService, CountryService } from '@bosvault/shared-services';
+import { AuthUsersService, AuthVaultService, EmployeesService, AssetInfoService, AssetTabsService, TicketsService, LicensesService, ReportsService, DashboardService, DocumentsService, CompanyService, ProcurementService, DepartmentService, AssetTypeService, DeviceConfigService, VendorService, ApplicationService, SlackUserService, EmailService, LicenseMasterService, NotificationsService, ContractsService, CountryService } from '@bosvault/shared-services';
 
 export const authService = new AuthUsersService();
+export const authVaultService = new AuthVaultService();
 export const employeeService = new EmployeesService();
 export const assetService = new AssetInfoService();
 export const assetTabsService = new AssetTabsService();
@@ -25,6 +26,7 @@ export const countryService = new CountryService();
 
 export const services = {
     auth: authService,
+    authVault: authVaultService,
     asset: assetService,
     assetTabs: assetTabsService,
     ticket: ticketService,

@@ -7,7 +7,7 @@ import { RouteGuard } from '@/components/auth/RouteGuard';
 import { Button } from '@/components/ui/Button';
 import { UserRoleEnum } from '@bosvault/shared-models';
 import { CredentialVaultMasterView, CredentialVaultMasterViewHandle } from '../masters/components/credential-vault-master-view';
-import { authService } from '@/lib/api/services';
+import { authService, authVaultService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 
 const CredentialVaultPage: React.FC = () => {
@@ -53,7 +53,7 @@ const CredentialVaultPage: React.FC = () => {
     const checkVaultStatus = async () => {
         try {
             // We'll use a dummy verify with empty password to check if it's set
-            const response = await authService.verifyVaultPassword('');
+            const response = await authVaultService.verifyVaultPassword('');
             if (response.code === 2) {
                 setIsFirstTime(true);
             }
@@ -68,7 +68,7 @@ const CredentialVaultPage: React.FC = () => {
 
         setIsVerifying(true);
         try {
-            const response = await authService.verifyVaultPassword(password);
+            const response = await authVaultService.verifyVaultPassword(password);
             if (response.status) {
                 unlockVault();
             } else if (response.code === 2) {
@@ -98,7 +98,7 @@ const CredentialVaultPage: React.FC = () => {
 
         setIsVerifying(true);
         try {
-            const response = await authService.requestVaultOtp({ email: resetEmail });
+            const response = await authVaultService.requestVaultOtp({ email: resetEmail });
             if (response.status) {
                 AlertMessages.getSuccessMessage('Verification OTP sent to your email');
                 setSetupStep('verify');
@@ -118,7 +118,7 @@ const CredentialVaultPage: React.FC = () => {
 
         setIsVerifying(true);
         try {
-            const response = await authService.setVaultPassword(password, setupOtp);
+            const response = await authVaultService.setVaultPassword(password, setupOtp);
             if (response.status) {
                 AlertMessages.getSuccessMessage('Vault password set successfully');
                 setIsFirstTime(false);
@@ -142,7 +142,7 @@ const CredentialVaultPage: React.FC = () => {
         }
         setIsProcessingReset(true);
         try {
-            const response = await authService.requestVaultOtp({ email: resetEmail });
+            const response = await authVaultService.requestVaultOtp({ email: resetEmail });
             if (response.status) {
                 AlertMessages.getSuccessMessage(response.message);
                 setResetStep('verify');
@@ -166,7 +166,7 @@ const CredentialVaultPage: React.FC = () => {
 
         setIsProcessingReset(true);
         try {
-            const response = await authService.resetVaultPasswordWithOtp({
+            const response = await authVaultService.resetVaultPasswordWithOtp({
                 email: resetEmail,
                 otp: otp,
                 newPassword: newVaultPassword

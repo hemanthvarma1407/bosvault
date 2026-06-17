@@ -52,7 +52,7 @@ export class TicketsGateway implements OnGatewayConnection, OnGatewayDisconnect 
     async emitTicketUpdated(ticket: any) {
         const room = `ticket_${ticket.id}`;
         this.server.to(room).emit('ticketUpdated', ticket);
-        this.server.to('admin_room').emit('ticketCreated', ticket);
+        this.server.to('admin_room').emit('ticketUpdated', ticket);
         const userId = await this.resolveUserId(ticket);
 
         if (userId) {

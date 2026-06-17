@@ -16,7 +16,6 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState<any[]>([]);
     const { user, logout } = useAuth();
-    const { theme, setTheme } = useTheme();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [mounted, setMounted] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -32,9 +31,9 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
             try {
                 const response = await notificationsService.getNotifications();
                 if (Array.isArray(response)) {
-                    setNotifications(response);
+                    setNotifications(response.filter((n: any) => !n.read && !n.isRead));
                 } else if (response && Array.isArray((response as any).data)) {
-                    setNotifications((response as any).data);
+                    setNotifications((response as any).data.filter((n: any) => !n.read && !n.isRead));
                 }
             } catch (error) {
                 console.error('[TopBar] Failed to fetch notifications:', error);
@@ -55,6 +54,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                     read: notif.read || false,
                     isRead: notif.isRead || false
                 };
+                if (newNotif.read || newNotif.isRead) return prev;
                 return [newNotif, ...prev].slice(0, 15);
             });
         });
@@ -65,15 +65,15 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     }, [user]);
 
     const toggleNotifications = async () => {
-        const nextShow = !showNotifications;
-        setShowNotifications(nextShow);
-        if (nextShow && unreadCount > 0) {
-            try {
-                await notificationsService.markAllAsRead();
-                setNotifications(prev => prev.map(n => ({ ...n, read: true, isRead: true })));
-            } catch (error) {
-                console.error('Failed to mark notifications as read:', error);
-            }
+        setShowNotifications(!showNotifications);
+    };
+
+    const handleReadNotification = async (id: string) => {
+        try {
+            await notificationsService.markAsRead(id);
+            setNotifications(prev => prev.filter(n => n.id !== id));
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
         }
     };
 
@@ -146,7 +146,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
             {/* Right: Tools & Identity */}
             <div className="flex items-center gap-2">
 
-                {/* Notifications */}
+                {/* Notifications hidden 
                 <div className="relative" ref={notificationRef}>
                     <button
                         onClick={toggleNotifications}
@@ -174,9 +174,12 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                                     </div>
                                 ) : (
                                     notifications.map(notif => (
-                                        <div key={notif.id} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors border-b border-slate-50 dark:border-slate-800 last:border-0 cursor-pointer">
-                                            <p className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</p>
-                                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{notif.message}</p>
+                                        <div key={notif.id} onClick={() => handleReadNotification(notif.id)} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors border-b border-slate-50 dark:border-slate-800 last:border-0 cursor-pointer flex justify-between items-start gap-2">
+                                            <div>
+                                                <p className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</p>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{notif.message}</p>
+                                            </div>
+                                            <div className="h-2 w-2 mt-1 rounded-full bg-blue-500 shrink-0"></div>
                                         </div>
                                     ))
                                 )}
@@ -184,8 +187,9 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                         </div>
                     )}
                 </div>
+                */}
 
-                {/* Theme Toggle */}
+                {/* Theme Toggle hidden
                 <button
                     onClick={() => {
                         const modes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
@@ -207,6 +211,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                         {theme}
                     </span>
                 </button>
+                */}
 
                 <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-2" />
 

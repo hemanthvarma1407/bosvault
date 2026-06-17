@@ -31,7 +31,7 @@ export const AssetDistributionChart: React.FC<AssetDistributionChartProps> = ({ 
     const totalAssets = data.reduce((sum, entry) => sum + entry.value, 0);
 
     return (
-        <ResponsiveContainer width="100%" height="100%" minHeight={220}>
+        <ResponsiveContainer minWidth={0} width="100%" height="100%" minHeight={220}>
             <PieChart>
                 <Pie
                     data={data}

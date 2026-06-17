@@ -28,7 +28,7 @@ export default function LicenseUtilizationChart({ purchased, assigned }: Utiliza
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Utilization</span>
             </div>
 
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer minWidth={0} width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={data}

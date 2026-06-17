@@ -15,7 +15,7 @@ export const EmployeeDeptChart: React.FC<EmployeeDeptChartProps> = ({ data }) =>
     if (!data || data.length === 0) return <div className="h-full w-full flex items-center justify-center text-xs text-slate-400">No data</div>;
 
     return (
-        <ResponsiveContainer width="100%" height="100%" minHeight={300}>
+        <ResponsiveContainer minWidth={0} width="100%" height="100%" minHeight={300}>
             <BarChart
                 data={data}
                 layout="vertical"

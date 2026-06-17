@@ -285,7 +285,7 @@ export default function TicketInsightsPage() {
                             {currentStats.total === 0 ? (
                                 <div className="text-slate-400 text-xs font-bold text-center">No SLA tickets created yet</div>
                             ) : (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                     <PieChart>
                                         <Pie
                                             data={slaData}
@@ -341,7 +341,7 @@ export default function TicketInsightsPage() {
                                     No customer ratings collected yet.
                                 </div>
                             ) : (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                     <BarChart data={csatDistributionData}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.15} />
                                         <XAxis dataKey="rating" stroke="#94a3b8" fontSize={11} fontWeight={600} tickLine={false} />
@@ -376,7 +376,7 @@ export default function TicketInsightsPage() {
                             {(!currentStats.monthlyTrends || currentStats.monthlyTrends.length === 0) ? (
                                 <div className="text-slate-400 text-xs font-bold text-center">No volume logs recorded yet</div>
                             ) : (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                     <LineChart data={currentStats.monthlyTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.15} />
                                         <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} fontWeight={600} tickLine={false} />
@@ -409,7 +409,7 @@ export default function TicketInsightsPage() {
                             {currentStats.total === 0 ? (
                                 <div className="text-slate-400 text-xs font-bold text-center">No category classifications yet</div>
                             ) : (
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                     <BarChart data={categoryData} layout="vertical">
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.15} />
                                         <XAxis type="number" stroke="#94a3b8" fontSize={11} fontWeight={600} tickLine={false} />

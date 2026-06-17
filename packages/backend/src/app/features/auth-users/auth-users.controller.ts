@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ApiBody, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AuthUsersService } from './auth-users.service';
+import { AuthVaultService } from './auth-vault.service';
 import { DeleteUserModel, GetAllUsersModel, LoginResponseModel, LoginUserModel, LogoutUserModel, RegisterUserModel, UpdateUserModel, RequestAccessModel, ForgotPasswordModel, ResetPasswordModel, RefreshTokenModel, IdRequestModel, AccessRequestsListModel, GlobalResponse, RequestVaultOtpModel, ResetVaultPasswordOtpModel } from '@bosvault/shared-models';
 import { Request, Response } from 'express';
 import { Public } from '../../decorators/public.decorator';
@@ -12,7 +13,8 @@ import { returnException } from '@bosvault/backend-utils';
 @Controller('auth-users')
 export class AuthUsersController {
     constructor(
-        private service: AuthUsersService
+        private service: AuthUsersService,
+        private vaultService: AuthVaultService
     ) { }
 
     @Post('registerUser')
@@ -171,7 +173,7 @@ export class AuthUsersController {
     @Post('set-vault-password')
     async setVaultPassword(@Req() req: any, @Body() body: { password: string; otp: string }): Promise<GlobalResponse> {
         try {
-            await this.service.setVaultPassword(req.user.userId, body.password, body.otp);
+            await this.vaultService.setVaultPassword(req.user.userId, body.password, body.otp);
             return new GlobalResponse(true, 0, "Vault password set successfully");
         } catch (error) {
             return returnException(GlobalResponse, error);
@@ -182,11 +184,11 @@ export class AuthUsersController {
     @Post('verify-vault-password')
     async verifyVaultPassword(@Req() req: any, @Body() body: { password: string }): Promise<GlobalResponse> {
         try {
-            const user = await this.service.getUserById(req.user.userId); // Need to make sure getUserById exists or use authUsersRepo
+            const user = await this.service.getUserById(req.user.userId);
             if (!user.vaultPasswordHash) {
                 return new GlobalResponse(false, 2, "Vault password not set");
             }
-            const isValid = await this.service.verifyVaultPassword(req.user.userId, body.password);
+            const isValid = await this.vaultService.verifyVaultPassword(req.user.userId, body.password);
             if (isValid) {
                 return new GlobalResponse(true, 0, "Vault password verified");
             } else {
@@ -202,7 +204,7 @@ export class AuthUsersController {
     @ApiBody({ type: RequestVaultOtpModel })
     async requestVaultOtp(@Req() req: any, @Body() reqModel: RequestVaultOtpModel): Promise<GlobalResponse> {
         try {
-            return await this.service.requestVaultReset(reqModel.email);
+            return await this.vaultService.requestVaultReset(reqModel.email);
         } catch (error) {
             return returnException(GlobalResponse, error);
         }
@@ -213,7 +215,7 @@ export class AuthUsersController {
     @ApiBody({ type: ResetVaultPasswordOtpModel })
     async resetVaultPasswordOtp(@Req() req: any, @Body() reqModel: ResetVaultPasswordOtpModel): Promise<GlobalResponse> {
         try {
-            return await this.service.resetVaultPasswordWithOtp(reqModel.email, reqModel.otp, reqModel.newPassword);
+            return await this.vaultService.resetVaultPasswordWithOtp(reqModel.email, reqModel.otp, reqModel.newPassword);
         } catch (error) {
             return returnException(GlobalResponse, error);
         }

@@ -29,6 +29,7 @@ const DEFAULT_MENUS = [
             { key: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
             { key: 'masters', label: 'Masters', icon: 'Settings2', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
             { key: 'reports', label: 'Reports', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+            { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
         ]
     },
     {
@@ -65,27 +66,27 @@ const DEFAULT_MENUS = [
 
         ]
     },
-    {
-        key: 'support',
-        label: 'Helpdesk',
-        icon: 'HelpCircle',
-        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
-        children: [
-            { key: 'tickets', label: 'Support Tickets', icon: 'Ticket', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
-        ]
-    },
-    {
-        key: 'profiles',
-        label: 'My Profiles',
-        icon: 'UserSquare2',
-        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
-        children: [
-            { key: 'profile', label: 'Personal Info', icon: 'User', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
-        ]
-    }
+    // {
+    //     key: 'support',
+    //     label: 'Helpdesk',
+    //     icon: 'HelpCircle',
+    //     roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
+    //     children: [
+    //         { key: 'tickets', label: 'Support Tickets', icon: 'Ticket', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+    //         { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+    //         { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+    //         { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
+    //     ]
+    // },
+    // {
+    //     key: 'profiles',
+    //     label: 'My Profiles',
+    //     icon: 'UserSquare2',
+    //     roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
+    //     children: [
+    //         { key: 'profile', label: 'Personal Info', icon: 'User', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
+    //     ]
+    // }
 ];
 
 @Injectable()
@@ -127,7 +128,11 @@ export class AuthUsersService {
                 employeeId = String(empRecord[0].id);
             }
             await transManager.startTransaction()
-            const passwordHash = await bcrypt.hash(reqModel.password, 10)
+            let finalPassword = reqModel.password;
+            if (finalPassword.length !== 64 || !/^[0-9a-fA-F]{64}$/.test(finalPassword)) {
+                finalPassword = crypto.createHash('sha256').update(finalPassword).digest('hex');
+            }
+            const passwordHash = await bcrypt.hash(finalPassword, 10)
             const newUser = new AuthUsersEntity()
             newUser.email = reqModel.email
             newUser.fullName = reqModel.fullName
@@ -163,14 +168,19 @@ export class AuthUsersService {
                 throw new ErrorResponse(401, "Invalid credentials");
             }
 
+            // Normalize the incoming password to SHA-256 if it was sent as plain text
+            let finalPassword = reqModel.password;
+            if (finalPassword.length !== 64 || !/^[0-9a-fA-F]{64}$/.test(finalPassword)) {
+                finalPassword = crypto.createHash('sha256').update(finalPassword).digest('hex');
+            }
+
             // Verify Password
-            let isMatch = await bcrypt.compare(reqModel.password, user.passwordHash);
+            let isMatch = await bcrypt.compare(finalPassword, user.passwordHash);
             if (!isMatch) {
                 // Check if stored password hash matches legacy SHA256 of input password
-                const inputHash = crypto.createHash('sha256').update(reqModel.password).digest('hex');
-                if (user.passwordHash === inputHash) {
+                if (user.passwordHash === finalPassword) {
                     // Update user's password hash in DB to the new format (bcrypt of the SHA256)
-                    user.passwordHash = await bcrypt.hash(inputHash, 10);
+                    user.passwordHash = await bcrypt.hash(finalPassword, 10);
                     await this.authUsersRepo.save(user);
                     isMatch = true;
                 }
@@ -242,55 +252,17 @@ export class AuthUsersService {
             if (!user) {
                 throw new ErrorResponse(0, "User not found");
             }
-            const isMatch = await bcrypt.compare(password, user.passwordHash);
+            let finalPassword = password;
+            if (finalPassword.length !== 64 || !/^[0-9a-fA-F]{64}$/.test(finalPassword)) {
+                finalPassword = crypto.createHash('sha256').update(finalPassword).digest('hex');
+            }
+            const isMatch = await bcrypt.compare(finalPassword, user.passwordHash);
             return isMatch;
         } catch (error) {
             throw error;
         }
     }
 
-    async setVaultPassword(userId: number, password: string, otp: string): Promise<void> {
-        try {
-            const user = await this.authUsersRepo.findOne({ where: { id: userId } });
-            if (!user) {
-                throw new ErrorResponse(0, "User not found");
-            }
-            if (!otp) {
-                throw new ErrorResponse(0, "OTP is required to set vault password");
-            }
-            if (!user.vaultResetOtp || user.vaultResetOtp !== otp) {
-                throw new ErrorResponse(0, "Invalid OTP");
-            }
-            if (!user.vaultResetOtpExpiry || user.vaultResetOtpExpiry < new Date()) {
-                throw new ErrorResponse(0, "OTP has expired");
-            }
-
-            user.vaultPasswordHash = await bcrypt.hash(password, 10);
-            user.vaultResetOtp = null;
-            user.vaultResetOtpExpiry = null;
-            await this.authUsersRepo.save(user);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async verifyVaultPassword(userId: number, password: string): Promise<boolean> {
-        try {
-            const user = await this.authUsersRepo.findOne({ where: { id: userId } });
-            if (!user) {
-                throw new ErrorResponse(0, "User not found");
-            }
-            if (!user.vaultPasswordHash) {
-                // If no vault password is set, we return false or maybe check if there's a fallback.
-                // The user said "Need to have another password not a login password".
-                return false;
-            }
-            const isMatch = await bcrypt.compare(password, user.vaultPasswordHash);
-            return isMatch;
-        } catch (error) {
-            throw error;
-        }
-    }
 
     async requestAccess(reqModel: RequestAccessModel): Promise<GlobalResponse> {
         try {
@@ -411,7 +383,11 @@ export class AuthUsersService {
             updateData.companyId = reqModel.companyId;
             updateData.email = reqModel.email;
             if (reqModel.password) {
-                updateData.passwordHash = await bcrypt.hash(reqModel.password, 10);
+                let finalPassword = reqModel.password;
+                if (finalPassword.length !== 64 || !/^[0-9a-fA-F]{64}$/.test(finalPassword)) {
+                    finalPassword = crypto.createHash('sha256').update(finalPassword).digest('hex');
+                }
+                updateData.passwordHash = await bcrypt.hash(finalPassword, 10);
             }
 
             await transManager.getRepository(AuthUsersEntity).update({ id: existingUser.id }, updateData);
@@ -596,58 +572,6 @@ export class AuthUsersService {
         }
     }
 
-    async requestVaultReset(email: string): Promise<GlobalResponse> {
-        try {
-            const user = await this.authUsersRepo.findOne({ where: { email } });
-            if (!user) {
-                // Security best practice: don't reveal if user exists
-                return new GlobalResponse(true, 0, "If your account is registered, you will receive an OTP shortly.");
-            }
-
-            const otp = Math.floor(100000 + Math.random() * 900000).toString();
-            const expiry = new Date();
-            expiry.setMinutes(expiry.getMinutes() + 10);
-
-            user.vaultResetOtp = otp;
-            user.vaultResetOtpExpiry = expiry;
-            await this.authUsersRepo.save(user);
-
-            const success = await this.emailService.sendVaultOtpEmail(user.email, otp);
-            if (!success) {
-                throw new ErrorResponse(0, "Failed to send OTP email. Please try again later.");
-            }
-
-            return new GlobalResponse(true, 0, "OTP has been sent to your registered email.");
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async resetVaultPasswordWithOtp(email: string, otp: string, newPassword: string): Promise<GlobalResponse> {
-        try {
-            const user = await this.authUsersRepo.findOne({ where: { email } });
-            if (!user) {
-                throw new ErrorResponse(0, "User not found");
-            }
-
-            if (!user.vaultResetOtp || user.vaultResetOtp !== otp) {
-                throw new ErrorResponse(0, "Invalid OTP");
-            }
-
-            if (!user.vaultResetOtpExpiry || user.vaultResetOtpExpiry < new Date()) {
-                throw new ErrorResponse(0, "OTP has expired");
-            }
-
-            user.vaultPasswordHash = await bcrypt.hash(newPassword, 10);
-            user.vaultResetOtp = null;
-            user.vaultResetOtpExpiry = null;
-            await this.authUsersRepo.save(user);
-
-            return new GlobalResponse(true, 0, "Vault security key has been reset successfully.");
-        } catch (error) {
-            throw error;
-        }
-    }
 
     private getMenusForRole(role: string): any[] {
         if (role === UserRoleEnum.SUPER_ADMIN || role === UserRoleEnum.SITE_ADMIN) {

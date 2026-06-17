@@ -354,7 +354,7 @@ export default function UserInsightsPage() {
                                     Support Status Breakdown
                                 </h3>
                                 <div className="h-52 relative flex items-center justify-center">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                    <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                         <PieChart>
                                             <Pie
                                                 data={stats.statusData}
@@ -412,7 +412,7 @@ export default function UserInsightsPage() {
                                     Ticket Density by Category
                                 </h3>
                                 <div className="h-64 flex-1">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                    <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                         <BarChart data={stats.categoryData}>
                                             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.15} />
                                             <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} fontWeight={600} tickLine={false} />
@@ -439,7 +439,7 @@ export default function UserInsightsPage() {
                                     Tickets by Priority Level
                                 </h3>
                                 <div className="h-64 flex-1">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                    <ResponsiveContainer minWidth={0} width="100%" height="100%">
                                         <BarChart data={stats.priorityData} layout="vertical">
                                             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.15} />
                                             <XAxis type="number" stroke="#94a3b8" fontSize={10} tickLine={false} allowDecimals={false} />

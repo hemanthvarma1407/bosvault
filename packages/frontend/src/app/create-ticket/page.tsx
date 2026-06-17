@@ -472,7 +472,7 @@ const SupportHubPage: React.FC = () => {
                                     filteredTickets.map((ticket) => {
                                         const Config = CategoryConfig[ticket.categoryEnum] || CategoryConfig[TicketCategoryEnum.OTHER];
                                         const CategoryIcon = Config.icon;
-                                        const hasAttachments = typeof window !== 'undefined' && localStorage.getItem(`ticket_attachments_${ticket.ticketCode}`);
+                                        const hasAttachments = ticket.description?.includes('**Attachments:**') || (typeof window !== 'undefined' && localStorage.getItem(`ticket_attachments_${ticket.ticketCode}`));
 
                                         return (
                                             <tr key={ticket.id} className="group hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">

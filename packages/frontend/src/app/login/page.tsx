@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
-import { Lock, Mail, Eye, EyeOff, ArrowRight, Users, BookOpen, Package, Key, Ticket } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ArrowRight, Users, Package, Key } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { LoginUserModel } from '@bosvault/shared-models';
 import Link from 'next/link';
@@ -71,7 +71,7 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className={`min-h-screen relative flex items-center justify-center overflow-hidden transition-colors duration-700 ${isDarkMode
-            ? 'bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900'
+            ? 'bg-black'
             : 'bg-[#F8FAFC]'
             }`}>
             {/* Theme Toggle Button */}
@@ -180,26 +180,9 @@ const LoginPage: React.FC = () => {
                                         'from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/10 group-hover:to-purple-500/10',
                                 },
                                 {
-                                    icon: BookOpen,
-                                    title: 'Help Center',
-                                    desc: 'Docs, guides & internal help',
-                                    darkContainer:
-                                        'bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border-violet-500/20 hover:border-violet-400/40',
-                                    lightContainerBorder:
-                                        'hover:shadow-violet-500/10 hover:border-violet-200',
-                                    darkIcon:
-                                        'bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30',
-                                    lightIcon:
-                                        'bg-violet-50 text-violet-600',
-                                    darkIconColor:
-                                        'text-fuchsia-300',
-                                    hoverGradient:
-                                        'from-violet-500/0 to-fuchsia-500/0 group-hover:from-violet-500/10 group-hover:to-fuchsia-500/10',
-                                },
-                                {
                                     icon: Key,
                                     title: 'Credential Vault',
-                                    desc: 'Securely store and manage organization passwords',
+                                    desc: 'Securely store and manage passwords',
                                     darkContainer:
                                         'bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/20 hover:border-amber-400/40',
                                     lightContainerBorder:
@@ -212,23 +195,6 @@ const LoginPage: React.FC = () => {
                                         'text-amber-300',
                                     hoverGradient:
                                         'from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10',
-                                },
-                                {
-                                    icon: Ticket,
-                                    title: 'Support Tickets',
-                                    desc: 'Efficiently resolve internal IT requests',
-                                    darkContainer:
-                                        'bg-gradient-to-br from-rose-500/10 to-pink-500/10 border-rose-500/20 hover:border-rose-400/40',
-                                    lightContainerBorder:
-                                        'hover:shadow-rose-500/10 hover:border-rose-200',
-                                    darkIcon:
-                                        'bg-gradient-to-br from-rose-500/30 to-pink-500/30',
-                                    lightIcon:
-                                        'bg-rose-50 text-rose-600',
-                                    darkIconColor:
-                                        'text-rose-300',
-                                    hoverGradient:
-                                        'from-rose-500/0 to-pink-500/0 group-hover:from-rose-500/10 group-hover:to-pink-500/10',
                                 },
                             ]
                                 .map((feat, i) => (

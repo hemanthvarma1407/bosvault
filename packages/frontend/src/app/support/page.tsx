@@ -85,7 +85,23 @@ const SupportChatPage: React.FC = () => {
         }
     }, [messages]);
 
-    const allAttachments = messages.flatMap(m => m.attachments || []);
+    const parsedAttachments: any[] = [];
+    let cleanDescription = ticket?.description || '';
+    if (ticket?.description) {
+        const regex = /\[(.*?)\]\((.*?)\)/g;
+        let match;
+        while ((match = regex.exec(ticket.description)) !== null) {
+            parsedAttachments.push({
+                name: match[1],
+                url: match[2],
+                fileName: match[2].split('/').pop() || match[1],
+                type: match[2].match(/\.(jpeg|jpg|gif|png|webp)$/i) ? 'image/jpeg' : 'application/octet-stream',
+                size: 0
+            });
+        }
+        cleanDescription = ticket.description.replace(/\*\*Attachments:\*\*[\s\S]*/, '').trim();
+    }
+    const allAttachments = [...parsedAttachments, ...messages.flatMap(m => m.attachments || [])];
 
     const handleSendMessage = (attachments?: any[]) => {
         if ((!inputMessage.trim() && (!attachments || attachments.length === 0)) || !ticketId || !user) return;
@@ -199,13 +215,40 @@ const SupportChatPage: React.FC = () => {
                                 <span className="text-xs font-bold text-rose-600">This ticket is closed</span>
                             </div>
                         )}
-                        {messages.length === 0 ? (
+                        {messages.length === 0 && !cleanDescription ? (
                             <div className="flex-1 flex flex-col items-center justify-center opacity-40">
                                 <Bot size={48} className="mb-2 text-slate-400" />
                                 <p className="font-bold text-slate-400 uppercase tracking-widest text-[10px]">No messages yet</p>
                             </div>
                         ) : (
                             <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                {cleanDescription && (
+                                    <div className="py-4 first:pt-0 last:pb-0 flex gap-4">
+                                        <div className="flex-shrink-0 pt-1">
+                                            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                                <span className="text-xs font-bold uppercase">
+                                                    {ticket?.employeeName?.[0] || 'R'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1.5 wrap">
+                                                <span className="text-sm font-bold text-slate-900 dark:text-white">
+                                                    {ticket?.employeeName || 'Reporter'}
+                                                </span>
+                                                <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[9px] font-black uppercase tracking-widest rounded flex items-center">
+                                                    Original Request
+                                                </span>
+                                                <span className="text-xs text-slate-400">
+                                                    {ticket?.createdAt ? new Date(ticket.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : ''}
+                                                </span>
+                                            </div>
+                                            <div className="text-[13.5px] leading-relaxed text-slate-700 dark:text-slate-300 whitespace-pre-wrap break-words">
+                                                {cleanDescription}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                                 {messages.map((message) => {
                                     const isMe = message.senderId === user?.id;
                                     const isInternal = message.commentType === 'internal';
@@ -450,7 +493,10 @@ const SupportChatPage: React.FC = () => {
                             ) : (
                                 <div className="space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar">
                                     {allAttachments.map((file, idx) => {
-                                        const attachmentUrl = `${configVariables.APP_AVS_SERVICE_URL}/tickets/attachment/${file.fileName || file.url?.split('/').pop()}`;
+                                        let attachmentUrl = file.url || '';
+                                        if (!attachmentUrl.startsWith('http')) {
+                                            attachmentUrl = `${configVariables.APP_AVS_SERVICE_URL}/tickets/attachment/${file.fileName || attachmentUrl.split('/').pop()}`;
+                                        }
                                         return (
                                             <a
                                                 key={idx}

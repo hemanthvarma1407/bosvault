@@ -10,7 +10,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import {
     Search, Edit, Trash2, Ticket, Clock, MessageSquare,
     Monitor, Cpu, Wifi, Mail, Lock, HelpCircle,
-    AlertTriangle, CheckCircle, User, Users, Filter
+    AlertTriangle, CheckCircle, User, Users, Filter, Paperclip
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { TicketCategoryEnum, TicketPriorityEnum, TicketStatusEnum, IdRequestModel, CreateTicketModel, UpdateTicketModel, DeleteTicketModel, UserRoleEnum, TicketSeverityEnum } from '@bosvault/shared-models';
@@ -114,17 +114,13 @@ const TicketsPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [priorityFilter, setPriorityFilter] = useState('all');
-    // Default to 'my' for non-admins
-    const [viewMode, setViewMode] = useState<'all' | 'my'>('my');
+    // Default to 'my' for non-admins, 'all' for super admins
+    const [viewMode, setViewMode] = useState<'all' | 'my'>(isSuperAdmin ? 'all' : 'my');
     const [showFilters, setShowFilters] = useState(false);
 
     // Update viewMode when user role is known
     useEffect(() => {
-        if (isSuperAdmin) {
-            setViewMode('all');
-        } else {
-            setViewMode('my');
-        }
+        setViewMode(isSuperAdmin ? 'all' : 'my');
     }, [isSuperAdmin]);
 
     const [formData, setFormData] = useState({
@@ -223,7 +219,7 @@ const TicketsPage: React.FC = () => {
         } finally {
             // setIsLoading(false);
         }
-    }, [viewMode, getCompanyId, isAdmin]);
+    }, [viewMode, getCompanyId, isAdmin, isSuperAdmin]);
 
 
 
@@ -244,6 +240,10 @@ const TicketsPage: React.FC = () => {
             AlertMessages.getSuccessMessage('New ticket received!');
         });
 
+        socket.on('ticketUpdated', () => {
+            fetchTickets();
+        });
+
         socket.on('notification', (notif: any) => {
             fetchTickets();
             AlertMessages.getSuccessMessage(`New Message: ${notif.title || 'Support'}`);
@@ -251,6 +251,7 @@ const TicketsPage: React.FC = () => {
 
         return () => {
             socket.off('ticketCreated');
+            socket.off('ticketUpdated');
             socket.off('notification');
         };
     }, [isAdmin, fetchTickets]);
@@ -713,10 +714,8 @@ const TicketsPage: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <div className="max-w-[300px] mx-auto">
-                                                        <div className="font-bold text-slate-900 dark:text-white truncate mb-0.5" title={ticket.subject}>
-                                                            {ticket.subject}
-                                                        </div>
+                                                    <div className="max-w-[300px] mx-auto flex items-center justify-center gap-1.5" title={ticket.subject}>
+                                                        <span className="font-bold text-slate-900 dark:text-white truncate">{ticket.subject}</span>
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
