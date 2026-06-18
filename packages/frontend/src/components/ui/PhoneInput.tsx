@@ -309,10 +309,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         />
                         {label && (
                             <label className={cn(
-                                "absolute left-4 transition-all duration-200 pointer-events-none uppercase font-bold tracking-wider",
+                                "absolute left-4 transition-all duration-200 pointer-events-none",
                                 (isFocused || isDropdownOpen || phoneNumber || value)
-                                    ? "top-2 text-[10px] text-primary-600 dark:text-primary-400"
-                                    : "top-1/2 -translate-y-1/2 text-sm text-slate-500 dark:text-slate-400"
+                                    ? "top-2 text-xs text-primary-600 font-medium"
+                                    : "top-1/2 -translate-y-1/2 text-sm text-slate-500"
                             )}>
                                 {label}
                             </label>

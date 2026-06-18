@@ -522,9 +522,8 @@ const ProcurementPage: React.FC = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeletePO(po.id)}
-                                                        disabled={po.status === POStatusEnum.APPROVED}
                                                         className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-transparent"
-                                                        title={po.status === POStatusEnum.APPROVED ? "Approved PO cannot be deleted" : "Delete PO"}
+                                                        title="Delete PO"
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>

@@ -58,10 +58,8 @@ const EmailRow: React.FC<{
     acc: EmailInfoResponseModel;
     idx: number;
     employees: any[];
-    onDelete: (id: number) => void;
-    onEdit: (data: EmailInfoResponseModel) => void;
     onToggleStatus: (data: EmailInfoResponseModel) => void;
-}> = ({ acc, idx, employees, onDelete, onEdit, onToggleStatus }) => {
+}> = ({ acc, idx, employees, onToggleStatus }) => {
     const [isMembersOpen, setIsMembersOpen] = useState(false);
     const memberNames = useMemo(() => {
         if (!acc.memberIds) return [];
@@ -118,22 +116,6 @@ const EmailRow: React.FC<{
                             title="Click to toggle status"
                         >
                             {acc.status === EmailStatusEnum.ACTIVE ? 'ACTIVE' : 'INACTIVE'}
-                        </button>
-                    </div>
-                </td>
-                <td className="p-4 border border-slate-200 dark:border-white/10 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                        <button
-                            onClick={() => onEdit(acc)}
-                            className="h-8 w-8 inline-flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all shadow-sm"
-                        >
-                            <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                            onClick={() => onDelete(acc.id)}
-                            className="h-8 w-8 inline-flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all shadow-sm"
-                        >
-                            <Trash2 className="h-4 w-4" />
                         </button>
                     </div>
                 </td>
@@ -499,7 +481,6 @@ const InfoEmailsPage: React.FC = () => {
                                                                     <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Full Name</th>
                                                                     <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Email Address</th>
                                                                     <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Status</th>
-                                                                    <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Actions</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -509,8 +490,6 @@ const InfoEmailsPage: React.FC = () => {
                                                                         acc={acc}
                                                                         idx={idx}
                                                                         employees={employees}
-                                                                        onDelete={handleDeleteEmailInfo}
-                                                                        onEdit={handleEdit}
                                                                         onToggleStatus={handleToggleStatus}
                                                                     />
                                                                 ))}

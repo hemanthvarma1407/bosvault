@@ -70,7 +70,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             htmlFor={inputId}
                             className={cn(
                                 'absolute left-4 transition-all duration-200 pointer-events-none',
-                                isFocused || props.value || type === 'date'
+                                isFocused || (props.value !== '' && props.value !== undefined && props.value !== null) || type === 'date'
                                     ? 'top-2 text-xs text-primary-600 font-medium'
                                     : 'top-1/2 -translate-y-1/2 text-sm text-slate-500',
                                 leftIcon && 'left-10'

@@ -223,12 +223,12 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                             ...(() => {
                                 const seen = new Set();
                                 return approvers.filter(a => {
-                                    if (!a.userId) return false;
-                                    const uid = Number(a.userId);
+                                    if (!a.id) return false;
+                                    const uid = Number(a.id);
                                     if (seen.has(uid)) return false;
                                     seen.add(uid);
                                     return true;
-                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: Number(a.userId) }));
+                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: Number(a.id) }));
                             })()
                         ]}
                     />
@@ -299,7 +299,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                                         type="number"
                                         value={item.quantity}
                                         onChange={(e) => updateItem(index, 'quantity', e.target.value)}
-                                        className="bg-white dark:bg-slate-900 text-center"
+                                        className="bg-white dark:bg-slate-900"
                                     />
                                 </div>
                                 <div className="col-span-5 md:col-span-2">

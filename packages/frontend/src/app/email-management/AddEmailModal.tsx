@@ -266,7 +266,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                     )}
                 </div>
 
-                {isCompany && (
+                {(isCompany || isGroup) && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
                             label="Billing Amount ($)"

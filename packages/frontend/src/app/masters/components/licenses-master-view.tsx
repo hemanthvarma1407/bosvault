@@ -201,7 +201,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                     <Input label="License Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-14" required />
                     <Input label="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-14" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input label="Total Quantity" type="number" value={formData.totalQuantity} onChange={e => setFormData({ ...formData, totalQuantity: Number(e.target.value) })} />
+                        <Input label="Total Quantity" type="number" value={formData.totalQuantity} onChange={e => setFormData({ ...formData, totalQuantity: Number(e.target.value) })} className="h-14" />
                         <Input label="Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })} className="h-14" />
                     </div>
 
