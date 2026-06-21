@@ -396,7 +396,22 @@ export class AssetInfoService {
                         'ASSIGNEE'
                     ));
 
-                    // 2. Send to Manager (if exists)
+                    // 2. Send to Assigner (if different from assignee)
+                    if (assigner.email !== employee.email) {
+                        await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(
+                            assigner.email,
+                            assigner.fullName,
+                            assetName,
+                            assignedByName,
+                            assignedDate,
+                            isReassignment,
+                            remarks,
+                            `${employee.firstName} ${employee.lastName}`.trim(),
+                            'ADMIN'
+                        ));
+                    }
+
+                    // 3. Send to Manager (if exists)
                     if (employee.managerId) {
                         const manager = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employee.managerId } });
                         if (manager && manager.email) {
@@ -416,7 +431,7 @@ export class AssetInfoService {
 
                     // 3. Send to Admins
                     const admins = await this.dataSource.getRepository(AuthUsersEntity).find({
-                        where: { companyId: employee.companyId, userRole: UserRoleEnum.ADMIN }
+                        where: { companyId: employee.companyId, userRole: UserRoleEnum.SUPER_ADMIN }
                     });
 
                     for (const admin of admins) {

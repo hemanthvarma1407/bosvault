@@ -22,8 +22,6 @@ const TABS = [
 
 const ROLE_OPTIONS = [
     { value: UserRoleEnum.USER, label: 'User' },
-    { value: UserRoleEnum.MANAGER, label: 'Manager' },
-    { value: UserRoleEnum.SUPPORT_ADMIN, label: 'Support Admin' },
     { value: UserRoleEnum.SUPER_ADMIN, label: 'Super Admin' },
 ];
 

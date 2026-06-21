@@ -92,6 +92,20 @@ export class ProcurementService {
                 }
             }
 
+            // Send email to requester as acknowledgement
+            if (requesterEmployee && requesterEmployee.email) {
+                const vendor = await this.vendorRepo.findOne({ where: { id: savedPO.vendorId } });
+                await this.emailInfoService.sendPOApprovalEmail(new SendPOApprovalEmailModel(
+                    requesterEmployee.email,
+                    `${requesterEmployee.firstName} ${requesterEmployee.lastName}`,
+                    savedPO.poNumber,
+                    `${requesterEmployee.firstName} ${requesterEmployee.lastName}`,
+                    totalAmount,
+                    vendor?.name,
+                    savedPO.id
+                ));
+            }
+
             return new GlobalResponse(true, 201, 'Purchase Order created successfully');
         } catch (error) {
             await transManager.releaseTransaction();
