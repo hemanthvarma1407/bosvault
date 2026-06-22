@@ -553,12 +553,6 @@ export class EmailInfoService {
     </table>
   </div>
   
-  <div style="text-align: center; margin: 30px 0;">
-    <a href="${frontendUrl}/procurement" style="background: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-      Review & Approve PO
-    </a>
-  </div>
-  
   <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
   <p style="font-size: 11px; color: #94a3b8; text-align: center;">BOS Vault System • Automated notification • Do not reply</p>
 </div>
