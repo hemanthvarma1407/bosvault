@@ -26,6 +26,7 @@ export class CreateEmployeeModel {
     lastWorkingDay?: Date;
     emailDeletionDate?: Date;
     groupEmails?: string[];
+    userRole?: string;
 
     constructor(
         userId: number,
@@ -47,7 +48,8 @@ export class CreateEmployeeModel {
         emailCreatedDate?: Date,
         lastWorkingDay?: Date,
         emailDeletionDate?: Date,
-        groupEmails?: string[]
+        groupEmails?: string[],
+        userRole?: string
     ) {
         this.userId = userId;
         this.companyId = companyId;
@@ -69,6 +71,7 @@ export class CreateEmployeeModel {
         this.lastWorkingDay = lastWorkingDay;
         this.emailDeletionDate = emailDeletionDate;
         this.groupEmails = groupEmails;
+        this.userRole = userRole;
     }
 }
 
@@ -96,9 +99,10 @@ export class UpdateEmployeeModel extends CreateEmployeeModel {
         emailCreatedDate?: Date,
         lastWorkingDay?: Date,
         emailDeletionDate?: Date,
-        groupEmails?: string[]
+        groupEmails?: string[],
+        userRole?: string
     ) {
-        super(userId, companyId, firstName, lastName, email, departmentId, empStatus, phNumber, billingAmount, remarks, slackUserId, slackDisplayName, slackAvatar, isSlackActive, managerId, joiningDate, emailCreatedDate, lastWorkingDay, emailDeletionDate, groupEmails);
+        super(userId, companyId, firstName, lastName, email, departmentId, empStatus, phNumber, billingAmount, remarks, slackUserId, slackDisplayName, slackAvatar, isSlackActive, managerId, joiningDate, emailCreatedDate, lastWorkingDay, emailDeletionDate, groupEmails, userRole);
         this.id = id;
     }
 }

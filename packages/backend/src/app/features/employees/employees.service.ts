@@ -113,6 +113,14 @@ export class EmployeesService {
             updateData.emailDeletionDate = reqModel.emailDeletionDate;
             updateData.groupEmails = reqModel.groupEmails;
             await transManager.getRepository(EmployeesEntity).update(reqModel.id, updateData);
+
+            if (reqModel.userRole) {
+                const authUser = await transManager.getRepository(AuthUsersEntity).findOne({ where: [ { employeeId: String(reqModel.id) }, { email: reqModel.email } ] });
+                if (authUser) {
+                    await transManager.getRepository(AuthUsersEntity).update(authUser.id, { userRole: reqModel.userRole as any });
+                }
+            }
+
             await transManager.completeTransaction();
 
 
@@ -150,6 +158,12 @@ export class EmployeesService {
                 }
             }
 
+            let userRole: string | undefined;
+            const authUser = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { email: employee.email } });
+            if (authUser) {
+                userRole = authUser.userRole;
+            }
+
             const employeeResponse = new EmployeeResponseModel(
                 employee.id,
                 employee.companyId,
@@ -168,7 +182,7 @@ export class EmployeesService {
                 employee.isSlackActive,
                 employee.managerId,
                 managerName,
-                undefined,
+                userRole,
                 employee.userId,
                 employee.joiningDate,
                 employee.emailCreatedDate,
@@ -219,11 +233,11 @@ export class EmployeesService {
                 managers.forEach(m => managerMap.set(Number(m.id), `${m.firstName} ${m.lastName}`));
             }
 
-            const userIds = [...new Set(employees.filter(e => e.userId && Number(e.userId) > 0).map(e => Number(e.userId)))];
-            const userRoleMap = new Map<number, string>();
-            if (userIds.length > 0) {
-                const users = await this.dataSource.getRepository(AuthUsersEntity).find({ where: { id: In(userIds) } });
-                users.forEach(u => userRoleMap.set(Number(u.id), u.userRole));
+            const emails = [...new Set(employees.filter(e => e.email).map(e => e.email))];
+            const userRoleMap = new Map<string, string>();
+            if (emails.length > 0) {
+                const users = await this.dataSource.getRepository(AuthUsersEntity).find({ where: { email: In(emails) } });
+                users.forEach(u => userRoleMap.set(u.email.toLowerCase(), u.userRole));
             }
 
             const employeeResponses = employees.map(emp => new EmployeeResponseModel(
@@ -244,7 +258,7 @@ export class EmployeesService {
                 emp.isSlackActive,
                 emp.managerId,
                 managerMap.get(Number(emp.managerId)) || '',
-                userRoleMap.get(Number(emp.userId)),
+                userRoleMap.get(emp.email.toLowerCase()),
                 emp.userId,
                 emp.joiningDate,
                 emp.emailCreatedDate,

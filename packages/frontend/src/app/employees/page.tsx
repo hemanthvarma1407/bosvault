@@ -9,7 +9,7 @@ import { PhoneInput } from '@/components/ui/PhoneInput';
 import { Select } from '@/components/ui/Select';
 import { Modal } from '@/components/ui/Modal';
 import {
-    Plus, Search, Building2, Users, LayoutGrid, List, Mail, Phone, Edit, DollarSign, Eye, Calendar, Trash2
+    Plus, Search, Building2, Users, LayoutGrid, List, Mail, Phone, Edit, DollarSign, Eye, Calendar, Trash2, Upload
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusEnum, GetAllEmployeesRequestModel, DeleteEmployeeModel } from '@bosvault/shared-models';
@@ -18,6 +18,7 @@ import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { formatPhoneNumberWithCountryCode } from '@/lib/utils';
+import { EmployeeBulkImportModal } from './bulk-import';
 
 interface Employee {
     id: number;
@@ -38,6 +39,7 @@ interface Employee {
     lastWorkingDay?: string;
     emailDeletionDate?: string;
     groupEmails?: string[];
+    userRole?: string;
     createdAt?: string;
 }
 
@@ -78,7 +80,8 @@ const EmployeesPage: React.FC = () => {
         emailCreatedDate: '',
         lastWorkingDay: '',
         emailDeletionDate: '',
-        groupEmails: [] as string[]
+        groupEmails: [] as string[],
+        userRole: ''
     });
     const [isLoading, setIsLoading] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
@@ -86,6 +89,7 @@ const EmployeesPage: React.FC = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isBulkImportModalOpen, setIsBulkImportModalOpen] = useState(false);
 
 
     const fetchEmployees = useCallback(async () => {
@@ -116,6 +120,7 @@ const EmployeesPage: React.FC = () => {
                     lastWorkingDay: item.lastWorkingDay,
                     emailDeletionDate: item.emailDeletionDate,
                     groupEmails: item.groupEmails,
+                    userRole: item.userRole,
                     createdAt: item.createdAt || new Date().toISOString()
                 }));
                 setEmployees(mappedEmployees);
@@ -198,7 +203,8 @@ const EmployeesPage: React.FC = () => {
                     formData.emailCreatedDate ? new Date(formData.emailCreatedDate) : undefined,
                     formData.lastWorkingDay ? new Date(formData.lastWorkingDay) : undefined,
                     formData.emailDeletionDate ? new Date(formData.emailDeletionDate) : undefined,
-                    formData.groupEmails
+                    formData.groupEmails,
+                    formData.userRole || undefined
                 );
                 const response = await employeeService.updateEmployee(model);
                 if (response.status) {
@@ -226,7 +232,8 @@ const EmployeesPage: React.FC = () => {
                     formData.emailCreatedDate ? new Date(formData.emailCreatedDate) : undefined,
                     formData.lastWorkingDay ? new Date(formData.lastWorkingDay) : undefined,
                     formData.emailDeletionDate ? new Date(formData.emailDeletionDate) : undefined,
-                    formData.groupEmails
+                    formData.groupEmails,
+                    formData.userRole || undefined
                 );
                 const response = await employeeService.createEmployee(model);
                 if (response.status) {
@@ -259,7 +266,8 @@ const EmployeesPage: React.FC = () => {
             emailCreatedDate: employee.emailCreatedDate ? new Date(employee.emailCreatedDate).toISOString().split('T')[0] : '',
             lastWorkingDay: employee.lastWorkingDay ? new Date(employee.lastWorkingDay).toISOString().split('T')[0] : '',
             emailDeletionDate: employee.emailDeletionDate ? new Date(employee.emailDeletionDate).toISOString().split('T')[0] : '',
-            groupEmails: employee.groupEmails || []
+            groupEmails: employee.groupEmails || [],
+            userRole: employee.userRole || ''
         });
         setIsModalOpen(true);
     };
@@ -272,7 +280,7 @@ const EmployeesPage: React.FC = () => {
         setFormData({
             firstName: '', lastName: '', email: '', phone: '', companyId: '', departmentId: '',
             accountStatus: EmployeeStatusEnum.ACTIVE, billingAmount: '', remarks: '', managerId: '',
-            joiningDate: '', emailCreatedDate: '', lastWorkingDay: '', emailDeletionDate: '', groupEmails: []
+            joiningDate: '', emailCreatedDate: '', lastWorkingDay: '', emailDeletionDate: '', groupEmails: [], userRole: ''
         });
     };
 
@@ -389,6 +397,12 @@ const EmployeesPage: React.FC = () => {
                     icon={<Users />}
                     gradient="from-indigo-600 to-indigo-700"
                     actions={[
+                        {
+                            label: 'Bulk Import',
+                            onClick: () => setIsBulkImportModalOpen(true),
+                            icon: <Upload className="h-3.5 w-3.5" />,
+                            variant: 'outline'
+                        },
                         {
                             label: 'Add Employee',
                             onClick: () => setIsModalOpen(true),
@@ -692,7 +706,7 @@ const EmployeesPage: React.FC = () => {
                                 options={[{ value: '', label: '' }, ...employees.filter(emp => !editingEmployee || emp.id !== editingEmployee.id).map(emp => ({ value: String(emp.id), label: `${emp.firstName} ${emp.lastName}` }))]}
                             />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Select
                                 label="Account Status"
                                 value={formData.accountStatus}
@@ -704,6 +718,20 @@ const EmployeesPage: React.FC = () => {
                                 ]}
                             />
                             <Input label="Billing Amount ($)" type="number" step="0.01" value={formData.billingAmount} onChange={(e) => setFormData({ ...formData, billingAmount: e.target.value })} />
+                            <Select
+                                label="User Role"
+                                value={formData.userRole}
+                                onChange={(e) => setFormData({ ...formData, userRole: e.target.value })}
+                                options={[
+                                    { value: '', label: 'Select Role' },
+                                    { value: UserRoleEnum.SUPER_ADMIN, label: 'Super Admin' },
+                                    { value: UserRoleEnum.ADMIN, label: 'Admin' },
+                                    { value: UserRoleEnum.SUPPORT_ADMIN, label: 'Support Admin' },
+                                    { value: UserRoleEnum.MANAGER, label: 'Manager' },
+                                    { value: UserRoleEnum.USER, label: 'User' },
+                                    { value: UserRoleEnum.VIEWER, label: 'Viewer' }
+                                ]}
+                            />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -910,6 +938,13 @@ const EmployeesPage: React.FC = () => {
                     onConfirm={handleDeleteConfirm}
                     itemName={employeeToDelete ? `${employeeToDelete.firstName} ${employeeToDelete.lastName}` : 'employee'}
                     isDeleting={isDeleting}
+                />
+
+                <EmployeeBulkImportModal
+                    isOpen={isBulkImportModalOpen}
+                    onClose={() => setIsBulkImportModalOpen(false)}
+                    companyId={Number(selectedOrg)}
+                    onSuccess={fetchEmployees}
                 />
 
             </div>

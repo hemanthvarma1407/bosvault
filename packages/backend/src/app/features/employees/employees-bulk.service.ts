@@ -7,6 +7,9 @@ import { DepartmentRepository } from '../masters/department/repositories/departm
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { EmployeeStatusEnum, BulkImportResponseModel, BulkImportRequestModel } from '@bosvault/shared-models';
 
+import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
+import { UserRoleEnum } from '@bosvault/shared-models';
+
 @Injectable()
 export class EmployeesBulkService {
     constructor(
@@ -27,14 +30,22 @@ export class EmployeesBulkService {
 
             // ── Company validation ─────────────────────────────────────────
             const companyRepo = this.dataSource.getRepository(CompanyInfoEntity);
-            const company = await companyRepo.findOne({ where: { id: companyId } });
-            if (!company) {
-                return new BulkImportResponseModel(false, 400, 'Invalid Company ID', 0, 0, []);
+            let expectedCompanyName: string | undefined;
+            let globalCompany: CompanyInfoEntity | null = null;
+            if (companyId) {
+                globalCompany = await companyRepo.findOne({ where: { id: companyId } });
+                if (!globalCompany) {
+                    return new BulkImportResponseModel(false, 400, 'Invalid Company ID', 0, 0, []);
+                }
+                expectedCompanyName = globalCompany.companyName.toLowerCase().trim();
             }
-            const expectedCompanyName = company.companyName.toLowerCase().trim();
+
+            const allCompanies = await companyRepo.find();
+            const companyNameMap = new Map<string, number>();
+            allCompanies.forEach(c => companyNameMap.set(c.companyName.toLowerCase().trim(), c.id));
 
             // ── Existing employees (for email dedup & manager resolution) ──
-            const existingEmployees = await this.employeesRepo.find({ where: { companyId } });
+            const existingEmployees = companyId ? await this.employeesRepo.find({ where: { companyId } }) : await this.employeesRepo.find();
             const existingEmailSet = new Set(existingEmployees.map(e => e.email.toLowerCase()));
             const emailToIdMap = new Map<string, number>();
             const nameToIdMap = new Map<string, number>(); // "firstname lastname" → id
@@ -75,6 +86,7 @@ export class EmployeesBulkService {
                     const remarks = row[7]?.toString().trim();
                     const managerInput = row[8]?.toString().trim();
                     const rowCompanyName = row[9]?.toString().trim(); // optional
+                    const roleInput = row[10]?.toString().trim().toUpperCase(); // optional Role
 
                     // ── Required fields ───────────────────────────────────
                     if (!firstName) throw new Error('First Name is required');
@@ -82,12 +94,24 @@ export class EmployeesBulkService {
                     if (!email) throw new Error('Email is required');
 
                     // ── Company name validation (optional column) ─────────
-                    if (rowCompanyName) {
-                        if (rowCompanyName.toLowerCase() !== expectedCompanyName) {
+                    let rowCompanyId = companyId;
+                    if (expectedCompanyName) {
+                        if (rowCompanyName && rowCompanyName.toLowerCase() !== expectedCompanyName) {
                             throw new Error(
-                                `Company name '${rowCompanyName}' does not match the selected company '${company.companyName}'.`
+                                `Company name '${rowCompanyName}' does not match the selected company '${globalCompany?.companyName}'.`
                             );
                         }
+                    } else if (rowCompanyName) {
+                        const matchedId = companyNameMap.get(rowCompanyName.toLowerCase());
+                        if (matchedId) {
+                            rowCompanyId = matchedId;
+                        } else {
+                            throw new Error(`Company '${rowCompanyName}' not found.`);
+                        }
+                    }
+
+                    if (!rowCompanyId) {
+                        throw new Error('Company ID is required. Please provide a valid Company Name in the sheet or select a company.');
                     }
 
                     // ── Department resolution ─────────────────────────────
@@ -138,7 +162,7 @@ export class EmployeesBulkService {
 
                     // ── Save ──────────────────────────────────────────────
                     const newEmployee = new EmployeesEntity();
-                    newEmployee.companyId = companyId;
+                    newEmployee.companyId = rowCompanyId;
                     newEmployee.userId = userId;
                     newEmployee.firstName = firstName;
                     newEmployee.lastName = lastName;
@@ -158,6 +182,21 @@ export class EmployeesBulkService {
                     emailToIdMap.set(email.toLowerCase(), newEmployee.id);
                     nameToIdMap.set(`${firstName} ${lastName}`.toLowerCase(), newEmployee.id);
                     idSet.add(newEmployee.id);
+
+                    // ── Update Role if provided ───────────────────────────
+                    if (roleInput) {
+                        const validRoles = Object.values(UserRoleEnum) as string[];
+                        if (validRoles.includes(roleInput)) {
+                            // Find user by email or employeeId
+                            let authUser = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: [ { email: newEmployee.email }, { employeeId: String(newEmployee.id) } ] });
+                            if (authUser) {
+                                await this.dataSource.getRepository(AuthUsersEntity).update(authUser.id, { userRole: roleInput as UserRoleEnum });
+                            } else {
+                                // We don't automatically register user here unless there's logic, but since it's an update,
+                                // we can just log or ignore, or we create a skeleton user. Often we just update if exists.
+                            }
+                        }
+                    }
 
                     successCount++;
                 } catch (err: any) {

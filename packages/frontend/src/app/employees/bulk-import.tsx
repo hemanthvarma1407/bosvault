@@ -38,7 +38,8 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
             'Department (ID or Name)', 'Status (active/inactive)',
             'Billing Amount', 'Remarks',
             'Reporting Manager (ID, Email, or Full Name)',
-            'Company Name (optional - for validation)'
+            'Company Name (optional - for validation)',
+            'Role (optional - e.g. ADMIN, USER)'
         ];
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet([headers]);
@@ -51,10 +52,7 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
             AlertMessages.getErrorMessage('Please select a file to import.');
             return;
         }
-        if (!companyId) {
-            AlertMessages.getErrorMessage('No company selected. Please select an organization first.');
-            return;
-        }
+
 
         try {
             const userData = localStorage.getItem('user');
