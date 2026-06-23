@@ -141,15 +141,15 @@ export class LicenseService {
     async deleteLicense(reqModel: IdRequestModel): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
-            const repo = transManager.getRepository(LicensesMasterEntity);
-            const delEntity = await repo.findOne({ where: { id: reqModel.id } });
+
+            const delEntity = await this.licenseRepo.findOne({ where: { id: reqModel.id } });
 
             if (delEntity && delEntity.usedCount > 0) {
                 throw new ErrorResponse(0, `Cannot delete license as it has ${delEntity.usedCount} active assignments`);
             }
 
             await transManager.startTransaction();
-            if (delEntity) await repo.remove(delEntity);
+            await transManager.getRepository(LicensesMasterEntity).delete(reqModel.id);
             await transManager.completeTransaction();
             return new GlobalResponse(true, 200, 'License deleted successfully');
         } catch (error) {

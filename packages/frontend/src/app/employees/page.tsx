@@ -725,11 +725,11 @@ const EmployeesPage: React.FC = () => {
                                 options={[
                                     { value: '', label: 'Select Role' },
                                     { value: UserRoleEnum.SUPER_ADMIN, label: 'Super Admin' },
-                                    { value: UserRoleEnum.ADMIN, label: 'Admin' },
-                                    { value: UserRoleEnum.SUPPORT_ADMIN, label: 'Support Admin' },
+                                    // { value: UserRoleEnum.ADMIN, label: 'Admin' },
+                                    // { value: UserRoleEnum.SUPPORT_ADMIN, label: 'Support Admin' },
                                     { value: UserRoleEnum.MANAGER, label: 'Manager' },
                                     { value: UserRoleEnum.USER, label: 'User' },
-                                    { value: UserRoleEnum.VIEWER, label: 'Viewer' }
+                                    // { value: UserRoleEnum.VIEWER, label: 'Viewer' }
                                 ]}
                             />
                         </div>

@@ -10,6 +10,7 @@ import { CreateEmployeeModel, UpdateEmployeeModel, DeleteEmployeeModel, GetEmplo
 import { EmailInfoService } from '../email/email-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
+import { EmailInfoEntity } from '../email/entities/email-info.entity';
 
 @Injectable()
 export class EmployeesService {
@@ -286,6 +287,7 @@ export class EmployeesService {
 
             await transManager.startTransaction();
             await transManager.getRepository(EmployeesEntity).softDelete(reqModel.id);
+            await transManager.getRepository(EmailInfoEntity).delete({ employeeId: reqModel.id });
             await transManager.completeTransaction();
 
 
