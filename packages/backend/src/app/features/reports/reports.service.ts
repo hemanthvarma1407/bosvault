@@ -290,11 +290,15 @@ export class ReportsService {
                 'e.email AS "email"',
                 'e.ph_number AS "phone"',
                 'e.emp_status AS "status"',
-                'e.created_at AS "joinDate"',
+                'e.joining_date AS "joiningDate"',
+                'e.billing_amount AS "billingAmount"',
+                'e.remarks AS "remarks"',
                 'd.name AS "departmentName"',
                 'c.company_name AS "companyName"'
             ])
-            .orderBy('e.id', 'DESC')
+            .where('e.deleted_at IS NULL')
+            .orderBy('e.first_name', 'ASC')
+            .addOrderBy('e.last_name', 'ASC')
             .getRawMany();
 
         return rawResults.map((emp: any) => ({
@@ -304,7 +308,9 @@ export class ReportsService {
             'Department': emp.departmentName || 'N/A',
             'Company': emp.companyName || 'N/A',
             'Status': emp.status,
-            'Join Date': emp.joinDate
+            'Joining Date': emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString('en-GB') : 'N/A',
+            'Billing Amount': emp.billingAmount ? `$${Number(emp.billingAmount).toLocaleString()}` : 'N/A',
+            'Remarks': emp.remarks || ''
         }));
     }
 

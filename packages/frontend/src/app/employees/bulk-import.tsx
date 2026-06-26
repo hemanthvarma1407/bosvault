@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Upload, FileUp, AlertCircle, CheckCircle, Download, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import * as XLSX from 'xlsx';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
-import { EmployeesService } from '@bosvault/shared-services';
+import { EmployeesService, CompanyService } from '@bosvault/shared-services';
 
 interface EmployeeBulkImportModalProps {
     isOpen: boolean;
@@ -24,6 +24,23 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
     const [importResult, setImportResult] = useState<{ success: boolean; message: string; successCount: number; errorCount: number; errors: { row: number; error: string }[] } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const employeeService = new EmployeesService();
+    const companyService = new CompanyService();
+
+    // Companies list for when no company is pre-selected
+    const [companies, setCompanies] = useState<{ id: number; companyName: string }[]>([]);
+    const [selectedCompanyId, setSelectedCompanyId] = useState<number>(companyId || 0);
+
+    useEffect(() => {
+        if (isOpen) {
+            setSelectedCompanyId(companyId || 0);
+            if (!companyId) {
+                companyService.getAllCompanies().then(res => {
+                    if (res?.data) setCompanies(res.data);
+                }).catch(() => {});
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, companyId]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -34,15 +51,35 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
 
     const handleDownloadTemplate = () => {
         const headers = [
-            'First Name', 'Last Name', 'Email', 'Phone',
-            'Department (ID or Name)', 'Status (active/inactive)',
+            'First Name *', 'Last Name *', 'Email *', 'Phone',
+            'Department (ID or Name) *', 'Status (active/inactive)',
             'Billing Amount', 'Remarks',
             'Reporting Manager (ID, Email, or Full Name)',
             'Company Name (optional - for validation)',
-            'Role (optional - e.g. ADMIN, USER)'
+            'Role (optional - e.g. SUPER_ADMIN, MANAGER, USER)',
+            'Joining Date (YYYY-MM-DD)',
+            'Email Created Date (YYYY-MM-DD)',
+            'Last Working Day (YYYY-MM-DD)',
+            'Email Deletion Date (YYYY-MM-DD)',
+            'Group Emails (comma-separated)'
+        ];
+        const sampleRow = [
+            'John', 'Doe', 'john.doe@example.com', '+91-9876543210',
+            'Engineering', 'active',
+            '5000', 'Sample employee',
+            'jane.smith@example.com',
+            '',
+            'USER',
+            '2024-01-15',
+            '2024-01-10',
+            '',
+            '',
+            'dev-team@example.com, all-staff@example.com'
         ];
         const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet([headers]);
+        const ws = XLSX.utils.aoa_to_sheet([headers, sampleRow]);
+        // Set column widths for readability
+        ws['!cols'] = headers.map(() => ({ wch: 28 }));
         XLSX.utils.book_append_sheet(wb, ws, 'Template');
         XLSX.writeFile(wb, 'Employee_Import_Template.xlsx');
     };
@@ -53,11 +90,16 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
             return;
         }
 
+        const effectiveCompanyId = selectedCompanyId || companyId;
+        if (!effectiveCompanyId) {
+            AlertMessages.getErrorMessage('Please select a company before importing.');
+            return;
+        }
 
         try {
             const userData = localStorage.getItem('user');
             const userId = userData ? JSON.parse(userData).id : 1;
-            const response = await employeeService.bulkImport(file, companyId, userId);
+            const response = await employeeService.bulkImport(file, effectiveCompanyId, userId);
 
             if (response.status) {
                 setImportResult({ success: true, message: response.message, successCount: response.successCount, errorCount: response.errorCount, errors: response.errors });
@@ -99,6 +141,13 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
                     <h4 className="text-sm font-semibold mb-2 text-slate-800 dark:text-slate-200">Instructions:</h4>
                     <ul className="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 space-y-1">
                         <li>Download the template and fill in employee details.</li>
+                        <li>Fields marked with <span className="font-bold text-rose-500">*</span> are required: <span className="font-medium">First Name, Last Name, Email, Department</span>.</li>
+                        <li><span className="font-medium">Department</span> accepts a valid Department Name or its numeric ID.</li>
+                        <li><span className="font-medium">Status</span>: use <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">active</code> or <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">inactive</code>. Defaults to active.</li>
+                        <li><span className="font-medium">Role</span>: use <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">SUPER_ADMIN</code>, <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">MANAGER</code>, or <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">USER</code>.</li>
+                        <li><span className="font-medium">Date fields</span> must be in <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">YYYY-MM-DD</code> format.</li>
+                        <li><span className="font-medium">Group Emails</span>: enter multiple addresses separated by commas.</li>
+                        <li>A sample data row is included in the template for reference.</li>
                     </ul>
                     <div className="mt-4">
                         <Button
@@ -111,6 +160,26 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
                         </Button>
                     </div>
                 </div>
+
+                {/* Company selector — shown only when no company is pre-selected */}
+                {!companyId && (
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                            Company <span className="text-rose-500">*</span>
+                        </label>
+                        <select
+                            value={selectedCompanyId || ''}
+                            onChange={(e) => setSelectedCompanyId(Number(e.target.value))}
+                            className="w-full px-3 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                            required
+                        >
+                            <option value="">Select a company…</option>
+                            {companies.map(c => (
+                                <option key={c.id} value={c.id}>{c.companyName}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center transition-colors hover:border-indigo-500 dark:hover:border-indigo-400">
                     <input

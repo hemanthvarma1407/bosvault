@@ -3,6 +3,9 @@ import { MasterBaseEntity } from '../../../../../database/master-base.entity';
 
 @Entity('remote_tools')
 export class RemoteMasterEntity extends MasterBaseEntity {
+    @Column('bigint', { name: 'company_id', nullable: true, comment: 'Company ID' })
+    companyId: number;
+
     @Column('varchar', { name: 'remote_tool', length: 255, nullable: false, comment: 'Remote Tool Name' })
     remoteTool: string;
 

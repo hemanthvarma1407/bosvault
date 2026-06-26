@@ -5,7 +5,8 @@ import { EmployeesEntity } from './entities/employees.entity';
 import { EmployeesRepository } from './repositories/employees.repository';
 import { DepartmentRepository } from '../masters/department/repositories/department.repository';
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
-import { EmployeeStatusEnum, BulkImportResponseModel, BulkImportRequestModel } from '@bosvault/shared-models';
+import { EmployeeStatusEnum, BulkImportResponseModel, BulkImportRequestModel, EmailTypeEnum } from '@bosvault/shared-models';
+import { EmailInfoEntity } from '../email/entities/email-info.entity';
 
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { UserRoleEnum } from '@bosvault/shared-models';
@@ -75,7 +76,22 @@ export class EmployeesBulkService {
                 if (!row || row.length === 0) continue;
 
                 try {
-                    // Col 0-8 (same as before), Col 9 = optional company name
+                    // Col 0  : First Name
+                    // Col 1  : Last Name
+                    // Col 2  : Email
+                    // Col 3  : Phone
+                    // Col 4  : Department (ID or Name)
+                    // Col 5  : Status (active/inactive)
+                    // Col 6  : Billing Amount
+                    // Col 7  : Remarks
+                    // Col 8  : Reporting Manager (ID, Email, or Full Name)
+                    // Col 9  : Company Name (optional)
+                    // Col 10 : Role (optional)
+                    // Col 11 : Joining Date (optional, YYYY-MM-DD)
+                    // Col 12 : Email Created Date (optional, YYYY-MM-DD)
+                    // Col 13 : Last Working Day (optional, YYYY-MM-DD)
+                    // Col 14 : Email Deletion Date (optional, YYYY-MM-DD)
+                    // Col 15 : Group Emails (optional, comma-separated)
                     const firstName = row[0]?.toString().trim();
                     const lastName = row[1]?.toString().trim();
                     const email = row[2]?.toString().trim();
@@ -87,6 +103,11 @@ export class EmployeesBulkService {
                     const managerInput = row[8]?.toString().trim();
                     const rowCompanyName = row[9]?.toString().trim(); // optional
                     const roleInput = row[10]?.toString().trim().toUpperCase(); // optional Role
+                    const joiningDateStr = row[11]?.toString().trim(); // optional
+                    const emailCreatedDateStr = row[12]?.toString().trim(); // optional
+                    const lastWorkingDayStr = row[13]?.toString().trim(); // optional
+                    const emailDeletionDateStr = row[14]?.toString().trim(); // optional
+                    const groupEmailsStr = row[15]?.toString().trim(); // optional, comma-separated
 
                     // ── Required fields ───────────────────────────────────
                     if (!firstName) throw new Error('First Name is required');
@@ -123,9 +144,11 @@ export class EmployeesBulkService {
                         if (!resolvedDepartmentId) {
                             resolvedDepartmentId = deptNameMap.get(depInput.toString().toLowerCase().trim());
                         }
-                    }
-                    if (!resolvedDepartmentId) {
-                        throw new Error(`Department '${depInput}' not found. Use a valid Department Name or ID.`);
+                        if (!resolvedDepartmentId) {
+                            throw new Error(`Department '${depInput}' not found. Use a valid Department Name or ID.`);
+                        }
+                    } else {
+                        throw new Error('Department is required. Provide a valid Department Name or ID.');
                     }
 
                     // ── Email duplicate check ──────────────────────────────
@@ -160,6 +183,20 @@ export class EmployeesBulkService {
                     // ── Status ────────────────────────────────────────────
                     const status = statusStr === 'inactive' ? EmployeeStatusEnum.INACTIVE : EmployeeStatusEnum.ACTIVE;
 
+                    // ── Parse optional date fields ────────────────────────
+                    const parseDate = (val: string | undefined): Date | undefined => {
+                        if (!val) return undefined;
+                        const d = new Date(val);
+                        return isNaN(d.getTime()) ? undefined : d;
+                    };
+                    const joiningDate = parseDate(joiningDateStr);
+                    const emailCreatedDate = parseDate(emailCreatedDateStr);
+                    const lastWorkingDay = parseDate(lastWorkingDayStr);
+                    const emailDeletionDate = parseDate(emailDeletionDateStr);
+                    const groupEmails = groupEmailsStr
+                        ? groupEmailsStr.split(',').map(e => e.trim()).filter(Boolean)
+                        : undefined;
+
                     // ── Save ──────────────────────────────────────────────
                     const newEmployee = new EmployeesEntity();
                     newEmployee.companyId = rowCompanyId;
@@ -173,9 +210,29 @@ export class EmployeesBulkService {
                     newEmployee.billingAmount = !isNaN(billingAmount) ? billingAmount : 0;
                     newEmployee.remarks = remarks;
                     newEmployee.managerId = resolvedManagerId;
+                    newEmployee.joiningDate = joiningDate;
+                    newEmployee.emailCreatedDate = emailCreatedDate;
+                    newEmployee.lastWorkingDay = lastWorkingDay;
+                    newEmployee.emailDeletionDate = emailDeletionDate;
+                    newEmployee.groupEmails = groupEmails;
                     newEmployee.createdAt = new Date();
 
                     await this.employeesRepo.save(newEmployee);
+
+                    // ── Create Email Info record (mirrors single-employee creation) ──
+                    const emailInfoRepo = this.dataSource.getRepository(EmailInfoEntity);
+                    const existingEmailInfo = await emailInfoRepo.findOne({ where: { email: email.toLowerCase() } });
+                    if (!existingEmailInfo) {
+                        const deptRecord = departments.find(d => d.id === resolvedDepartmentId);
+                        const newEmailInfo = new EmailInfoEntity();
+                        newEmailInfo.companyId = rowCompanyId;
+                        newEmailInfo.emailType = EmailTypeEnum.USER;
+                        newEmailInfo.department = deptRecord?.name ?? '';
+                        newEmailInfo.email = email;
+                        newEmailInfo.employeeId = newEmployee.id;
+                        if (emailCreatedDate) newEmailInfo.createdDate = emailCreatedDate;
+                        await emailInfoRepo.save(newEmailInfo);
+                    }
 
                     // Update in-memory maps so later rows can reference this new employee as manager
                     existingEmailSet.add(email.toLowerCase());

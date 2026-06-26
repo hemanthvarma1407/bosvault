@@ -42,9 +42,9 @@ export class RemoteController {
     }
 
     @Post('getAllRemotes')
-    async getAllRemotes(): Promise<GetAllRemoteMasterResponseModel> {
+    async getAllRemotes(@Body() reqModel: IdRequestModel): Promise<GetAllRemoteMasterResponseModel> {
         try {
-            return await this.remoteService.getAllRemotes();
+            return await this.remoteService.getAllRemotes(reqModel.id);
         } catch (error) {
             return returnException(GetAllRemoteMasterResponseModel, error);
         }

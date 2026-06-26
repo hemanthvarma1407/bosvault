@@ -24,14 +24,22 @@ export class RemoteService {
                 throw new ErrorResponse(0, "Username and Password are required");
             }
 
-            const existing = await this.remoteRepo.findOne({ where: { remoteTool: reqModel.remoteToolName } });
+            // Allow same tool name for different users — unique per (toolName + userName + companyId)
+            const existing = await this.remoteRepo.findOne({
+                where: {
+                    remoteTool: reqModel.remoteToolName,
+                    username: reqModel.userName,
+                    companyId: reqModel.companyId
+                }
+            });
             if (existing) {
-                throw new ErrorResponse(0, "Remote Tool with this name already exists");
+                throw new ErrorResponse(0, "A Remote Tool entry with this Tool Name and User ID already exists");
             }
 
             await transManager.startTransaction();
             const newRemote = new RemoteMasterEntity();
             newRemote.userId = reqModel.createdBy; // Map createdBy to userId
+            newRemote.companyId = reqModel.companyId;
             newRemote.remoteTool = reqModel.remoteToolName;
             newRemote.username = reqModel.userName;
             newRemote.userFullname = reqModel.userFullname;
@@ -63,12 +71,13 @@ export class RemoteService {
         }
     }
 
-    async getAllRemotes(): Promise<GetAllRemoteMasterResponseModel> {
+    async getAllRemotes(companyId?: number): Promise<GetAllRemoteMasterResponseModel> {
         try {
-            const remotes = await this.remoteRepo.find();
+            const whereClause = companyId ? { companyId } : {};
+            const remotes = await this.remoteRepo.find({ where: whereClause });
             const mappedList = remotes.map(remote => ({
                 id: remote.id,
-                companyId: 0, // Default or fetch if available
+                companyId: remote.companyId || 0,
                 remoteToolName: remote.remoteTool,
                 userName: remote.username,
                 userFullname: remote.userFullname,
@@ -101,9 +110,15 @@ export class RemoteService {
             }
 
             if (reqModel.remoteToolName) {
-                const existingTool = await this.remoteRepo.findOne({ where: { remoteTool: reqModel.remoteToolName, id: Not(reqModel.id) } });
+                const existingTool = await this.remoteRepo.findOne({
+                    where: {
+                        remoteTool: reqModel.remoteToolName,
+                        username: reqModel.userName,
+                        id: Not(reqModel.id)
+                    }
+                });
                 if (existingTool) {
-                    throw new ErrorResponse(0, "Remote Tool with this name already exists");
+                    throw new ErrorResponse(0, "A Remote Tool entry with this Tool Name and User ID already exists");
                 }
             }
 

@@ -304,10 +304,14 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                             options={[
                                 { value: '', label: 'Unassigned' },
                                 ...employees
-                                    .filter(emp => !formData.department || emp.departmentName === formData.department)
+                                    .filter(emp => {
+                                        if (!formData.department) return true;
+                                        // Show employee if dept matches, or if dept is unknown/null (don't hide them)
+                                        return !emp.departmentName || emp.departmentName === formData.department;
+                                    })
                                     .map(emp => ({
                                         value: String(emp.id),
-                                        label: `${emp.firstName} ${emp.lastName}`
+                                        label: `${emp.firstName} ${emp.lastName}${emp.departmentName ? ` (${emp.departmentName})` : ''}`
                                     }))
                             ]}
                         />
