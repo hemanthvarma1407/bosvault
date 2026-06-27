@@ -13,7 +13,6 @@ export class AssetBulkService {
 
     async processBulkImport(reqModel: BulkImportRequestModel): Promise<BulkImportResponseModel> {
         try {
-            // cellDates: true ensures dates are parsed as JS Date objects
             const workbook = XLSX.read(reqModel.fileBuffer, { type: 'buffer', cellDates: true });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
@@ -22,18 +21,13 @@ export class AssetBulkService {
             if (!rows || rows.length < 1) {
                 return new BulkImportResponseModel(false, 400, 'File is empty', 0, 0, []);
             }
-
-            // Skip header row if it exists (assuming first row is header)
             const dataRows = rows.slice(1);
             const errors: { row: number; error: string }[] = [];
             let successCount = 0;
-
             for (let i = 0; i < dataRows.length; i++) {
                 const row = dataRows[i];
-                const rowNumber = i + 2; // +1 for 0-index, +1 for header row
-
+                const rowNumber = i + 2;
                 if (!row || row.length === 0) continue;
-
                 // Check if row is empty (sometimes excel has empty rows at the end)
                 if (row.every((cell: any) => cell === undefined || cell === null || cell === '')) {
                     continue;
@@ -55,7 +49,6 @@ export class AssetBulkService {
                     }
 
                     await transManager.startTransaction();
-
                     // Check for duplicate serial number
                     const existing = await transManager.getRepository(AssetInfoEntity).findOne({ where: { serialNumber } });
                     if (existing) {

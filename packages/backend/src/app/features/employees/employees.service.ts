@@ -115,6 +115,17 @@ export class EmployeesService {
             updateData.groupEmails = reqModel.groupEmails;
             await transManager.getRepository(EmployeesEntity).update(reqModel.id, updateData);
 
+            // Sync department name change to the employee's email info record
+            if (reqModel.departmentId && reqModel.departmentId !== existingEmployee.departmentId) {
+                const newDept = await this.dataSource.getRepository(DepartmentsMasterEntity).findOne({ where: { id: reqModel.departmentId } });
+                if (newDept) {
+                    await transManager.getRepository(EmailInfoEntity).update(
+                        { employeeId: reqModel.id },
+                        { department: newDept.name }
+                    );
+                }
+            }
+
             if (reqModel.userRole) {
                 const authUser = await transManager.getRepository(AuthUsersEntity).findOne({ where: [ { employeeId: String(reqModel.id) }, { email: reqModel.email } ] });
                 if (authUser) {
@@ -214,7 +225,7 @@ export class EmployeesService {
 
             employees = await this.employeesRepo.find({
                 where: whereClause,
-                order: { createdAt: 'DESC' }
+                order: { firstName: 'ASC', lastName: 'ASC' }
             });
 
             const deptIds = [...new Set(employees.filter(e => e.departmentId && Number(e.departmentId) > 0).map(e => Number(e.departmentId)))];

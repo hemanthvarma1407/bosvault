@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import * as XLSX from 'xlsx';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { EmployeesEntity } from '../employees/entities/employees.entity';
-import { TicketsEntity } from '../tickets/entities/tickets.entity';
+import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { AssetInfoEntity } from '../asset-info/entities/asset-info.entity';
 import { AssetTypeMasterEntity } from '../masters/asset-type/entities/asset-type.entity';
 import { DeviceConfigEntity } from '../masters/brand/entities/brand.entity';
@@ -12,7 +12,6 @@ import { DepartmentsMasterEntity } from '../masters/department/entities/departme
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { CompanyLicenseEntity } from '../licenses/entities/company-license.entity';
 import { LicensesMasterEntity } from '../masters/license/entities/license.entity';
-import { TicketStatusEnum } from '@bosvault/shared-models';
 
 @Injectable()
 export class ReportsService {
@@ -272,87 +271,78 @@ export class ReportsService {
         }));
     }
 
-    async getEmployeeReports(format = 'summary') {
+    async getEmployeeReports(format = 'summary', companyId?: number) {
         if (format === 'summary') {
             const empRepo = this.dataSource.getRepository(EmployeesEntity);
-            const totalEmployees = await empRepo.count();
+            const totalEmployees = companyId
+                ? await empRepo.count({ where: { companyId } })
+                : await empRepo.count();
             return { totalEmployees };
         }
 
-        const rawResults = await this.dataSource.getRepository(EmployeesEntity)
+        // Resolve fallback company name when companyId is provided
+        let fallbackCompanyName: string | undefined;
+        if (companyId) {
+            const companyRecord = await this.dataSource.getRepository(CompanyInfoEntity)
+                .findOne({ where: { id: companyId } });
+            fallbackCompanyName = companyRecord?.companyName;
+        }
+
+        const qb = this.dataSource.getRepository(EmployeesEntity)
             .createQueryBuilder('e')
             .leftJoin(DepartmentsMasterEntity, 'd', 'e.departmentId = d.id')
             .leftJoin(CompanyInfoEntity, 'c', 'e.companyId = c.id')
+            .leftJoin(EmployeesEntity, 'mgr', 'e.managerId = mgr.id')
+            .leftJoin(AuthUsersEntity, 'au', 'au.email = e.email')
             .select([
                 'e.id AS "id"',
                 'e.first_name AS "firstName"',
                 'e.last_name AS "lastName"',
                 'e.email AS "email"',
                 'e.ph_number AS "phone"',
+                'd.name AS "departmentName"',
                 'e.emp_status AS "status"',
-                'e.joining_date AS "joiningDate"',
                 'e.billing_amount AS "billingAmount"',
                 'e.remarks AS "remarks"',
-                'd.name AS "departmentName"',
-                'c.company_name AS "companyName"'
+                "CONCAT(mgr.first_name, ' ', mgr.last_name) AS \"reportingManager\"",
+                'c.company_name AS "companyName"',
+                'au.user_role AS "userRole"',
+                'e.joining_date AS "joiningDate"',
+                'e.email_created_date AS "emailCreatedDate"',
+                'e.last_working_day AS "lastWorkingDay"',
+                'e.email_deletion_date AS "emailDeletionDate"',
+                'e.group_emails AS "groupEmails"'
             ])
-            .where('e.deleted_at IS NULL')
+            .where('e.deleted_at IS NULL');
+
+        if (companyId) {
+            qb.andWhere('e.companyId = :companyId', { companyId });
+        }
+
+        const rawResults = await qb
             .orderBy('e.first_name', 'ASC')
             .addOrderBy('e.last_name', 'ASC')
             .getRawMany();
 
+        const formatDate = (val: any) => val ? new Date(val).toISOString().split('T')[0] : '';
+
         return rawResults.map((emp: any) => ({
-            'Full Name': `${emp.firstName} ${emp.lastName}`,
-            'Email': emp.email,
-            'Phone': emp.phone || 'N/A',
-            'Department': emp.departmentName || 'N/A',
-            'Company': emp.companyName || 'N/A',
-            'Status': emp.status,
-            'Joining Date': emp.joiningDate ? new Date(emp.joiningDate).toLocaleDateString('en-GB') : 'N/A',
-            'Billing Amount': emp.billingAmount ? `$${Number(emp.billingAmount).toLocaleString()}` : 'N/A',
-            'Remarks': emp.remarks || ''
-        }));
-    }
-
-    async getTicketReports(format = 'summary') {
-        if (format === 'summary') {
-            const ticketRepo = this.dataSource.getRepository(TicketsEntity);
-            const totalTickets = await ticketRepo.count();
-            const ticketsByStatus = await ticketRepo.createQueryBuilder('ticket')
-                .select('ticket.ticketStatus, COUNT(ticket.id) as count')
-                .groupBy('ticket.ticketStatus')
-                .getRawMany();
-            return { totalTickets, ticketsByStatus };
-        }
-
-        const rawResults = await this.dataSource.getRepository(TicketsEntity)
-            .createQueryBuilder('t')
-            .leftJoin(EmployeesEntity, 'e1', 't.employeeId = e1.id')
-            .leftJoin(EmployeesEntity, 'e2', 't.assignAdminId = e2.id')
-            .select([
-                't.ticket_code AS "ticketCode"',
-                't.subject AS "subject"',
-                't.priority_enum AS "priority"',
-                't.category_enum AS "category"',
-                't.ticket_status AS "status"',
-                't.created_at AS "createdAt"',
-                't.resolved_at AS "resolvedAt"',
-                "CONCAT(e1.first_name, ' ', e1.last_name) AS \"raisedBy\"",
-                "CONCAT(e2.first_name, ' ', e2.last_name) AS \"assignedTo\""
-            ])
-            .orderBy('t.created_at', 'DESC')
-            .getRawMany();
-
-        return rawResults.map((t: any) => ({
-            'Ticket Code': t.ticketCode,
-            'Subject': t.subject,
-            'Priority': t.priority,
-            'Category': t.category,
-            'Status': t.status,
-            'Raised By': t.raisedBy || 'Unknown',
-            'Assigned To': t.assignedTo || 'Unassigned',
-            'Created At': t.createdAt,
-            'Resolved At': t.resolvedAt || 'Pending'
+            'First Name *': emp.firstName || '',
+            'Last Name *': emp.lastName || '',
+            'Email *': emp.email || '',
+            'Phone': emp.phone || '',
+            'Department (ID or Name) *': emp.departmentName || '',
+            'Status (active/inactive)': emp.status || '',
+            'Billing Amount': emp.billingAmount ? Number(emp.billingAmount) : '',
+            'Remarks': emp.remarks || '',
+            'Reporting Manager (ID, Email, or Full Name)': emp.reportingManager?.trim() || '',
+            'Company Name (optional - for validation)': emp.companyName || fallbackCompanyName || '',
+            'Role (optional - e.g. SUPER_ADMIN, MANAGER, USER)': emp.userRole || '',
+            'Joining Date (YYYY-MM-DD)': formatDate(emp.joiningDate),
+            'Email Created Date (YYYY-MM-DD)': formatDate(emp.emailCreatedDate),
+            'Last Working Day (YYYY-MM-DD)': formatDate(emp.lastWorkingDay),
+            'Email Deletion Date (YYYY-MM-DD)': formatDate(emp.emailDeletionDate),
+            'Group Emails (comma-separated)': emp.groupEmails || ''
         }));
     }
 
@@ -506,127 +496,6 @@ export class ReportsService {
         }));
     }
 
-    // Ticket Reports
-    async getOpenTicketsReport(format = 'summary') {
-        const rawResults = await this.dataSource.getRepository(TicketsEntity)
-            .createQueryBuilder('t')
-            .leftJoin(EmployeesEntity, 'e1', 't.employeeId = e1.id')
-            .leftJoin(EmployeesEntity, 'e2', 't.assignAdminId = e2.id')
-            .select([
-                't.ticket_code AS "ticketCode"',
-                't.subject AS "subject"',
-                't.priority_enum AS "priority"',
-                't.category_enum AS "category"',
-                't.ticket_status AS "status"',
-                't.created_at AS "createdAt"',
-                "CONCAT(e1.first_name, ' ', e1.last_name) AS \"raisedBy\"",
-                "CONCAT(e2.first_name, ' ', e2.last_name) AS \"assignedTo\"",
-                '(CURRENT_DATE - t.created_at::date) AS "daysOpen"'
-            ])
-            .where('t.ticket_status NOT IN (:...statuses)', { statuses: [TicketStatusEnum.RESOLVED, TicketStatusEnum.CLOSED] })
-            .orderBy('t.priority_enum', 'DESC')
-            .addOrderBy('t.created_at', 'ASC')
-            .getRawMany();
-
-        return rawResults.map((t: any) => ({
-            'Ticket Code': t.ticketCode,
-            'Subject': t.subject,
-            'Priority': t.priority,
-            'Category': t.category,
-            'Status': t.status,
-            'Raised By': t.raisedBy || 'Unknown',
-            'Assigned To': t.assignedTo || 'Unassigned',
-            'Created At': t.createdAt,
-            'Days Open': t.daysOpen
-        }));
-    }
-
-    async getResolvedTicketsReport(format = 'summary') {
-        const rawResults = await this.dataSource.getRepository(TicketsEntity)
-            .createQueryBuilder('t')
-            .leftJoin(EmployeesEntity, 'e1', 't.employeeId = e1.id')
-            .leftJoin(EmployeesEntity, 'e2', 't.assignAdminId = e2.id')
-            .select([
-                't.ticket_code AS "ticketCode"',
-                't.subject AS "subject"',
-                't.priority_enum AS "priority"',
-                't.category_enum AS "category"',
-                't.created_at AS "createdAt"',
-                't.resolved_at AS "resolvedAt"',
-                "CONCAT(e1.first_name, ' ', e1.last_name) AS \"raisedBy\"",
-                "CONCAT(e2.first_name, ' ', e2.last_name) AS \"resolvedBy\"",
-                '(t.resolved_at::date - t.created_at::date) AS "resolutionDays"'
-            ])
-            .where('t.ticket_status IN (:...statuses)', { statuses: [TicketStatusEnum.RESOLVED, TicketStatusEnum.CLOSED] })
-            .orderBy('t.resolvedAt', 'DESC')
-            .getRawMany();
-
-        return rawResults.map((t: any) => ({
-            'Ticket Code': t.ticketCode,
-            'Subject': t.subject,
-            'Priority': t.priority,
-            'Category': t.category,
-            'Raised By': t.raisedBy || 'Unknown',
-            'Resolved By': t.resolvedBy || 'Unknown',
-            'Created At': t.createdAt,
-            'Resolved At': t.resolvedAt,
-            'Resolution Days': t.resolutionDays
-        }));
-    }
-
-    async getTicketsByPriorityReport(format = 'summary') {
-        const rawResults = await this.dataSource.getRepository(TicketsEntity)
-            .createQueryBuilder('t')
-            .select([
-                't.priority_enum AS "priority"',
-                't.ticket_status AS "status"',
-                'COUNT(t.id) AS "ticketCount"',
-                'AVG(COALESCE(t.resolved_at::date, CURRENT_DATE) - t.created_at::date) AS "avgResolutionDays"'
-            ])
-            .groupBy('t.priority_enum')
-            .addGroupBy('t.ticketStatus')
-            .orderBy(
-                `CASE t.priority_enum::text
-                    WHEN 'urgent' THEN 1
-                    WHEN 'high' THEN 2
-                    WHEN 'medium' THEN 3
-                    WHEN 'low' THEN 4
-                    ELSE 5
-                END`,
-                'ASC'
-            )
-            .addOrderBy('t.ticketStatus', 'ASC')
-            .getRawMany();
-
-        return rawResults.map((row: any) => ({
-            'Priority': row.priority,
-            'Status': row.status,
-            'Ticket Count': row.ticketCount,
-            'Avg Resolution Days': Math.round(row.avgResolutionDays || 0)
-        }));
-    }
-
-    async getTicketsByCategoryReport(format = 'summary') {
-        const rawResults = await this.dataSource.getRepository(TicketsEntity)
-            .createQueryBuilder('t')
-            .select([
-                't.category_enum AS "category"',
-                't.ticket_status AS "status"',
-                'COUNT(t.id) AS "ticketCount"',
-                'AVG(COALESCE(t.resolved_at::date, CURRENT_DATE) - t.created_at::date) AS "avgResolutionDays"'
-            ])
-            .groupBy('t.category_enum')
-            .addGroupBy('t.ticketStatus')
-            .orderBy('"ticketCount"', 'DESC')
-            .getRawMany();
-
-        return rawResults.map((row: any) => ({
-            'Category': row.category,
-            'Status': row.status,
-            'Ticket Count': row.ticketCount,
-            'Avg Resolution Days': Math.round(row.avgResolutionDays || 0)
-        }));
-    }
 
     // Master Data Reports
     async getDepartmentSummaryReport(format = 'summary') {
@@ -733,28 +602,13 @@ export class ReportsService {
                 data = await this.getUnassignedAssetsReport(fetchFormat);
                 break;
             case 'Employee Directory':
-                data = await this.getEmployeeReports(fetchFormat);
+                data = await this.getEmployeeReports(fetchFormat, filters.companyId ? Number(filters.companyId) : undefined);
                 break;
             case 'Employees by Department Report':
                 data = await this.getEmployeesByDepartmentReport(fetchFormat);
                 break;
             case 'License Assignment Report':
                 data = await this.getLicenseReports(fetchFormat);
-                break;
-            case 'Ticket Summary Report':
-                data = await this.getTicketReports(fetchFormat);
-                break;
-            case 'Open Tickets Report':
-                data = await this.getOpenTicketsReport(fetchFormat);
-                break;
-            case 'Resolved Tickets Report':
-                data = await this.getResolvedTicketsReport(fetchFormat);
-                break;
-            case 'Tickets by Priority Report':
-                data = await this.getTicketsByPriorityReport(fetchFormat);
-                break;
-            case 'Tickets by Category Report':
-                data = await this.getTicketsByCategoryReport(fetchFormat);
                 break;
             case 'Department Summary Report':
                 data = await this.getDepartmentSummaryReport(fetchFormat);

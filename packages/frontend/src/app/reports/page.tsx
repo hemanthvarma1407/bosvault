@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { FileText, Users, Package, Ticket, TrendingUp, BarChart3, FileSpreadsheet, CheckCircle2, Clock, AlertCircle, ArrowLeft, Search } from 'lucide-react';
+import { FileText, Users, Package, TrendingUp, BarChart3, FileSpreadsheet, Clock, AlertCircle, ArrowLeft, Search } from 'lucide-react';
 import { reportsService } from '@/lib/api/services';
 import { useToast } from '@/contexts/ToastContext';
 import { RouteGuard } from '@/components/auth/RouteGuard';
@@ -64,19 +64,6 @@ const ReportsPage: React.FC = () => {
             reports: [
                 { name: 'Employee Directory', description: 'Complete employee list with contact information and department details', icon: Users, stats: 'Directory' },
                 { name: 'Employees by Department Report', description: 'Employee count and listing grouped by department', icon: TrendingUp, stats: 'Distribution' },
-            ]
-        },
-        {
-            id: 'tickets',
-            title: 'Ticket Reports',
-            description: 'Service desk analytics and performance metrics',
-            icon: Ticket,
-            reports: [
-                { name: 'Ticket Summary Report', description: 'Complete overview of all tickets with status and assignment details', icon: FileText, stats: 'Overview' },
-                { name: 'Open Tickets Report', description: 'Currently open tickets with priority and days open tracking', icon: AlertCircle, stats: 'Active' },
-                { name: 'Resolved Tickets Report', description: 'Resolved tickets with resolution time and performance metrics', icon: CheckCircle2, stats: 'Completed' },
-                { name: 'Tickets by Priority Report', description: 'Ticket statistics grouped by priority level with average resolution time', icon: TrendingUp, stats: 'Priority' },
-                { name: 'Tickets by Category Report', description: 'Ticket statistics grouped by category with resolution metrics', icon: BarChart3, stats: 'Categories' },
             ]
         },
         {

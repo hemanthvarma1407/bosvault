@@ -114,26 +114,35 @@ export class EmployeesBulkService {
                     if (!lastName) throw new Error('Last Name is required');
                     if (!email) throw new Error('Email is required');
 
-                    // ── Company name validation (optional column) ─────────
-                    let rowCompanyId = companyId;
-                    if (expectedCompanyName) {
-                        if (rowCompanyName && rowCompanyName.toLowerCase() !== expectedCompanyName) {
-                            throw new Error(
-                                `Company name '${rowCompanyName}' does not match the selected company '${globalCompany?.companyName}'.`
-                            );
-                        }
-                    } else if (rowCompanyName) {
-                        const matchedId = companyNameMap.get(rowCompanyName.toLowerCase());
-                        if (matchedId) {
-                            rowCompanyId = matchedId;
+                    // ── Company name/id validation (optional column) ──────
+                    let rowCompanyId = companyId;  // default: use the companyId from the request
+                    if (rowCompanyName) {
+                        // 1. Try exact name match (case-insensitive, trimmed)
+                        const byName = companyNameMap.get(rowCompanyName.toLowerCase().trim());
+                        if (byName) {
+                            // If a specific company was selected, validate it matches
+                            if (expectedCompanyName && rowCompanyName.toLowerCase().trim() !== expectedCompanyName) {
+                                throw new Error(
+                                    `Company name '${rowCompanyName}' does not match the selected company '${globalCompany?.companyName}'.`
+                                );
+                            }
+                            rowCompanyId = byName;
                         } else {
-                            throw new Error(`Company '${rowCompanyName}' not found.`);
+                            // 2. Try numeric ID in the company column
+                            const numericId = Number(rowCompanyName);
+                            if (!isNaN(numericId) && numericId > 0) {
+                                const byId = allCompanies.find(c => c.id === numericId);
+                                if (byId) {
+                                    rowCompanyId = byId.id;
+                                }
+                            }
                         }
                     }
 
                     if (!rowCompanyId) {
-                        throw new Error('Company ID is required. Please provide a valid Company Name in the sheet or select a company.');
+                        throw new Error('Company is required. Fill the "Company Name" column in the sheet with a valid company name or ID.');
                     }
+
 
                     // ── Department resolution ─────────────────────────────
                     let resolvedDepartmentId: number | undefined;

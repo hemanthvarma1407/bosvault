@@ -114,6 +114,7 @@ export class RemoteService {
                     where: {
                         remoteTool: reqModel.remoteToolName,
                         username: reqModel.userName,
+                        companyId: existing.companyId,
                         id: Not(reqModel.id)
                     }
                 });

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Package, Warehouse, History, Plus, Filter, Activity, CheckCircle2, User, RefreshCw, Building2, Search } from 'lucide-react';
+import { Package, Warehouse, History, Plus, Filter, Activity, CheckCircle2, User, RefreshCw, Building2, Search, Upload } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { ModernTabs } from './components/ModernTabs';
 import { AllAssetsTab } from './components/AllAssetsTab';
@@ -315,6 +315,12 @@ const AssetsPage: React.FC = () => {
                     gradient="from-blue-600 to-indigo-700"
                     actions={[
                         {
+                            label: 'Bulk Import',
+                            onClick: () => setIsBulkImportOpen(true),
+                            icon: <Upload className="h-3.5 w-3.5" />,
+                            variant: 'outline'
+                        },
+                        {
                             label: 'Filter',
                             onClick: () => setIsFilterModalOpen(true),
                             icon: <Filter className="h-3.5 w-3.5" />,
@@ -459,7 +465,7 @@ const AssetsPage: React.FC = () => {
                         isOpen={isBulkImportOpen}
                         companyId={selectedCompanyId}
                         companies={companies}
-                        onSuccess={() => { /* handled */ }}
+                        onSuccess={() => { refresh(); }}
                         onClose={() => setIsBulkImportOpen(false)}
                     />
                 )}

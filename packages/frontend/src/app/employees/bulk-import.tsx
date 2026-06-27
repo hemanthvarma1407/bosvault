@@ -26,17 +26,21 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
     const employeeService = new EmployeesService();
     const companyService = new CompanyService();
 
-    // Companies list for when no company is pre-selected
-    const [companies, setCompanies] = useState<{ id: number; companyName: string }[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number>(companyId || 0);
+    const [companyName, setCompanyName] = useState<string>('');
 
     useEffect(() => {
         if (isOpen) {
-            setSelectedCompanyId(companyId || 0);
-            if (!companyId) {
+            setFile(null);
+            setImportResult(null);
+            if (companyId) {
                 companyService.getAllCompanies().then(res => {
-                    if (res?.data) setCompanies(res.data);
+                    if (res?.data) {
+                        const found = res.data.find((c: any) => c.id === companyId);
+                        setCompanyName(found?.companyName || '');
+                    }
                 }).catch(() => {});
+            } else {
+                setCompanyName('');
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,7 +72,7 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
             'Engineering', 'active',
             '5000', 'Sample employee',
             'jane.smith@example.com',
-            '',
+            companyName || '',
             'USER',
             '2024-01-15',
             '2024-01-10',
@@ -90,16 +94,10 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
             return;
         }
 
-        const effectiveCompanyId = selectedCompanyId || companyId;
-        if (!effectiveCompanyId) {
-            AlertMessages.getErrorMessage('Please select a company before importing.');
-            return;
-        }
-
         try {
             const userData = localStorage.getItem('user');
             const userId = userData ? JSON.parse(userData).id : 1;
-            const response = await employeeService.bulkImport(file, effectiveCompanyId, userId);
+            const response = await employeeService.bulkImport(file, companyId || 0, userId);
 
             if (response.status) {
                 setImportResult({ success: true, message: response.message, successCount: response.successCount, errorCount: response.errorCount, errors: response.errors });
@@ -160,26 +158,6 @@ export const EmployeeBulkImportModal: React.FC<EmployeeBulkImportModalProps> = (
                         </Button>
                     </div>
                 </div>
-
-                {/* Company selector — shown only when no company is pre-selected */}
-                {!companyId && (
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                            Company <span className="text-rose-500">*</span>
-                        </label>
-                        <select
-                            value={selectedCompanyId || ''}
-                            onChange={(e) => setSelectedCompanyId(Number(e.target.value))}
-                            className="w-full px-3 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
-                            required
-                        >
-                            <option value="">Select a company…</option>
-                            {companies.map(c => (
-                                <option key={c.id} value={c.id}>{c.companyName}</option>
-                            ))}
-                        </select>
-                    </div>
-                )}
 
                 <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center transition-colors hover:border-indigo-500 dark:hover:border-indigo-400">
                     <input

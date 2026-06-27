@@ -26,13 +26,6 @@ export class AssetInfoService {
         private notificationsService: NotificationsService
     ) { }
 
-    /**
-     * Create a new asset in the system
-     * Validates required fields and ensures serial number uniqueness
-     * 
-     * @param reqModel - Asset creation data including company, device, and serial number
-     * @throws ErrorResponse if validation fails or serial number already exists
-     */
     async createAsset(reqModel: CreateAssetModel, userId?: number): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
@@ -79,14 +72,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Update an existing asset
-     * Modifies asset information for an existing asset record
-     * 
-     * @param reqModel - Asset update data
-     * @returns GlobalResponse indicating success or failure
-     * @throws ErrorResponse if asset not found or update fails
-     */
     async updateAsset(reqModel: UpdateAssetModel, userId?: number): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
@@ -148,14 +133,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Get a specific asset by ID
-     * Retrieves detailed information about a single asset
-     * 
-     * @param reqModel - Request model containing asset ID
-     * @returns GetAssetByIdModel with asset details
-     * @throws ErrorResponse if asset not found
-     */
     async getAsset(reqModel: GetAssetModel): Promise<GetAssetByIdModel> {
         try {
             if (!reqModel.id) {
@@ -174,14 +151,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Get all assets, optionally filtered by company
-     * Retrieves a list of all assets or assets for a specific company
-     * 
-     * @param companyId - Optional company ID to filter assets
-     * @returns GetAllAssetsModel with list of assets
-     * @throws Error if retrieval fails
-     */
     async getAllAssets(reqModel: IdRequestModel): Promise<GetAllAssetsModel> {
         try {
             const companyId = reqModel.id;
@@ -193,14 +162,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Delete an asset (soft delete)
-     * Marks an asset as deleted without removing from database
-     * 
-     * @param reqModel - Request model containing asset ID to delete
-     * @returns GlobalResponse indicating success or failure
-     * @throws ErrorResponse if asset not found or deletion fails
-     */
     async deleteAsset(reqModel: DeleteAssetModel, userId?: number): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
@@ -223,15 +184,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Get asset statistics grouped by status
-     * Provides counts of assets in each status (Available, In Use, Retired)
-     * Uses repository method for efficient aggregation
-     * 
-     * @param companyId - Company ID to get statistics for
-     * @returns AssetStatisticsResponseModel with status counts
-     * @throws ErrorResponse if company ID not provided
-     */
     async getAssetStatistics(reqModel: IdRequestModel): Promise<AssetStatisticsResponseModel> {
         try {
             const companyId = reqModel.id;
@@ -256,15 +208,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Search assets by query and/or status filter
-     * Searches assets by serial number or device name, with optional status filtering
-     * Uses repository method for optimized query
-     * 
-     * @param reqModel - Search request with company ID, optional query and status filter
-     * @returns GetAllAssetsModel with filtered asset list
-     * @throws ErrorResponse if company ID not provided
-     */
     async searchAssets(reqModel: AssetSearchRequestModel): Promise<GetAllAssetsModel> {
         try {
             if (reqModel.companyId === undefined || reqModel.companyId === null) {
@@ -278,15 +221,6 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Get assets with their current assignment information
-     * Retrieves assets joined with device info, current assignments, and assigned employee details
-     * Uses repository method for complex join query
-     * 
-     * @param companyId - Company ID to get assets for
-     * @returns GetAssetsWithAssignmentsResponseModel with assets and assignment details
-     * @throws ErrorResponse if company ID not provided
-     */
     async getAssetsWithAssignments(reqModel: IdRequestModel): Promise<GetAssetsWithAssignmentsResponseModel> {
         try {
             const companyId = reqModel.id;
@@ -301,13 +235,8 @@ export class AssetInfoService {
         }
     }
 
-    /**
-     * Asset Assignment CRUD Operations
-     * Note: For actual assignment workflow, use AssetOperationsService.assignAssetOp
-     */
 
     async createAssignment(reqModel: CreateAssetAssignModel, userId?: number): Promise<GlobalResponse> {
-        // This is a placeholder - actual assignment should use AssetOperationsService
         return new GlobalResponse(false, 400, "Please use the asset operations endpoint for assignment");
     }
 
@@ -370,8 +299,6 @@ export class AssetInfoService {
             await assignRepo.save(assignment);
 
             await transManager.completeTransaction();
-
-
             // Send Emails (Independent of transaction success/failure after commit)
             try {
                 // Fetch details for email
@@ -382,81 +309,33 @@ export class AssetInfoService {
                     const assignedDate = new Date();
                     const assetName = `${asset.model} (SN: ${asset.serialNumber})`; // Basic asset name construction
                     const assignedByName = assigner.fullName;
-
                     // 1. Send to Assignee (User)
-                    await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(
-                        employee.email,
-                        employee.firstName,
-                        assetName,
-                        assignedByName,
-                        assignedDate,
-                        isReassignment,
-                        remarks,
-                        `${employee.firstName} ${employee.lastName}`.trim(),
-                        'ASSIGNEE'
-                    ));
-
+                    await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(employee.email, employee.firstName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ASSIGNEE'));
                     // 2. Send to Assigner (if different from assignee)
                     if (assigner.email !== employee.email) {
-                        await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(
-                            assigner.email,
-                            assigner.fullName,
-                            assetName,
-                            assignedByName,
-                            assignedDate,
-                            isReassignment,
-                            remarks,
-                            `${employee.firstName} ${employee.lastName}`.trim(),
-                            'ADMIN'
-                        ));
+                        await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(assigner.email, assigner.fullName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                     }
-
                     // 3. Send to Manager (if exists)
                     if (employee.managerId) {
                         const manager = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employee.managerId } });
                         if (manager && manager.email) {
-                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(
-                                manager.email,
-                                manager.firstName,
-                                assetName,
-                                assignedByName,
-                                assignedDate,
-                                isReassignment,
-                                remarks,
-                                `${employee.firstName} ${employee.lastName}`.trim(),
-                                'MANAGER'
-                            ));
+                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(manager.email, manager.firstName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'MANAGER'));
                         }
                     }
 
                     // 3. Send to Admins
-                    const admins = await this.dataSource.getRepository(AuthUsersEntity).find({
-                        where: { companyId: employee.companyId, userRole: UserRoleEnum.SUPER_ADMIN }
-                    });
-
+                    const admins = await this.dataSource.getRepository(AuthUsersEntity).find({ where: { companyId: employee.companyId, userRole: UserRoleEnum.SUPER_ADMIN } });
                     for (const admin of admins) {
                         // Avoid sending to self if admin is the assigner (optional, but good practice)
                         // Also avoid sending to assignee if they are an admin (covered above)
                         if (admin.email !== employee.email) {
-                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(
-                                admin.email,
-                                admin.fullName,
-                                assetName,
-                                assignedByName,
-                                assignedDate,
-                                isReassignment,
-                                remarks,
-                                `${employee.firstName} ${employee.lastName}`.trim(),
-                                'ADMIN'
-                            ));
+                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(admin.email, admin.fullName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                         }
                     }
                 }
             } catch (emailError) {
-                // Log but don't fail the request since transaction is already committed
-                console.error("Failed to send asset assignment emails", emailError);
+                throw emailError;
             }
-
             // --- PERSISTENT NOTIFICATIONS ---
             try {
                 const employee = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employeeId } });
@@ -464,40 +343,25 @@ export class AssetInfoService {
 
                 if (employee && asset) {
                     const assetName = `${asset.model} (SN: ${asset.serialNumber})`;
-
                     // 1. To Assignee
                     const assigneeUser = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { email: employee.email } });
                     if (assigneeUser) {
-                        await this.notificationsService.createNotification(assigneeUser.id, {
-                            title: 'Asset Assigned',
-                            message: `A new asset "${assetName}" has been assigned to you.`,
-                            type: NotificationType.SUCCESS,
-                            category: 'asset',
-                            link: '/self-service',
-                            metadata: { assetId: asset.id }
-                        });
+                        await this.notificationsService.createNotification(assigneeUser.id, { title: 'Asset Assigned', message: `A new asset "${assetName}" has been assigned to you.`, type: NotificationType.SUCCESS, category: 'asset', link: '/self-service', metadata: { assetId: asset.id } });
                     }
-
                     // 2. To Manager
                     if (employee.managerId) {
                         const manager = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employee.managerId } });
                         if (manager) {
                             const managerUser = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { email: manager.email } });
                             if (managerUser) {
-                                await this.notificationsService.createNotification(managerUser.id, {
-                                    title: 'Asset Assigned to Team Member',
-                                    message: `Asset "${assetName}" has been assigned to ${employee.firstName} ${employee.lastName}.`,
-                                    type: NotificationType.INFO,
-                                    category: 'asset'
-                                });
+                                await this.notificationsService.createNotification(managerUser.id, { title: 'Asset Assigned to Team Member', message: `Asset "${assetName}" has been assigned to ${employee.firstName} ${employee.lastName}.`, type: NotificationType.INFO, category: 'asset' });
                             }
                         }
                     }
                 }
             } catch (notifyError) {
-                console.error("Failed to create asset assignment notifications", notifyError);
+                throw notifyError;
             }
-
             return new GlobalResponse(true, 200, isReassignment ? 'Asset reassigned successfully' : 'Asset assigned successfully');
         } catch (error) {
             await transManager.releaseTransaction();
@@ -514,9 +378,7 @@ export class AssetInfoService {
 
             const asset = await assetRepo.findOne({ where: { id: assetId } });
             if (!asset) throw new NotFoundException('Asset not found');
-
             const previousUserId = asset.assignedToEmployeeId;
-
             asset.assetStatusEnum = targetStatus || AssetStatusEnum.AVAILABLE;
             asset.previousUserEmployeeId = asset.assignedToEmployeeId;
             asset.assignedToEmployeeId = null as any;
@@ -537,17 +399,10 @@ export class AssetInfoService {
                 returnHistory.companyId = asset.companyId;
                 returnHistory.allocationDate = asset.userAssignedDate;
                 await transManager.getRepository(AssetReturnHistoryEntity).save(returnHistory);
-
                 // Update assignment table where return date is null
-                await transManager.getRepository(AssetAssignEntity).update(
-                    { assetId: assetId, employeeId: previousUserId, returnDate: IsNull() as any },
-                    { returnDate: new Date(), remarks: `Returned: ${remarks || 'No reason specified'}` }
-                );
+                await transManager.getRepository(AssetAssignEntity).update({ assetId: assetId, employeeId: previousUserId, returnDate: IsNull() as any }, { returnDate: new Date(), remarks: `Returned: ${remarks || 'No reason specified'}` });
             }
-
             await transManager.completeTransaction();
-
-
             // --- PERSISTENT NOTIFICATIONS ---
             try {
                 if (previousUserId) {
@@ -555,17 +410,12 @@ export class AssetInfoService {
                     if (employee) {
                         const user = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { email: employee.email } });
                         if (user) {
-                            await this.notificationsService.createNotification(user.id, {
-                                title: 'Asset Returned',
-                                message: `Your asset "${asset.model} (SN: ${asset.serialNumber})" has been marked as returned.`,
-                                type: NotificationType.INFO,
-                                category: 'asset'
-                            });
+                            await this.notificationsService.createNotification(user.id, { title: 'Asset Returned', message: `Your asset "${asset.model} (SN: ${asset.serialNumber})" has been marked as returned.`, type: NotificationType.INFO, category: 'asset' });
                         }
                     }
                 }
             } catch (notifyError) {
-                console.error("Failed to create asset return notifications", notifyError);
+                throw notifyError;
             }
 
             return new GlobalResponse(true, 200, 'Asset returned successfully');
@@ -617,7 +467,6 @@ export class AssetInfoService {
 
         asset.currentValue = Number(newValue.toFixed(2));
         await this.assetInfoRepo.save(asset);
-
         return asset.currentValue;
     }
 }

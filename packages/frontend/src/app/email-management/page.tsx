@@ -58,10 +58,11 @@ const EmailRow: React.FC<{
     acc: EmailInfoResponseModel;
     idx: number;
     employees: any[];
+    activeTab: EmailCategory;
     onToggleStatus: (data: EmailInfoResponseModel) => void;
     onEdit: (data: EmailInfoResponseModel) => void;
     onDelete: (id: number) => void;
-}> = ({ acc, idx, employees, onToggleStatus, onEdit, onDelete }) => {
+}> = ({ acc, idx, employees, activeTab, onToggleStatus, onEdit, onDelete }) => {
     const [isMembersOpen, setIsMembersOpen] = useState(false);
     const memberNames = useMemo(() => {
         if (!acc.memberIds) return [];
@@ -123,24 +124,20 @@ const EmailRow: React.FC<{
                 </td>
                 <td className="p-4 border border-slate-200 dark:border-white/10">
                     <div className="flex justify-center gap-1">
-                        {(isGroup || isCompany) && (
-                            <>
-                                <button
-                                    onClick={() => onEdit(acc)}
-                                    title="Edit Email"
-                                    className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
-                                >
-                                    <Pencil className="h-3.5 w-3.5" />
-                                </button>
-                                <button
-                                    onClick={() => onDelete(acc.id)}
-                                    title="Delete Email"
-                                    className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                                >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                </button>
-                            </>
-                        )}
+                        <button
+                            onClick={() => onEdit(acc)}
+                            title="Edit Email"
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
+                        >
+                            <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                            onClick={() => onDelete(acc.id)}
+                            title="Delete Email"
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                         {isCompany && (
                             <div className="flex items-center justify-center w-full ml-2">
                                 <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
@@ -319,6 +316,7 @@ const InfoEmailsPage: React.FC = () => {
         setExpandedDepts(prev => ({ ...prev, [dept]: !prev[dept] }));
     };
 
+
     const categoryEmails = useMemo(() => {
         const categoryTypes = CategoryConfig[activeTab].types;
         return emailInfoList.filter(acc => categoryTypes.includes(acc.emailType));
@@ -371,7 +369,16 @@ const InfoEmailsPage: React.FC = () => {
         }
 
         return groups;
-    }, [filteredEmails, departments, searchQuery, activeTab]);
+    }, [filteredEmails, departments, searchQuery, activeTab, selectedOrg, companies]);
+
+    // Auto-expand all groups whenever the tab or grouped data changes
+    useEffect(() => {
+        const newExpanded: Record<string, boolean> = {};
+        Object.keys(groupedData).forEach(key => {
+            newExpanded[key] = true;
+        });
+        setExpandedDepts(newExpanded);
+    }, [groupedData]);
 
     return (
         <RouteGuard requiredRoles={[UserRoleEnum.ADMIN]}>
@@ -531,6 +538,7 @@ const InfoEmailsPage: React.FC = () => {
                                                                         acc={acc}
                                                                         idx={idx}
                                                                         employees={employees}
+                                                                        activeTab={activeTab}
                                                                         onToggleStatus={handleToggleStatus}
                                                                         onEdit={handleEdit}
                                                                         onDelete={handleDeleteEmailInfo}

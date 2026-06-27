@@ -19,9 +19,16 @@ export class DeviceConfigService {
     async createDeviceConfig(reqModel: CreateDeviceConfigModel): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
-            const existing = await this.deviceConfigRepo.findOne({ where: { laptopCompany: reqModel.laptopCompany, model: reqModel.model } });
+            const existing = await this.deviceConfigRepo.findOne({
+                where: {
+                    laptopCompany: reqModel.laptopCompany,
+                    model: reqModel.model,
+                    ram: reqModel.ram,
+                    storage: reqModel.storage
+                }
+            });
             if (existing) {
-                throw new ErrorResponse(400, 'Device configuration already exists');
+                throw new ErrorResponse(400, 'Device configuration with the same brand, model, RAM and storage already exists');
             }
             await transManager.startTransaction();
             const saveEnti = new DeviceConfigEntity();

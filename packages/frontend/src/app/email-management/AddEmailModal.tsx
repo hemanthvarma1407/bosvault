@@ -58,7 +58,9 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
 
     const fetchEmployees = useCallback(async () => {
         try {
-            const req = new GetAllEmployeesRequestModel(Number(selectedCompanyId) || 0);
+            // Fetch all employees across all companies for assignment (companyId=0 means all)
+            // Always exclude deactivated employees from assignment dropdowns
+            const req = new GetAllEmployeesRequestModel(Number(selectedCompanyId) || 0, false);
             const response = await employeeService.getAllEmployees(req);
             if (response.status) {
                 const data = response.data || [];
@@ -305,8 +307,10 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                                 { value: '', label: 'Unassigned' },
                                 ...employees
                                     .filter(emp => {
+                                        // For COMPANY or GROUP types, dept field is hidden — show all employees
+                                        if (isCompany || isGroup) return true;
                                         if (!formData.department) return true;
-                                        // Show employee if dept matches, or if dept is unknown/null (don't hide them)
+                                        // For USER type, filter by selected department if one is chosen
                                         return !emp.departmentName || emp.departmentName === formData.department;
                                     })
                                     .map(emp => ({
