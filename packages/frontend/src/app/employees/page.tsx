@@ -99,6 +99,9 @@ const EmployeesPage: React.FC = () => {
             const includeDeactivated = true;
             const req = new GetAllEmployeesRequestModel(companyId, includeDeactivated);
             const response = await employeeService.getAllEmployees(req);
+            
+
+
             if (response.status) {
                 const data = response.data || [];
                 const mappedEmployees: Employee[] = data.map((item: any) => ({
@@ -355,17 +358,22 @@ const EmployeesPage: React.FC = () => {
     const filteredEmployees = employees.filter(emp => {
         const searchLower = searchQuery.toLowerCase();
         const deptName = getDepartmentName(emp).toLowerCase();
-        const matchesSearch = (
-            emp.firstName?.toLowerCase().includes(searchLower) ||
-            emp.lastName?.toLowerCase().includes(searchLower) ||
-            emp.email?.toLowerCase().includes(searchLower) ||
+        const matchesSearch = !!(
+            (emp.firstName && emp.firstName.toLowerCase().includes(searchLower)) ||
+            (emp.lastName && emp.lastName.toLowerCase().includes(searchLower)) ||
+            (emp.email && emp.email.toLowerCase().includes(searchLower)) ||
             deptName.includes(searchLower) ||
-            emp.managerName?.toLowerCase().includes(searchLower)
+            (emp.managerName && emp.managerName.toLowerCase().includes(searchLower))
         );
 
-        const matchesStatus = (statusFilter === 'all' || emp.empStatus?.toLowerCase() === statusFilter);
+        const empStatus = emp.empStatus?.toLowerCase() || 'active';
+        const matchesStatus = (statusFilter === 'all' || empStatus === statusFilter);
 
         return matchesSearch && matchesStatus;
+    }).sort((a, b) => {
+        const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+        const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+        return nameA.localeCompare(nameB);
     });
 
     const stats = {
@@ -448,7 +456,7 @@ const EmployeesPage: React.FC = () => {
                             >
                                 <option value="">All Companies</option>
                                 {companies.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.companyName}</option>
+                                    <option key={c.id} value={c.id}>{c.companyName || (c as any).name}</option>
                                 ))}
                             </select>
                             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">

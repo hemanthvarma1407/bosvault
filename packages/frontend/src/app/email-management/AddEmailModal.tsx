@@ -60,7 +60,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
         try {
             // Fetch all employees across all companies for assignment (companyId=0 means all)
             // Always exclude deactivated employees from assignment dropdowns
-            const req = new GetAllEmployeesRequestModel(Number(selectedCompanyId) || 0, false);
+            const req = new GetAllEmployeesRequestModel(0, false);
             const response = await employeeService.getAllEmployees(req);
             if (response.status) {
                 const data = response.data || [];

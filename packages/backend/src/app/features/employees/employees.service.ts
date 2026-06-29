@@ -120,7 +120,7 @@ export class EmployeesService {
                 const newDept = await this.dataSource.getRepository(DepartmentsMasterEntity).findOne({ where: { id: reqModel.departmentId } });
                 if (newDept) {
                     await transManager.getRepository(EmailInfoEntity).update(
-                        { employeeId: reqModel.id },
+                        { email: reqModel.email },
                         { department: newDept.name }
                     );
                 }
@@ -218,6 +218,8 @@ export class EmployeesService {
             if (companyId) {
                 whereClause.companyId = companyId;
             }
+            console.log('getAllEmployees Request Model:', reqModel);
+            console.log('getAllEmployees Where Clause:', whereClause);
 
             if (!includeDeactivated) {
                 whereClause.empStatus = Not(EmployeeStatusEnum.DEACTIVATED);

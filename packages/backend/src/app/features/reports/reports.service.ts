@@ -327,22 +327,16 @@ export class ReportsService {
         const formatDate = (val: any) => val ? new Date(val).toISOString().split('T')[0] : '';
 
         return rawResults.map((emp: any) => ({
-            'First Name *': emp.firstName || '',
-            'Last Name *': emp.lastName || '',
-            'Email *': emp.email || '',
-            'Phone': emp.phone || '',
-            'Department (ID or Name) *': emp.departmentName || '',
-            'Status (active/inactive)': emp.status || '',
-            'Billing Amount': emp.billingAmount ? Number(emp.billingAmount) : '',
-            'Remarks': emp.remarks || '',
-            'Reporting Manager (ID, Email, or Full Name)': emp.reportingManager?.trim() || '',
-            'Company Name (optional - for validation)': emp.companyName || fallbackCompanyName || '',
-            'Role (optional - e.g. SUPER_ADMIN, MANAGER, USER)': emp.userRole || '',
-            'Joining Date (YYYY-MM-DD)': formatDate(emp.joiningDate),
-            'Email Created Date (YYYY-MM-DD)': formatDate(emp.emailCreatedDate),
-            'Last Working Day (YYYY-MM-DD)': formatDate(emp.lastWorkingDay),
-            'Email Deletion Date (YYYY-MM-DD)': formatDate(emp.emailDeletionDate),
-            'Group Emails (comma-separated)': emp.groupEmails || ''
+            'First name': emp.firstName || '',
+            'Last name': emp.lastName || '',
+            'Email Address': emp.email || '',
+            'Org': emp.companyName || fallbackCompanyName || '',
+            'Number': emp.phone || '',
+            'Department': emp.departmentName || '',
+            'Account status': emp.status || '',
+            'billing': emp.billingAmount ? Number(emp.billingAmount) : '',
+            'joining date': formatDate(emp.joiningDate),
+            'email creation date': formatDate(emp.emailCreatedDate)
         }));
     }
 

@@ -371,11 +371,11 @@ const InfoEmailsPage: React.FC = () => {
         return groups;
     }, [filteredEmails, departments, searchQuery, activeTab, selectedOrg, companies]);
 
-    // Auto-expand all groups whenever the tab or grouped data changes
+    // Collapse all groups by default whenever the tab or grouped data changes
     useEffect(() => {
         const newExpanded: Record<string, boolean> = {};
         Object.keys(groupedData).forEach(key => {
-            newExpanded[key] = true;
+            newExpanded[key] = false;
         });
         setExpandedDepts(newExpanded);
     }, [groupedData]);

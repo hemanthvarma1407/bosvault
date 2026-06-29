@@ -24,17 +24,7 @@ export class RemoteService {
                 throw new ErrorResponse(0, "Username and Password are required");
             }
 
-            // Allow same tool name for different users — unique per (toolName + userName + companyId)
-            const existing = await this.remoteRepo.findOne({
-                where: {
-                    remoteTool: reqModel.remoteToolName,
-                    username: reqModel.userName,
-                    companyId: reqModel.companyId
-                }
-            });
-            if (existing) {
-                throw new ErrorResponse(0, "A Remote Tool entry with this Tool Name and User ID already exists");
-            }
+            // Removed uniqueness check to allow identical tool names
 
             await transManager.startTransaction();
             const newRemote = new RemoteMasterEntity();
@@ -109,19 +99,7 @@ export class RemoteService {
                 throw new ErrorResponse(0, 'Remote Tool name cannot be empty');
             }
 
-            if (reqModel.remoteToolName) {
-                const existingTool = await this.remoteRepo.findOne({
-                    where: {
-                        remoteTool: reqModel.remoteToolName,
-                        username: reqModel.userName,
-                        companyId: existing.companyId,
-                        id: Not(reqModel.id)
-                    }
-                });
-                if (existingTool) {
-                    throw new ErrorResponse(0, "A Remote Tool entry with this Tool Name and User ID already exists");
-                }
-            }
+            // Removed uniqueness check on update
 
             await transManager.startTransaction();
             const updateData: Partial<RemoteMasterEntity> = {
