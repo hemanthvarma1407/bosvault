@@ -30,10 +30,10 @@ export class ProcurementService {
     async createPurchaseOrder(reqModel: CreatePOModel): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
-            const { userId, username, companyId, vendorId, approverId, orderDate, items, notes, timeSpentMinutes, expectedDeliveryDate, invoiceUrl, currency, vendorName } = reqModel;
-            const requesterEmployee = await this.employeeRepo.findOne({ where: { userId: userId } });
-            if (!requesterEmployee) {
-                throw new ErrorResponse(404, 'Employee profile not found for current user');
+            const { userId, username, companyId, vendorId, approverIds, orderDate, items, notes, timeSpentMinutes, expectedDeliveryDate, invoiceUrl, currency, vendorName } = reqModel;
+            const requesterAuthUser = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { id: userId } });
+            if (!requesterAuthUser) {
+                throw new ErrorResponse(404, 'User profile not found for current session');
             }
 
             await transManager.startTransaction();
@@ -47,7 +47,7 @@ export class ProcurementService {
             poEntity.poNumber = poNumber;
             poEntity.vendorId = vendorId;
             poEntity.requesterId = userId;
-            poEntity.approverId = approverId;
+            poEntity.approverIds = approverIds;
             poEntity.orderDate = orderDate;
             poEntity.expectedDeliveryDate = expectedDeliveryDate;
             poEntity.status = POStatusEnum.ORDERED;
@@ -75,33 +75,37 @@ export class ProcurementService {
             await transManager.getRepository(PurchaseOrderItemEntity).save(itemEntities);
             await transManager.completeTransaction();
 
-            // Send email to approver if present
-            if (savedPO.approverId) {
-                const approverEmployee = await this.employeeRepo.findOne({ where: { userId: savedPO.approverId } });
+            // Send email to approvers if present
+            if (savedPO.approverIds && savedPO.approverIds.length > 0) {
+                const approverEmployees = await this.employeeRepo.find({ where: { id: In(savedPO.approverIds) } });
                 const vendor = await this.vendorRepo.findOne({ where: { id: savedPO.vendorId } });
-                if (approverEmployee && approverEmployee.email) {
+                
+                const recipientEmails = approverEmployees.map(e => e.email).filter(Boolean) as string[];
+                const recipientNames = approverEmployees.map(e => `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.email);
+                
+                if (recipientEmails.length > 0) {
                     await this.emailInfoService.sendPOApprovalEmail(new SendPOApprovalEmailModel(
-                        approverEmployee.email,
-                        `${approverEmployee.firstName} ${approverEmployee.lastName}`,
+                        recipientEmails,
+                        recipientNames,
                         savedPO.poNumber,
-                        `${requesterEmployee.firstName} ${requesterEmployee.lastName}`,
+                        username,
                         totalAmount,
-                        vendor?.name,
+                        vendor?.name || '',
                         savedPO.id
                     ));
                 }
             }
 
             // Send email to requester as acknowledgement
-            if (requesterEmployee && requesterEmployee.email) {
+            if (requesterAuthUser && requesterAuthUser.email) {
                 const vendor = await this.vendorRepo.findOne({ where: { id: savedPO.vendorId } });
                 await this.emailInfoService.sendPOApprovalEmail(new SendPOApprovalEmailModel(
-                    requesterEmployee.email,
-                    `${requesterEmployee.firstName} ${requesterEmployee.lastName}`,
+                    [requesterAuthUser.email],
+                    [username],
                     savedPO.poNumber,
-                    `${requesterEmployee.firstName} ${requesterEmployee.lastName}`,
+                    username,
                     totalAmount,
-                    vendor?.name,
+                    vendor?.name || '',
                     savedPO.id
                 ));
             }
@@ -116,7 +120,7 @@ export class ProcurementService {
     async updatePurchaseOrder(reqModel: UpdatePOModel): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
-            const { id, userId, username, companyId, items, vendorId, approverId, orderDate, expectedDeliveryDate, notes, timeSpentMinutes, invoiceUrl, currency, vendorName } = reqModel;
+            const { id, userId, username, companyId, items, vendorId, approverIds, orderDate, expectedDeliveryDate, notes, timeSpentMinutes, invoiceUrl, currency, vendorName } = reqModel;
             const employee = await this.employeeRepo.findOne({ where: { userId: userId } });
             if (!employee) {
                 throw new ErrorResponse(404, 'Employee profile not found for current user');
@@ -150,7 +154,7 @@ export class ProcurementService {
                 const otherFieldsChanged =
                     Number(existingPO.vendorId) !== Number(vendorId) ||
                     Number(existingPO.companyId) !== Number(companyId) ||
-                    Number(existingPO.approverId || 0) !== Number(approverId || 0) ||
+                    (existingPO.approverIds || []).join(',') !== (approverIds || []).join(',') ||
                     orderDateChanged ||
                     deliveryDateChanged ||
                     (existingPO.notes || '') !== (notes || '') ||
@@ -170,7 +174,7 @@ export class ProcurementService {
 
             existingPO.vendorId = vendorId;
             existingPO.companyId = companyId || existingPO.companyId;
-            existingPO.approverId = approverId || existingPO.approverId;
+            existingPO.approverIds = approverIds || existingPO.approverIds;
             existingPO.orderDate = orderDate ? new Date(orderDate) : existingPO.orderDate;
             existingPO.expectedDeliveryDate = expectedDeliveryDate ? new Date(expectedDeliveryDate) : null;
             existingPO.totalAmount = totalAmount;
@@ -232,22 +236,23 @@ export class ProcurementService {
 
         const poIds: number[] = [];
         const userIds = new Set<number>();
-        const employeeIds = new Set<number>();
-        const vendorIds = new Set<number>();
         const companyIds = new Set<number>();
+        const vendorIds = new Set<number>();
+        const approverEmpIds = new Set<number>();
 
         for (const po of pos) {
             poIds.push(po.id);
-            po.userId && userIds.add(Number(po.userId));
-            po.requesterId && userIds.add(Number(po.requesterId));
-            po.approverId && userIds.add(Number(po.approverId));
-            po.vendorId && vendorIds.add(Number(po.vendorId));
-            po.companyId && companyIds.add(Number(po.companyId));
+            if (po.requesterId) userIds.add(Number(po.requesterId));
+            if (po.userId) userIds.add(Number(po.userId));
+            if (po.companyId) companyIds.add(Number(po.companyId));
+            if (po.vendorId) vendorIds.add(Number(po.vendorId));
+            po.approverIds && po.approverIds.forEach(id => approverEmpIds.add(Number(id)));
         }
 
-        const [allItems, authUsers, vendors, companyInfos] = await Promise.all([
+        const [allItems, authUsers, approverEmployees, vendors, companyInfos] = await Promise.all([
             this.poItemRepo.find({ where: { purchaseOrderId: In(poIds) } }),
             this.dataSource.getRepository(AuthUsersEntity).find({ where: { id: In([...userIds]) } }),
+            this.employeeRepo.find({ where: { id: In([...approverEmpIds]) } }),
             this.dataSource.getRepository(VendorsMasterEntity).find({ where: { id: In([...vendorIds]) } }),
             this.dataSource.getRepository(CompanyInfoEntity).find({ where: { id: In([...companyIds]) } })
         ]);
@@ -268,6 +273,7 @@ export class ProcurementService {
         }
 
         const userMap = new Map(authUsers.map(u => [Number(u.id), u.fullName]));
+        const employeeMap = new Map(approverEmployees.map(e => [Number(e.id), `${e.firstName || ''} ${e.lastName || ''}`.trim() || e.email]));
         const vendorMap = new Map(vendors.map(v => [Number(v.id), v.name]));
         const companyMap = new Map(companyInfos.map(c => [Number(c.id), c.companyName]));
 
@@ -282,8 +288,8 @@ export class ProcurementService {
             responses.push(new PurchaseOrderModel(
                 p.id, p.poNumber, p.vendorId, p.requesterId, p.orderDate, p.status, p.totalAmount, p.createdAt,
                 poItems, p.vendorName || vendorMap.get(Number(p.vendorId)), userMap.get(Number(p.requesterId)) || userMap.get(Number(p.userId)),
-                p.expectedDeliveryDate, p.notes, p.timeSpentMinutes, p.approverId,
-                userMap.get(Number(p.approverId)), companyMap.get(Number(p.companyId)), p.invoiceUrl, p.currency
+                p.expectedDeliveryDate, p.notes, p.timeSpentMinutes, p.approverIds,
+                p.approverIds?.map(id => employeeMap.get(Number(id)) || '').filter(Boolean), companyMap.get(Number(p.companyId)), p.invoiceUrl, p.currency
             ));
         }
         return responses;
@@ -300,7 +306,7 @@ export class ProcurementService {
                 this.poItemRepo.find({ where: { purchaseOrderId: p.id } }),
                 p.userId ? this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { id: p.userId } }) : null,
                 p.requesterId ? this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { id: p.requesterId } }) : null,
-                p.approverId ? this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { id: p.approverId } }) : null,
+                p.approverIds && p.approverIds.length > 0 ? this.employeeRepo.find({ where: { id: In(p.approverIds) } }) : [],
                 p.vendorId ? this.dataSource.getRepository(VendorsMasterEntity).findOne({ where: { id: p.vendorId } }) : null,
                 p.companyId ? this.dataSource.getRepository(CompanyInfoEntity).findOne({ where: { id: Number(p.companyId) } }) : null
             ]);
@@ -321,9 +327,9 @@ export class ProcurementService {
             }
 
             const requesterName = requester?.fullName || user?.fullName;
-            const approverName = approver?.fullName;
+            const approverNames = (approver as any[] | null)?.map(a => `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email).filter(Boolean) as string[] | undefined;
 
-            const response = new PurchaseOrderModel(p.id, p.poNumber, p.vendorId, p.requesterId, p.orderDate, p.status, p.totalAmount, p.createdAt, poItems, p.vendorName || vendor?.name, requesterName, p.expectedDeliveryDate, p.notes, p.timeSpentMinutes, p.approverId, approverName, company?.companyName, p.invoiceUrl, p.currency);
+            const response = new PurchaseOrderModel(p.id, p.poNumber, p.vendorId, p.requesterId, p.orderDate, p.status, p.totalAmount, p.createdAt, poItems, p.vendorName || vendor?.name, requesterName, p.expectedDeliveryDate, p.notes, p.timeSpentMinutes, p.approverIds, approverNames, company?.companyName, p.invoiceUrl, p.currency);
             return new GetPOByIdModel(true, 200, 'Purchase Order retrieved successfully', response);
         } catch (error) {
             throw error;

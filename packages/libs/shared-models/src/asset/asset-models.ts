@@ -363,12 +363,14 @@ export class AssignAssetOpRequestModel {
     employeeId: number;
     userId: number;
     remarks?: string;
+    assignedDate?: Date;
 
-    constructor(assetId: number, employeeId: number, userId: number, remarks?: string) {
+    constructor(assetId: number, employeeId: number, userId: number, remarks?: string, assignedDate?: Date) {
         this.assetId = assetId;
         this.employeeId = employeeId;
         this.userId = userId;
         this.remarks = remarks;
+        this.assignedDate = assignedDate;
     }
 }
 

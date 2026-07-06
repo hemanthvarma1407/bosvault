@@ -81,7 +81,8 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
                     asset.id,
                     Number(formData.employeeId),
                     user.id,
-                    formData.remarks
+                    formData.remarks,
+                    formData.assignedDate ? new Date(formData.assignedDate) : undefined
                 );
                 const response = await assetService.assignAssetOp(req);
 

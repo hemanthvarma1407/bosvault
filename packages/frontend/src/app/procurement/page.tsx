@@ -578,7 +578,7 @@ const ProcurementPage: React.FC = () => {
                     >
                         <div className="space-y-6">
                             {/* Summary info */}
-                            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
                                 <div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
                                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${getStatusStyle(selectedPO.status)}`}>
@@ -612,6 +612,15 @@ const ProcurementPage: React.FC = () => {
                                     <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
                                         <Calendar size={14} className="text-slate-400" />
                                         {new Date(selectedPO.orderDate).toLocaleDateString()}
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Approvers</p>
+                                    <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                        <User size={14} className="text-slate-400" />
+                                        <span className="truncate" title={(selectedPO.approverNames || []).join(', ')}>
+                                            {(selectedPO.approverNames || []).length > 0 ? (selectedPO.approverNames || []).join(', ') : 'None'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

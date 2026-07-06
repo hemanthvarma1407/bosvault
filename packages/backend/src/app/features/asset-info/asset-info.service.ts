@@ -286,13 +286,13 @@ export class AssetInfoService {
 
             asset.assetStatusEnum = AssetStatusEnum.IN_USE;
             asset.assignedToEmployeeId = employeeId;
-            asset.userAssignedDate = new Date();
+            asset.userAssignedDate = reqModel.assignedDate ? new Date(reqModel.assignedDate) : new Date();
             await assetRepo.save(asset);
 
             const assignment = new AssetAssignEntity();
             assignment.assetId = assetId;
             assignment.employeeId = employeeId;
-            assignment.assignedDate = new Date();
+            assignment.assignedDate = reqModel.assignedDate ? new Date(reqModel.assignedDate) : new Date();
             assignment.assignedById = userId;
             assignment.isCurrent = true;
             assignment.remarks = remarks || (isReassignment ? 'Reassigned from previous user' : '');
@@ -306,7 +306,7 @@ export class AssetInfoService {
                 const assigner = await this.dataSource.getRepository(AuthUsersEntity).findOne({ where: { id: userId } });
 
                 if (employee && assigner) {
-                    const assignedDate = new Date();
+                    const assignedDate = reqModel.assignedDate ? new Date(reqModel.assignedDate) : new Date();
                     const assetName = `${asset.model} (SN: ${asset.serialNumber})`; // Basic asset name construction
                     const assignedByName = assigner.fullName;
                     // 1. Send to Assignee (User)
@@ -328,7 +328,7 @@ export class AssetInfoService {
                     for (const admin of admins) {
                         // Avoid sending to self if admin is the assigner (optional, but good practice)
                         // Also avoid sending to assignee if they are an admin (covered above)
-                        if (admin.email !== employee.email) {
+                        if (admin.email !== employee.email && admin.email !== assigner.email) {
                             await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(admin.email, admin.fullName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                         }
                     }

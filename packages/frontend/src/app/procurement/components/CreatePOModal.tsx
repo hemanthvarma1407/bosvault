@@ -5,6 +5,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { MultiSelect } from '@/components/ui/MultiSelect';
 import { Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { CreatePOModel, UpdatePOModel, POItemModel, Vendor, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { vendorService, procurementService, employeeService, companyService, assetTypeService } from '@/lib/api/services';
@@ -25,7 +26,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
     const [approvers, setApprovers] = useState<any[]>([]);
     const [companies, setCompanies] = useState<any[]>([]);
     const [assetTypes, setAssetTypes] = useState<any[]>([]);
-    const defaultForm = { vendorId: 0, vendorName: '', currency: 'USD', orderDate: new Date().toISOString().split('T')[0], expectedDeliveryDate: '', notes: '', approverId: 0, companyId: user?.companyId || 0, items: [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }] };
+    const defaultForm = { vendorId: 0, vendorName: '', currency: 'USD', orderDate: new Date().toISOString().split('T')[0], expectedDeliveryDate: '', notes: '', approverIds: [], companyId: user?.companyId || 0, items: [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }] };
     const [formData, setFormData] = useState<any>(defaultForm);
 
     useEffect(() => {
@@ -37,7 +38,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                     orderDate: initialPO.orderDate ? new Date(initialPO.orderDate).toISOString().split('T')[0] : '',
                     expectedDeliveryDate: initialPO.expectedDeliveryDate ? new Date(initialPO.expectedDeliveryDate).toISOString().split('T')[0] : '',
                     notes: initialPO.notes || '',
-                    approverId: initialPO.approverId || 0,
+                    approverIds: initialPO.approverIds || [],
                     companyId: initialPO.companyId || user?.companyId || 0,
                     currency: initialPO.currency || 'USD',
                     vendorName: initialPO.vendorName || '',
@@ -49,18 +50,29 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
         }
     }, [isOpen, initialPO]);
 
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            if (!isOpen) return;
+            try {
+                const eRes = await employeeService.getAllEmployees(new GetAllEmployeesRequestModel(0));
+                const employeeList = (eRes as any)?.data || (eRes as any)?.employees || (Array.isArray(eRes) ? eRes : []);
+                setApprovers(employeeList);
+            } catch (err: any) {
+                console.error('Failed to fetch employees', err);
+            }
+        };
+        fetchEmployees();
+    }, [isOpen]);
+
     const fetchMasters = async () => {
         if (!user?.companyId) return;
         try {
-            const [vRes, eRes, cRes, atRes] = await Promise.all([
+            const [vRes, cRes, atRes] = await Promise.all([
                 vendorService.getAllVendors(),
-                employeeService.getAllEmployees(new GetAllEmployeesRequestModel(user.companyId)),
                 companyService.getAllCompaniesDropdown(),
                 assetTypeService.getAllAssetTypesDropdown()
             ]);
             setVendors(vRes.vendors || []);
-            const employeeList = (eRes as any)?.data || (eRes as any)?.employees || (Array.isArray(eRes) ? eRes : []);
-            setApprovers(employeeList);
             setCompanies((cRes as any)?.data || (cRes as any)?.companies || []);
             setAssetTypes((atRes as any)?.data || (atRes as any)?.assetTypes || []);
         } catch (err: any) {
@@ -115,10 +127,10 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
             let res;
             if (initialPO) {
-                const model = new UpdatePOModel(initialPO.id, user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverId || undefined, initialPO.invoiceUrl, formData.currency, formData.vendorName);
+                const model = new UpdatePOModel(initialPO.id, user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, initialPO.invoiceUrl, formData.currency, formData.vendorName);
                 res = await procurementService.updatePurchaseOrder(model);
             } else {
-                const model = new CreatePOModel(user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverId || undefined, undefined, formData.currency, formData.vendorName);
+                const model = new CreatePOModel(user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, undefined, formData.currency, formData.vendorName);
                 res = await procurementService.createPurchaseOrder(model);
             }
 
@@ -214,12 +226,11 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                         onChange={(e) => setFormData({ ...formData, expectedDeliveryDate: e.target.value })}
                     />
 
-                    <Select
-                        label="Approver"
-                        value={formData.approverId ?? 0}
-                        onChange={(e) => setFormData({ ...formData, approverId: Number(e.target.value) })}
+                    <MultiSelect
+                        label="Approvers"
+                        value={(formData.approverIds || []).map(String)}
+                        onChange={(val: string[]) => setFormData({ ...formData, approverIds: val.map(Number) })}
                         options={[
-                            { label: 'No Specific Approver', value: 0 },
                             ...(() => {
                                 const seen = new Set();
                                 return approvers.filter(a => {
@@ -228,7 +239,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                                     if (seen.has(uid)) return false;
                                     seen.add(uid);
                                     return true;
-                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: Number(a.id) }));
+                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: String(a.id) }));
                             })()
                         ]}
                     />

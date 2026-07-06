@@ -9,7 +9,7 @@ export class CreatePOModel extends CommonRequestModel {
     items: POItemModel[];
     notes?: string;
     timeSpentMinutes?: number;
-    approverId?: number;
+    approverIds?: number[];
     invoiceUrl?: string;
     currency?: string;
     vendorName?: string;
@@ -25,7 +25,7 @@ export class CreatePOModel extends CommonRequestModel {
         expectedDeliveryDate?: Date,
         notes?: string,
         timeSpentMinutes?: number,
-        approverId?: number,
+        approverIds?: number[],
         invoiceUrl?: string,
         currency?: string,
         vendorName?: string
@@ -37,7 +37,7 @@ export class CreatePOModel extends CommonRequestModel {
         this.expectedDeliveryDate = expectedDeliveryDate;
         this.notes = notes;
         this.timeSpentMinutes = timeSpentMinutes;
-        this.approverId = approverId;
+        this.approverIds = approverIds;
         this.invoiceUrl = invoiceUrl;
         this.currency = currency || 'USD';
         this.vendorName = vendorName;
@@ -83,12 +83,12 @@ export class UpdatePOModel extends CreatePOModel {
         expectedDeliveryDate?: Date,
         notes?: string,
         timeSpentMinutes?: number,
-        approverId?: number,
+        approverIds?: number[],
         invoiceUrl?: string,
         currency?: string,
         vendorName?: string,
     ) {
-        super(username, userId, ipAddress, companyId, vendorId, orderDate, items, expectedDeliveryDate, notes, timeSpentMinutes, approverId, invoiceUrl, currency, vendorName);
+        super(username, userId, ipAddress, companyId, vendorId, orderDate, items, expectedDeliveryDate, notes, timeSpentMinutes, approverIds, invoiceUrl, currency, vendorName);
         this.id = id;
     }
 }
@@ -137,8 +137,8 @@ export class PurchaseOrderModel {
     notes?: string;
     timeSpentMinutes?: number;
     createdAt: Date;
-    approverId?: number;
-    approverName?: string;
+    approverIds?: number[];
+    approverNames?: string[];
     companyName?: string;
     invoiceUrl?: string;
     currency?: string;
@@ -158,8 +158,8 @@ export class PurchaseOrderModel {
         expectedDeliveryDate?: Date,
         notes?: string,
         timeSpentMinutes?: number,
-        approverId?: number,
-        approverName?: string,
+        approverIds?: number[],
+        approverNames?: string[],
         companyName?: string,
         invoiceUrl?: string,
         currency?: string
@@ -178,8 +178,8 @@ export class PurchaseOrderModel {
         this.expectedDeliveryDate = expectedDeliveryDate;
         this.notes = notes;
         this.timeSpentMinutes = timeSpentMinutes;
-        this.approverId = approverId;
-        this.approverName = approverName;
+        this.approverIds = approverIds;
+        this.approverNames = approverNames;
         this.companyName = companyName;
         this.invoiceUrl = invoiceUrl;
         this.currency = currency || 'USD';

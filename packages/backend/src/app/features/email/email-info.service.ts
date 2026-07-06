@@ -440,6 +440,7 @@ export class EmailInfoService {
     return await this.accessRequestRepo.find({ order: { createdAt: 'DESC' } });
   }
   async sendAssetAssignedEmail(reqModel: SendAssetAssignedEmailModel): Promise<boolean> {
+    console.log('sendAssetAssignedEmail called with model:', reqModel);
     const { recipientEmail, recipientName, assetName, assignedBy, assignedDate, isReassignment, remarks, assignedToName, recipientRole } = reqModel;
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const emailUser = this.configService.get<string>('EMAIL_USER');
@@ -515,13 +516,18 @@ export class EmailInfoService {
   }
 
   async sendPOApprovalEmail(reqModel: SendPOApprovalEmailModel): Promise<boolean> {
-    const { recipientEmail, recipientName, poNumber, requesterName, totalAmount, vendorName, poId } = reqModel;
+    const { recipientEmails, recipientNames, poNumber, requesterName, totalAmount, vendorName, poId } = reqModel;
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const emailUser = this.configService.get<string>('EMAIL_USER');
 
+    const toEmail = recipientEmails[0];
+    const ccEmails = recipientEmails.length > 1 ? recipientEmails.slice(1).join(',') : undefined;
+    const allApproverNames = recipientNames.join(', ');
+
     const mailOptions = {
       from: `"BOS Vault Procurement" <${emailUser}>`,
-      to: recipientEmail,
+      to: toEmail,
+      ...(ccEmails && { cc: ccEmails }),
       subject: `[Approval Required] New Purchase Order: ${poNumber}`,
       html: `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6; border: 1px solid #eee; border-radius: 8px; padding: 20px;">
@@ -529,7 +535,7 @@ export class EmailInfoService {
     <h2 style="color: #4f46e5; margin: 0;">BOS Vault Procurement</h2>
   </div>
   
-  <p>Hello <strong>${recipientName}</strong>,</p>
+  <p>Hello <strong>${allApproverNames}</strong>,</p>
   <p>A new purchase order <strong>${poNumber}</strong> has been submitted and requires your approval.</p>
   
   <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #f1f5f9;">
@@ -561,10 +567,10 @@ export class EmailInfoService {
 
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      this.logger.log(`PO approval email sent for ${poNumber} to ${recipientEmail}: ${info.messageId}`);
+      this.logger.log(`PO approval email sent for ${poNumber} to ${recipientEmails.join(',')}: ${info.messageId}`);
       return true;
     } catch (error) {
-      this.logger.error(`Error sending PO approval email for ${poNumber} to ${recipientEmail}`, error);
+      this.logger.error(`Error sending PO approval email for ${poNumber} to ${recipientEmails.join(',')}`, error);
       return false;
     }
   }

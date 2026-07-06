@@ -283,8 +283,8 @@ export class SendTicketStatusUpdateEmailModel {
 
 
 export class SendPOApprovalEmailModel {
-    recipientEmail: string;
-    recipientName: string;
+    recipientEmails: string[];
+    recipientNames: string[];
     poNumber: string;
     requesterName: string;
     totalAmount: number;
@@ -292,16 +292,16 @@ export class SendPOApprovalEmailModel {
     poId: number;
 
     constructor(
-        recipientEmail: string,
-        recipientName: string,
+        recipientEmails: string[],
+        recipientNames: string[],
         poNumber: string,
         requesterName: string,
         totalAmount: number,
         vendorName: string,
         poId: number
     ) {
-        this.recipientEmail = recipientEmail;
-        this.recipientName = recipientName;
+        this.recipientEmails = recipientEmails;
+        this.recipientNames = recipientNames;
         this.poNumber = poNumber;
         this.requesterName = requesterName;
         this.totalAmount = totalAmount;
