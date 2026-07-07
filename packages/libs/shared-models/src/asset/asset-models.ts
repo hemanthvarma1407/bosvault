@@ -295,6 +295,7 @@ export class AssetWithAssignmentModel {
     id: number;
     companyId: number;
     deviceId: number;
+    deviceConfigId?: number;
     deviceName?: string;
     serialNumber: string;
     purchaseDate?: Date;
@@ -327,11 +328,13 @@ export class AssetWithAssignmentModel {
         userAssignedDate?: Date,
         lastReturnDate?: Date,
         managerName?: string,
-        configuration?: string
+        configuration?: string,
+        deviceConfigId?: number
     ) {
         this.id = id;
         this.companyId = companyId;
         this.deviceId = deviceId;
+        this.deviceConfigId = deviceConfigId;
         this.deviceName = deviceName;
         this.serialNumber = serialNumber;
         this.purchaseDate = purchaseDate;
