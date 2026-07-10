@@ -81,7 +81,7 @@ const DashboardPage: React.FC = () => {
         { id: 'kpi_it_assets', label: 'KPI: IT Assets', category: 'KPI', description: 'Total assets count' },
         { id: 'kpi_employees', label: 'KPI: Employees', category: 'KPI', description: 'Global registry count' },
         { id: 'kpi_licenses', label: 'KPI: Licenses', category: 'KPI', description: 'Software subscriptions count' },
-        { id: 'support_criticality_matrix', label: 'Support Criticality', category: 'Analytics', description: 'Ticket priority distribution' },
+        { id: 'license_expiry_tracker', label: 'License Tracker', category: 'Analytics', description: 'Expiring subscriptions' },
         { id: 'procurement_pulse', label: 'Procurement Pulse', category: 'Operations', description: 'Real-time spend and orders' },
         { id: 'asset_lifecycle', label: 'Asset Lifecycle', category: 'Analytics', description: 'Asset status distribution' },
         { id: 'workforce_architecture', label: 'Workforce Depts', category: 'Analytics', description: 'Department distribution' }
@@ -360,18 +360,72 @@ const DashboardPage: React.FC = () => {
 
                 {/* Analytics & Priority Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    {/* Ticket Priorities */}
-                    {widgetSettings['support_criticality_matrix']?.isVisible !== false && (
+                    {/* License Expiration Tracker */}
+                    {widgetSettings['license_expiry_tracker']?.isVisible !== false && (
                         <motion.div variants={itemVariants} className="lg:col-span-8">
                             <Card className="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
-                                <h3 className="text-[11px] font-black text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-                                    <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-600 shadow-inner border border-orange-500/10">
-                                        <AlertTriangle className="h-3.5 w-3.5" />
-                                    </div>
-                                    Support Criticality Matrix
-                                </h3>
-                                <div className="flex-1 min-h-[300px]">
-                                    <TicketPriorityChart data={ticketPriorityData} />
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-[11px] font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                        <div className="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 shadow-inner border border-rose-500/10">
+                                            <AlertTriangle className="h-3.5 w-3.5" />
+                                        </div>
+                                        License Renewal & Expirations
+                                    </h3>
+                                    <Link href="/licenses">
+                                        <Button variant="outline" className="rounded-lg px-2.5 h-6 text-[8px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800">
+                                            Manage Licenses <ArrowUpRight className="h-2.5 w-2.5 ml-1" />
+                                        </Button>
+                                    </Link>
+                                </div>
+                                <div className="flex-1 overflow-y-auto max-h-[300px] pr-1 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+                                    {isLoading ? (
+                                        <div className="space-y-2 animate-pulse">
+                                            <div className="h-10 bg-slate-100 dark:bg-slate-800/50 rounded-lg"></div>
+                                            <div className="h-10 bg-slate-100 dark:bg-slate-800/50 rounded-lg"></div>
+                                            <div className="h-10 bg-slate-100 dark:bg-slate-800/50 rounded-lg"></div>
+                                        </div>
+                                    ) : !stats?.licenses?.expiringSoon || stats.licenses.expiringSoon.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center h-full py-8 text-center">
+                                            <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-2">
+                                                <CheckCircle className="h-4 w-4" />
+                                            </div>
+                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400">All subscriptions are up to date</p>
+                                            <p className="text-[8px] text-slate-400 dark:text-slate-500 mt-0.5">No immediate renewals required.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {stats.licenses.expiringSoon.map((lic: any) => {
+                                                const daysLeft = Math.ceil((new Date(lic.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                                                const isCritical = daysLeft <= 7;
+                                                const isWarning = daysLeft > 7 && daysLeft <= 30;
+                                                const badgeColor = isCritical 
+                                                    ? 'bg-rose-500/10 text-rose-600 border-rose-500/10' 
+                                                    : isWarning 
+                                                        ? 'bg-amber-500/10 text-amber-600 border-amber-500/10' 
+                                                        : 'bg-blue-500/10 text-blue-600 border-blue-500/10';
+
+                                                return (
+                                                    <div key={lic.id} className="flex items-center justify-between p-2 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/30 hover:border-indigo-500/20 transition-all duration-300">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className={`w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-blue-500'} animate-pulse`} />
+                                                            <div>
+                                                                <p className="text-[10px] font-black text-slate-800 dark:text-white tracking-tight uppercase leading-none mb-0.5">{lic.applicationName}</p>
+                                                                <p className="text-[8px] text-slate-400 dark:text-slate-500 font-medium">Assigned to: {lic.assignedTo || 'Unassigned'}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${badgeColor}`}>
+                                                                {daysLeft <= 0 ? 'Expired' : `${daysLeft} days left`}
+                                                            </span>
+                                                            <p className="text-[8px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">
+                                                                {new Date(lic.expiryDate).toLocaleDateString()}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </Card>
                         </motion.div>

@@ -485,7 +485,7 @@ export class EmailInfoService {
   <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #f1f5f9;">
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
       <tr>
-        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Name</td>
+        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Device Configuration</td>
         <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Type</td>
         <td width="34%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Serial Number</td>
       </tr>
