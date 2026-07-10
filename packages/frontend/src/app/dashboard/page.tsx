@@ -362,7 +362,7 @@ const DashboardPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     {/* License Expiration Tracker */}
                     {widgetSettings['license_expiry_tracker']?.isVisible !== false && (
-                        <motion.div variants={itemVariants} className="lg:col-span-8">
+                        <motion.div variants={itemVariants} className="lg:col-span-4">
                             <Card className="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="text-[11px] font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -433,7 +433,7 @@ const DashboardPage: React.FC = () => {
 
                     {/* Procurement Widget */}
                     {widgetSettings['procurement_pulse']?.isVisible !== false && (
-                        <motion.div variants={itemVariants} className="lg:col-span-4 h-full">
+                        <motion.div variants={itemVariants} className="lg:col-span-8 h-full">
                             <ProcurementWidget stats={stats as any} />
                         </motion.div>
                     )}
