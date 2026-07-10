@@ -864,7 +864,7 @@ const TicketsPage: React.FC = () => {
                                     </div>
 
                                     {/* Classification Section */}
-                                    <div className="md:col-span-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+                                    <div className="md:col-span-2 border-t border-slate-200 dark:border-slate-800 pt-4">
                                         <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Classification & Priority</h4>
                                     </div>
 

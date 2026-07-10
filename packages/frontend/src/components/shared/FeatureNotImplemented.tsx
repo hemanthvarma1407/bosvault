@@ -29,7 +29,7 @@ export const FeatureNotImplemented: React.FC<FeatureNotImplementedProps> = ({
                     : 'bg-blue-400/20'}`}></div>
                 <div className={`relative w-24 h-24 rounded-3xl flex items-center justify-center border shadow-2xl ${isDarkMode
                     ? 'bg-slate-900 border-slate-800'
-                    : 'bg-white border-slate-100'}`}>
+                    : 'bg-white border-slate-200'}`}>
                     <Construction className={`w-12 h-12 ${isDarkMode ? 'text-blue-500' : 'text-blue-600'} animate-bounce-slow`} />
                     <div className="absolute -top-2 -right-2">
                         <Sparkles className="h-6 w-6 text-cyan-400 animate-pulse" />

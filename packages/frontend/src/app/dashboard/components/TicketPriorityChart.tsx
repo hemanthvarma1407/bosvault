@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 const COLORS = {
@@ -12,6 +13,11 @@ interface TicketPriorityChartProps {
 }
 
 export default function TicketPriorityChart({ data }: TicketPriorityChartProps) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     // Ensure we always have 4 levels for visual consistency
     const levels = ['low', 'medium', 'high', 'critical'];
     const chartData = levels.map(level => {
@@ -22,6 +28,7 @@ export default function TicketPriorityChart({ data }: TicketPriorityChartProps) 
         };
     });
 
+    if (!mounted) return <div className="h-[300px] w-full bg-slate-50/50 dark:bg-slate-900/10 rounded-xl animate-pulse" />;
     if (!chartData || chartData.length === 0) return <div className="h-full w-full flex items-center justify-center text-xs text-slate-400">No data</div>;
 
     return (

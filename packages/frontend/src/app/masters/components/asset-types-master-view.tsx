@@ -238,7 +238,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
             >
                 {selectedAssetType && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
                                 <Monitor className="h-8 w-8" />
                             </div>
@@ -248,7 +248,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Description</label>
-                                <p className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
+                                <p className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
                                     {selectedAssetType.description || 'No description provided for this asset type.'}
                                 </p>
                             </div>
@@ -269,7 +269,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>

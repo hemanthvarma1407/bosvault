@@ -257,11 +257,11 @@ const ReportsPage: React.FC = () => {
                                                         </thead>
                                                         <tbody>
                                                             {reportData.slice(0, 500).map((row: any, idx: number) => (
-                                                                <tr key={idx} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 transition-colors group border-b border-slate-50 dark:border-white/[0.02] last:border-0">
+                                                                <tr key={idx} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-500/5 transition-colors group border-b border-slate-200 dark:border-white/[0.02] last:border-0">
                                                                     {Object.values(row).map((cell: any, cellIdx: number) => (
                                                                         <td
                                                                             key={cellIdx}
-                                                                            className={`px-6 py-4 text-[10px] font-bold text-slate-600 dark:text-slate-400 min-w-[150px] max-w-[400px] break-words group-hover:text-indigo-600 transition-colors leading-normal uppercase border-r border-slate-100 dark:border-white/5 ${cellIdx === Object.values(row).length - 1 ? 'border-r-0' : ''}`}
+                                                                            className={`px-6 py-4 text-[10px] font-bold text-slate-600 dark:text-slate-400 min-w-[150px] max-w-[400px] break-words group-hover:text-indigo-600 transition-colors leading-normal uppercase border-r border-slate-200 dark:border-white/5 ${cellIdx === Object.values(row).length - 1 ? 'border-r-0' : ''}`}
                                                                         >
                                                                             {cell === null || cell === undefined ? <span className="opacity-20">---</span> : String(cell)}
                                                                         </td>
@@ -356,7 +356,7 @@ const ReportsPage: React.FC = () => {
                                                             <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform shadow-sm">
                                                                 <ReportIcon className="h-3.5 w-3.5" />
                                                             </div>
-                                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-white/5 px-1.5 py-0.5 rounded-md border border-slate-100 dark:border-white/5">
+                                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-white/5 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-white/5">
                                                                 {report.stats}
                                                             </span>
                                                         </div>

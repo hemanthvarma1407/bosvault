@@ -240,6 +240,9 @@ export class SendAssetAssignedEmailModel {
     remarks?: string;
     assignedToName?: string;
     recipientRole?: 'ASSIGNEE' | 'MANAGER' | 'ADMIN';
+    assetType: string;
+    serialNumber: string;
+    specification: string;
 
     constructor(
         recipientEmail: string,
@@ -247,6 +250,9 @@ export class SendAssetAssignedEmailModel {
         assetName: string,
         assignedBy: string,
         assignedDate: Date,
+        assetType: string,
+        serialNumber: string,
+        specification: string,
         isReassignment = false,
         remarks?: string,
         assignedToName?: string,
@@ -261,6 +267,9 @@ export class SendAssetAssignedEmailModel {
         this.remarks = remarks;
         this.assignedToName = assignedToName;
         this.recipientRole = recipientRole;
+        this.assetType = assetType;
+        this.serialNumber = serialNumber;
+        this.specification = specification;
     }
 }
 

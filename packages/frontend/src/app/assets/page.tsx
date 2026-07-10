@@ -509,11 +509,11 @@ const AssetsPage: React.FC = () => {
                         size="md"
                     >
                         <div className="space-y-4 p-2">
-                            <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                            <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800">
                                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 italic">Technical Specifications</h4>
                                 <div className="space-y-3">
                                     {selectedAsset?.configuration ? (
-                                        <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap bg-white dark:bg-black/20 p-3 rounded-lg border border-slate-100 dark:border-white/5">
+                                        <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap bg-white dark:bg-black/20 p-3 rounded-lg border border-slate-200 dark:border-white/5">
                                             {selectedAsset.configuration}
                                         </pre>
                                     ) : (

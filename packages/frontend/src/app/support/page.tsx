@@ -328,7 +328,7 @@ const SupportChatPage: React.FC = () => {
                                                                     rel="noopener noreferrer"
                                                                     className="flex items-center gap-3 p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/10 transition-all cursor-pointer group/file"
                                                                 >
-                                                                    <div className="w-10 h-10 rounded border border-slate-100 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-blue-500">
+                                                                    <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-blue-500">
                                                                         <FileText size={20} />
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
@@ -428,7 +428,7 @@ const SupportChatPage: React.FC = () => {
                             </div>
                         </section>
 
-                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <section className="pt-6 border-t border-slate-200 dark:border-slate-800">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Time & Effort</h3>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-2">
@@ -442,7 +442,7 @@ const SupportChatPage: React.FC = () => {
                             </div>
                         </section>
 
-                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <section className="pt-6 border-t border-slate-200 dark:border-slate-800">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">People</h3>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-2">
@@ -466,7 +466,7 @@ const SupportChatPage: React.FC = () => {
                             </div>
                         </section>
 
-                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <section className="pt-6 border-t border-slate-200 dark:border-slate-800">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Dates</h3>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-2">
@@ -476,7 +476,7 @@ const SupportChatPage: React.FC = () => {
                             </div>
                         </section>
 
-                        <section className="pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <section className="pt-6 border-t border-slate-200 dark:border-slate-800">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attachments</h3>
                                 {!isClosed && (
@@ -503,7 +503,7 @@ const SupportChatPage: React.FC = () => {
                                                 href={attachmentUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-2 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                                                className="flex items-center gap-2 p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                                             >
                                                 <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 flex-shrink-0">
                                                     {file.type?.startsWith('image/') ? (
@@ -528,7 +528,7 @@ const SupportChatPage: React.FC = () => {
                         </section>
                     </div>
 
-                    <div className="mt-auto p-5 border-t border-slate-100 dark:border-slate-800">
+                    <div className="mt-auto p-5 border-t border-slate-200 dark:border-slate-800">
                         <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg">
                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">Diagnostic Context</p>
                             <p className="text-[10px] leading-tight text-slate-500 italic">

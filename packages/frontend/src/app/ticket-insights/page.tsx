@@ -433,7 +433,7 @@ export default function TicketInsightsPage() {
 
                 {/* Third Row: Technician Performance Leaderboard */}
                 <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
                             <Award className="h-5 w-5 text-indigo-500" />
                             IT Support Technicians Performance

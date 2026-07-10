@@ -221,7 +221,7 @@ export const CompaniesMasterView: React.FC<CompaniesMasterViewProps> = ({ onBack
             >
                 {selectedCompany && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
                                 <Building2 className="h-8 w-8" />
                             </div>
@@ -252,7 +252,7 @@ export const CompaniesMasterView: React.FC<CompaniesMasterViewProps> = ({ onBack
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>

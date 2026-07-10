@@ -1,23 +1,15 @@
 'use client';
 
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 
-const COLORS = {
-    emerald: '#10B981',
-    teal: '#14B8A6',
-    cyan: '#06B6D4',
-    sky: '#0EA5E9',
-    blue: '#3B82F6',
-    violet: '#8B5CF6',
-    amber: '#F59E0B',
-    rose: '#F43F5E',
-    fuchsia: '#D946EF',
-    orange: '#F97316',
-};
-
-const CHART_COLORS = [
-    COLORS.emerald, COLORS.violet, COLORS.amber, COLORS.rose,
-    COLORS.cyan, COLORS.fuchsia, COLORS.orange, COLORS.blue
+const COLORS = [
+    { bg: 'bg-emerald-500', text: 'text-emerald-500', bar: 'bg-emerald-500', shadow: 'shadow-emerald-500/20' },
+    { bg: 'bg-blue-500', text: 'text-blue-500', bar: 'bg-blue-500', shadow: 'shadow-blue-500/20' },
+    { bg: 'bg-amber-500', text: 'text-amber-500', bar: 'bg-amber-500', shadow: 'shadow-amber-500/20' },
+    { bg: 'bg-rose-500', text: 'text-rose-500', bar: 'bg-rose-500', shadow: 'shadow-rose-500/20' },
+    { bg: 'bg-violet-500', text: 'text-violet-500', bar: 'bg-violet-500', shadow: 'shadow-violet-500/20' },
+    { bg: 'bg-cyan-500', text: 'text-cyan-500', bar: 'bg-cyan-500', shadow: 'shadow-cyan-500/20' },
 ];
 
 interface AssetDistributionChartProps {
@@ -25,76 +17,58 @@ interface AssetDistributionChartProps {
 }
 
 export const AssetDistributionChart: React.FC<AssetDistributionChartProps> = ({ data }) => {
-    // If data is empty or invalid, show empty state or return null
     if (!data || data.length === 0) return <div className="h-full w-full flex items-center justify-center text-xs text-slate-400">No data</div>;
 
     const totalAssets = data.reduce((sum, entry) => sum + entry.value, 0);
+    const sortedData = useMemo(() => [...data].sort((a, b) => b.value - a.value), [data]);
 
     return (
-        <ResponsiveContainer minWidth={0} width="100%" height="100%" minHeight={220}>
-            <PieChart>
-                <Pie
-                    data={data}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={95}
-                    paddingAngle={5}
-                    dataKey="value"
-                    stroke="none"
-                    animationDuration={1500}
-                >
-                    {data.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={CHART_COLORS[index % CHART_COLORS.length]}
-                        />
+        <div className="w-full h-full flex flex-col pt-2">
+            <div className="flex items-center justify-between mb-4 px-2">
+                <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Assets</p>
+                    <p className="text-2xl font-black text-slate-900 dark:text-white tabular-nums tracking-tighter leading-none">
+                        {totalAssets}
+                    </p>
+                </div>
+                <div className="flex -space-x-2">
+                    {sortedData.slice(0, 3).map((item, idx) => (
+                        <div key={idx} className={`w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 ${COLORS[idx % COLORS.length].bg} flex items-center justify-center text-[10px] font-black text-white shadow-lg z-${30 - idx * 10}`} title={item.name}>
+                            {Math.round((item.value / totalAssets) * 100)}%
+                        </div>
                     ))}
-                </Pie>
-                {/* Center Text */}
-                <text
-                    x="50%"
-                    y="50%"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="fill-slate-900 dark:fill-white font-black text-xl"
-                >
-                    {totalAssets}
-                </text>
-                <text
-                    x="50%"
-                    y="62%"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="fill-slate-400 font-bold text-[8px] uppercase tracking-widest"
-                >
-                    Total Assets
-                </text>
-                <Tooltip
-                    contentStyle={{
-                        backgroundColor: '#0f172a',
-                        border: '1px solid #1e293b',
-                        borderRadius: '12px',
-                        padding: '8px 12px',
-                        fontSize: '11px',
-                        color: '#fff',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)'
-                    }}
-                />
-                <Legend
-                    verticalAlign="bottom"
-                    align="center"
-                    iconType="circle"
-                    iconSize={8}
-                    wrapperStyle={{
-                        fontSize: '10px',
-                        fontWeight: '700',
-                        paddingTop: '20px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                    }}
-                />
-            </PieChart>
-        </ResponsiveContainer>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                {sortedData.map((item, index) => {
+                    const percentage = totalAssets > 0 ? (item.value / totalAssets) * 100 : 0;
+                    const colorSet = COLORS[index % COLORS.length];
+
+                    return (
+                        <div key={item.name} className="group relative">
+                            <div className="flex items-center justify-between mb-1.5">
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${colorSet.bg} shadow-sm ${colorSet.shadow}`} />
+                                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{item.name}</span>
+                                </div>
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-[11px] font-black text-slate-900 dark:text-white tabular-nums">{item.value}</span>
+                                    <span className="text-[9px] font-bold text-slate-400 tabular-nums w-8 text-right">{percentage.toFixed(0)}%</span>
+                                </div>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${percentage}%` }}
+                                    transition={{ duration: 1, ease: "easeOut", delay: index * 0.1 }}
+                                    className={`h-full rounded-full ${colorSet.bg} shadow-sm`}
+                                />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
     );
 }

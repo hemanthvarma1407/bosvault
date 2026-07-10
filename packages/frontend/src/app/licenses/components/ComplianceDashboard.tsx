@@ -112,17 +112,17 @@ export default function ComplianceDashboard({ data }: ComplianceDashboardProps) 
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-100 dark:border-white/5">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-white/5">
                                     <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Purchased</p>
                                     <p className="text-xl font-black text-slate-900 dark:text-white">{item.purchased}</p>
                                 </div>
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-100 dark:border-white/5">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-200 dark:border-white/5">
                                     <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Assigned</p>
                                     <p className="text-xl font-black text-slate-900 dark:text-white">{item.assigned}</p>
                                 </div>
                             </div>
 
-                            <div className="mt-4 pt-4 border-t border-slate-50 dark:border-white/5">
+                            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/5">
                                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
                                     <div
                                         className={`h-1.5 rounded-full ${item.assigned > item.purchased ? 'bg-rose-500' : 'bg-indigo-500'}`}

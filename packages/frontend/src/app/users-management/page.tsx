@@ -383,7 +383,7 @@ export default function UsersManagementPage() {
                 />
 
                 {/* Tabs */}
-                <div className="bg-white dark:bg-slate-900 p-1.5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex gap-1.5 w-fit">
+                <div className="bg-white dark:bg-slate-900 p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex gap-1.5 w-fit">
                     {TABS.map(tab => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
@@ -404,13 +404,13 @@ export default function UsersManagementPage() {
                 </div>
 
                 {/* Content */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
 
                     {/* ── Create Login User Tab ── */}
                     {activeTab === 'create-user' && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                             {/* Toolbar */}
-                            <div className="flex items-center gap-3 p-4 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-800">
                                 <div className="relative flex-1 max-w-xs">
                                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                     <input
@@ -437,35 +437,35 @@ export default function UsersManagementPage() {
                                     <p className="text-xs text-slate-400 mt-1">Click "Add User" to create the first login user</p>
                                 </div>
                             ) : (
-                                <table className="w-full text-center border-collapse border border-slate-100 dark:border-slate-800">
-                                    <thead className="bg-slate-50 dark:bg-slate-800/70 border-b border-slate-100 dark:border-slate-700">
+                                <table className="w-full text-center border-collapse border border-slate-200 dark:border-slate-800">
+                                    <thead className="bg-slate-50 dark:bg-slate-800/70 border-b border-slate-200 dark:border-slate-700">
                                         <tr>
-                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800">User</th>
-                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800 hidden md:table-cell">Email</th>
-                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800">Role</th>
-                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800 hidden sm:table-cell">Status</th>
-                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800 hidden lg:table-cell">Created</th>
+                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800">User</th>
+                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800 hidden md:table-cell">Email</th>
+                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800">Role</th>
+                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800 hidden sm:table-cell">Status</th>
+                                            <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800 hidden lg:table-cell">Created</th>
                                             <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                                         {filteredUsers.map(u => (
-                                            <tr key={u.id} className="group hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-50 dark:border-slate-800">
-                                                <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800">
+                                            <tr key={u.id} className="group hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-200 dark:border-slate-800">
+                                                <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800">
                                                     <span className="text-xs font-semibold text-slate-800 dark:text-white">{u.fullName}</span>
                                                 </td>
-                                                <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800 hidden md:table-cell">
+                                                <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800 hidden md:table-cell">
                                                     <div className="flex items-center justify-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                                                         <Mail className="h-3 w-3 opacity-60" />
                                                         {u.email}
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800">
+                                                <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${getRoleBadge(u.userRole)}`}>
                                                         {u.userRole?.replace(/_/g, ' ')}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800 hidden sm:table-cell">
+                                                <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800 hidden sm:table-cell">
                                                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${u.status
                                                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
                                                         : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400'
@@ -474,7 +474,7 @@ export default function UsersManagementPage() {
                                                         {u.status ? 'Active' : 'Inactive'}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800 hidden lg:table-cell text-xs text-slate-400">
+                                                <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800 hidden lg:table-cell text-xs text-slate-400">
                                                     {formatDate(u.createdAt)}
                                                 </td>
                                                 <td className="px-4 py-2.5">
@@ -510,7 +510,7 @@ export default function UsersManagementPage() {
                     {activeTab === 'access-requests' && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                             {/* Toolbar */}
-                            <div className="flex items-center gap-3 p-4 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center gap-3 p-4 border-b border-slate-200 dark:border-slate-800">
                                 <div className="relative flex-1 max-w-xs">
                                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                                     <input
@@ -546,26 +546,26 @@ export default function UsersManagementPage() {
                                 </div>
                             ) : (
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-center border-collapse border border-slate-100 dark:border-slate-800">
-                                        <thead className="bg-slate-50 dark:bg-slate-800/70 border-b border-slate-100 dark:border-slate-700">
+                                    <table className="w-full text-center border-collapse border border-slate-200 dark:border-slate-800">
+                                        <thead className="bg-slate-50 dark:bg-slate-800/70 border-b border-slate-200 dark:border-slate-700">
                                             <tr>
-                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800">Name</th>
-                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800 hidden md:table-cell">Email</th>
-                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800">Status</th>
-                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-100 dark:border-slate-800 hidden lg:table-cell">Requested On</th>
+                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800">Name</th>
+                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800 hidden md:table-cell">Email</th>
+                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800">Status</th>
+                                                <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider border-r border-slate-200 dark:border-slate-800 hidden lg:table-cell">Requested On</th>
                                                 <th className="px-4 py-2.5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                                             {filteredRequests.map(r => (
-                                                <tr key={r.id} className="group hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-50 dark:border-slate-800">
-                                                    <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800">
+                                                <tr key={r.id} className="group hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-200 dark:border-slate-800">
+                                                    <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800">
                                                         <span className="text-xs font-semibold text-slate-800 dark:text-white">{r.name}</span>
                                                     </td>
-                                                    <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800 hidden md:table-cell">
+                                                    <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800 hidden md:table-cell">
                                                         <span className="text-xs text-slate-500 dark:text-slate-400">{r.email}</span>
                                                     </td>
-                                                    <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800">
+                                                    <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800">
                                                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${r.status?.toUpperCase() === 'COMPLETED'
                                                             ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400'
                                                             : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400'
@@ -573,7 +573,7 @@ export default function UsersManagementPage() {
                                                             {r.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-2.5 border-r border-slate-50 dark:border-slate-800 hidden lg:table-cell text-xs text-slate-400">
+                                                    <td className="px-4 py-2.5 border-r border-slate-200 dark:border-slate-800 hidden lg:table-cell text-xs text-slate-400">
                                                         {formatDate(r.createdAt)}
                                                     </td>
                                                     <td className="px-4 py-2.5">
@@ -614,7 +614,7 @@ export default function UsersManagementPage() {
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 
                                 {/* Card 1: Trigger Reset Link */}
-                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 rounded-xl">
                                             <Send className="h-5 w-5" />
@@ -657,7 +657,7 @@ export default function UsersManagementPage() {
                                 </div>
 
                                 {/* Card 2: Force Reset Password */}
-                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+                                <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-xl">
                                             <Key className="h-5 w-5" />
@@ -803,7 +803,7 @@ export default function UsersManagementPage() {
                             options={ROLE_OPTIONS}
                             disabled={submitting}
                         />
-                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <Button variant="outline" type="button" onClick={handleCloseModal} disabled={submitting}>
                                 Cancel
                             </Button>

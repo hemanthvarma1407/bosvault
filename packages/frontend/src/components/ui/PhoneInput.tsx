@@ -242,7 +242,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         {isDropdownOpen && (
                             <div className="absolute top-full left-0 mt-2 w-[280px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                 {/* Search Input */}
-                                <div className="p-3 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                                <div className="p-3 border-b border-slate-200 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
                                     <div className="relative">
                                         <input
                                             autoFocus

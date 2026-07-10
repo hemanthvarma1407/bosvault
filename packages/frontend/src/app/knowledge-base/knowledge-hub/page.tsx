@@ -81,7 +81,7 @@ export default function KnowledgeHubPage() {
                     <h3 className={`text-sm font-black uppercase tracking-[0.2em] mb-4 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Categories</h3>
                     <div className="space-y-2">
                         {categories.map((cat, i) => (
-                            <button key={i} className={`w-full flex items-center justify-between p-4 rounded-3xl transition-all border ${isDarkMode ? 'bg-slate-900/50 border-slate-800 hover:bg-slate-800 hover:border-slate-700' : 'bg-white border-slate-100 hover:border-indigo-200 hover:shadow-lg shadow-indigo-500/5'}`}>
+                            <button key={i} className={`w-full flex items-center justify-between p-4 rounded-3xl transition-all border ${isDarkMode ? 'bg-slate-900/50 border-slate-800 hover:bg-slate-800 hover:border-slate-700' : 'bg-white border-slate-200 hover:border-indigo-200 hover:shadow-lg shadow-indigo-500/5'}`}>
                                 <div className="flex items-center gap-4">
                                     <div className={`p-2 rounded-xl bg-${cat.color}-500/10 text-${cat.color}-500`}>
                                         <cat.icon className="h-4 w-4" />
@@ -100,7 +100,7 @@ export default function KnowledgeHubPage() {
                     </Button>
 
                     {/* Contributors Highlight */}
-                    <div className={`p-6 rounded-[2.5rem] border ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
+                    <div className={`p-6 rounded-[2.5rem] border ${isDarkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
                         <h4 className={`text-xs font-black uppercase tracking-widest mb-4 ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>Top Contributors</h4>
                         <div className="flex -space-x-3 mb-4">
                             {[1, 2, 3, 4, 5].map(i => (
@@ -138,7 +138,7 @@ export default function KnowledgeHubPage() {
                         {popularArticles.map((article) => (
                             <div key={article.id} className={`group p-6 rounded-[2.5rem] border transition-all hover:scale-[1.02] ${isDarkMode
                                 ? 'bg-slate-900/50 border-slate-800 hover:bg-slate-900 hover:border-indigo-500/30'
-                                : 'bg-white border-slate-100 hover:shadow-2xl shadow-indigo-500/5'}`}>
+                                : 'bg-white border-slate-200 hover:shadow-2xl shadow-indigo-500/5'}`}>
                                 <div className="space-y-4">
                                     <div className="flex items-start justify-between">
                                         <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>

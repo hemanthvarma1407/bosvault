@@ -75,7 +75,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                                 key={widget.id}
                                 className={`flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 ${isVisible
                                     ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
-                                    : 'bg-slate-50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-800/50 opacity-60'
+                                    : 'bg-slate-50 dark:bg-slate-800/20 border-slate-200 dark:border-slate-800/50 opacity-60'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                     })}
                 </div>
 
-                <div className="pt-4 flex justify-end gap-3 border-t border-slate-50 dark:border-slate-800">
+                <div className="pt-4 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-800">
                     <Button variant="ghost" onClick={onClose} className="text-xs font-black uppercase tracking-widest">Done</Button>
                 </div>
             </div>

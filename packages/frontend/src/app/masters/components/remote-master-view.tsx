@@ -269,7 +269,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
             >
                 {selectedTool && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
                                 <Globe className="h-8 w-8" />
                             </div>
@@ -287,14 +287,14 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-2 text-slate-400">
                                         <TrendingUp className="h-4 w-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">User ID</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{(selectedTool as any).userName || 'N/A'}</p>
                                 </div>
-                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-2 text-slate-400">
                                         <Shield className="h-4 w-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Password</span>
@@ -305,7 +305,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Access Notes</label>
-                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed">
                                     {selectedTool.notes || 'No security notes or additional details provided for this remote access record.'}
                                 </div>
                             </div>
@@ -320,7 +320,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>

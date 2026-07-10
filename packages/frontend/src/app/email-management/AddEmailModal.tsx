@@ -289,7 +289,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                 )}
 
 
-                <div className="space-y-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="space-y-6 pt-4 border-t border-slate-200 dark:border-slate-800">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Select
                             label={isGroup ? 'Owner / Primary Contact' : 'Employee Name'}
@@ -335,7 +335,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                     {!isGroup && <p className="text-[11px] font-medium text-slate-400 px-1">Assign an employee to this email address for tracking and responsibility.</p>}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
                     <Button variant="outline" type="button" onClick={onClose} className="rounded-xl px-8">Cancel</Button>
                     <Button variant="primary" type="submit" className="rounded-xl px-12 font-black">
                         {editData ? 'Save Changes' : 'Allocate Email'}

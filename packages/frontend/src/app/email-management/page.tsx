@@ -50,7 +50,7 @@ const DeptConfig: Record<string, { icon: any, color: string, bg: string, border:
     [DepartmentEnum.MARKETING]: { icon: Megaphone, color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/40', border: 'border-amber-100 dark:border-amber-900/30', label: 'Marketing & Sales' },
     [DepartmentEnum.SALES]: { icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/40', border: 'border-violet-100 dark:border-violet-900/30', label: 'Sales & Partnerships' },
     [DepartmentEnum.OPERATIONS]: { icon: ShieldCheck, color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-950/40', border: 'border-cyan-100 dark:border-cyan-900/30', label: 'Operations & Logistics' },
-    'Unassigned': { icon: Globe, color: 'text-slate-600', bg: 'bg-slate-50 dark:bg-slate-950/40', border: 'border-slate-100 dark:border-slate-900/30', label: 'General' },
+    'Unassigned': { icon: Globe, color: 'text-slate-600', bg: 'bg-slate-50 dark:bg-slate-950/40', border: 'border-slate-200 dark:border-slate-900/30', label: 'General' },
     'Default': { icon: Building2, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-950/40', border: 'border-indigo-100 dark:border-indigo-900/30', label: 'Department' },
 };
 
@@ -77,7 +77,7 @@ const EmailRow: React.FC<{
 
     return (
         <>
-            <tr className={`group/row border-b last:border-0 border-slate-50 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
+            <tr className={`group/row border-b last:border-0 border-slate-200 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
                 <td className="p-4 border border-slate-200 dark:border-white/10">
                     <div className="flex items-center justify-center gap-2">
                         {(isCompany || isGroup) && acc.name && (
@@ -160,7 +160,7 @@ const EmailRow: React.FC<{
                             >
                                 <div className="p-4 pl-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                     {memberNames.map((name, i) => (
-                                        <div key={i} className="flex items-center gap-2 p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-white/5">
+                                        <div key={i} className="flex items-center gap-2 p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/5">
                                             <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-[10px] font-bold text-indigo-600">
                                                 {name.charAt(0)}
                                             </div>
@@ -515,7 +515,7 @@ const InfoEmailsPage: React.FC = () => {
                                         </button>
 
                                         {isExpanded && (
-                                            <div className="border-t border-slate-50 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
+                                            <div className="border-t border-slate-200 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
                                                 {emails.length === 0 ? (
                                                     <div className="p-8 text-center text-slate-400 opacity-50">
                                                         <p className="text-[10px] font-black uppercase tracking-widest">No records found for this department</p>

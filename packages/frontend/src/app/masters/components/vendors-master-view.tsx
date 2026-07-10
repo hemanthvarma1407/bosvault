@@ -252,7 +252,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
             >
                 {selectedVendor && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm transition-transform hover:scale-105">
                                 <Store className="h-8 w-8" />
                             </div>
@@ -270,14 +270,14 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-indigo-200 transition-colors group">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 hover:border-indigo-200 transition-colors group">
                                     <div className="flex items-center gap-2 mb-1">
                                         <User className="h-3.5 w-3.5 text-blue-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Contact Person</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{selectedVendor.contactPerson || 'Not provided'}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Tag className="h-3.5 w-3.5 text-emerald-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Business Type</span>
@@ -287,14 +287,14 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Mail className="h-3.5 w-3.5 text-amber-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Email Address</span>
                                     </div>
                                     <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate" title={selectedVendor.email}>{selectedVendor.email || 'None'}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Phone className="h-3.5 w-3.5 text-purple-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Primary Phone</span>
@@ -303,7 +303,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                                 </div>
                             </div>
 
-                            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                 <div className="flex items-center gap-2 mb-1">
                                     <MapPin className="h-3.5 w-3.5 text-red-500" />
                                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Registered Address</span>
@@ -315,7 +315,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Vendor Overview</label>
-                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed">
                                     {selectedVendor.description || 'No additional business description or partnership notes provided.'}
                                 </div>
                             </div>
@@ -330,7 +330,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>

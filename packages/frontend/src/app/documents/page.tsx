@@ -352,7 +352,7 @@ const DocumentsPage: React.FC = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-slate-50/50 dark:bg-slate-950/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                                    <tr className="bg-slate-50/50 dark:bg-slate-950/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
                                         <th className="pl-8 pr-4 py-4">Document Asset</th>
                                         <th className="px-4 py-4">Category</th>
                                         <th className="px-4 py-4">Storage Details</th>
@@ -364,7 +364,7 @@ const DocumentsPage: React.FC = () => {
                                         <tr key={doc.id} className="group hover:bg-indigo-50/20 dark:hover:bg-indigo-900/10 transition-colors">
                                             <td className="pl-8 pr-4 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-lg bg-white dark:bg-slate-950 flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                                    <div className="w-9 h-9 rounded-lg bg-white dark:bg-slate-950 flex items-center justify-center border border-slate-200 dark:border-slate-800 shadow-sm group-hover:scale-110 transition-transform duration-300">
                                                         {getFileIcon(doc.mimeType)}
                                                     </div>
                                                     <div className="min-w-0">
@@ -493,7 +493,7 @@ const DocumentsPage: React.FC = () => {
                             />
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <Button
                                 variant="outline"
                                 onClick={() => {
@@ -554,7 +554,7 @@ const DocumentsPage: React.FC = () => {
                             />
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <Button
                                 variant="outline"
                                 onClick={() => {

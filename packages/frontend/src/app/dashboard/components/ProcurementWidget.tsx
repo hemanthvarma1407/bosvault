@@ -36,14 +36,14 @@ export const ProcurementWidget: React.FC<ProcurementWidgetProps> = ({ stats }) =
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
                     <div className="flex items-center gap-2 mb-1">
                         <DollarSign className="h-3 w-3 text-emerald-500" />
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Spend</span>
                     </div>
                     <p className="text-lg font-black text-slate-900 dark:text-white">${formatNumber(procurement.totalSpend)}</p>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
                     <div className="flex items-center gap-2 mb-1">
                         <Package className="h-3 w-3 text-indigo-500" />
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Orders</span>
@@ -85,7 +85,7 @@ export const ProcurementWidget: React.FC<ProcurementWidgetProps> = ({ stats }) =
                 )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-[10px] text-slate-600 dark:text-slate-400 font-medium">
                     <TrendingUp className="h-3 w-3 text-emerald-500" />
                     <span>Real-time procurement tracking active</span>

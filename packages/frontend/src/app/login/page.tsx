@@ -200,7 +200,7 @@ const LoginPage: React.FC = () => {
                                 .map((feat, i) => (
                                     <div key={i} className={`group relative overflow-hidden rounded-xl p-3.5 transition-all hover:scale-105 border h-full flex flex-col justify-center ${isDarkMode
                                         ? feat.darkContainer
-                                        : `bg-white border-slate-100 shadow-sm hover:shadow-md ${feat.lightContainerBorder}`
+                                        : `bg-white border-slate-200 shadow-sm hover:shadow-md ${feat.lightContainerBorder}`
                                         }`}>
                                         <div className={`absolute inset-0 transition-all bg-gradient-to-br ${isDarkMode
                                             ? feat.hoverGradient
@@ -329,7 +329,7 @@ const LoginPage: React.FC = () => {
 
                                     <div className="relative py-0.5">
                                         <div className="absolute inset-0 flex items-center">
-                                            <div className={`w-full border-t ${isDarkMode ? 'border-slate-800' : 'border-slate-100'}`}></div>
+                                            <div className={`w-full border-t ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}></div>
                                         </div>
                                         <div className="relative flex justify-center text-[8px] font-black uppercase tracking-widest">
                                             <span className={`px-2 backdrop-blur-xl ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>Or continue with</span>
@@ -343,7 +343,7 @@ const LoginPage: React.FC = () => {
                                         disabled={isLoading || isGoogleLoading}
                                         className={`w-full py-2 flex items-center justify-center gap-2 rounded-lg border text-[10px] font-bold transition-all duration-300 ${isDarkMode
                                             ? 'bg-white/5 border-white/5 text-white hover:bg-white/10'
-                                            : 'bg-white border-slate-100 text-slate-700 hover:bg-slate-50 shadow-sm'
+                                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
                                             }`}
                                     >
                                         {isGoogleLoading ? (

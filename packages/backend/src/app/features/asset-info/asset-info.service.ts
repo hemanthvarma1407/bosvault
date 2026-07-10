@@ -309,17 +309,30 @@ export class AssetInfoService {
                     const assignedDate = reqModel.assignedDate ? new Date(reqModel.assignedDate) : new Date();
                     const assetName = `${asset.model} (SN: ${asset.serialNumber})`; // Basic asset name construction
                     const assignedByName = assigner.fullName;
+
+                    const assetDetailsQuery = await this.dataSource.query(
+                        `SELECT d.name as "assetType", 
+                                COALESCE(NULLIF(a.configuration, ''), c.configuration) as "specification"
+                         FROM asset_info a
+                         LEFT JOIN asset_types d ON a.device_id = d.id
+                         LEFT JOIN device_configs c ON a.device_config_id = c.id
+                         WHERE a.id = $1`, [assetId]
+                    );
+                    const assetType = assetDetailsQuery[0]?.assetType || 'Unknown Type';
+                    const specification = assetDetailsQuery[0]?.specification || 'N/A';
+                    const serialNumber = asset.serialNumber;
+
                     // 1. Send to Assignee (User)
-                    await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(employee.email, employee.firstName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ASSIGNEE'));
+                    await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(employee.email, employee.firstName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ASSIGNEE'));
                     // 2. Send to Assigner (if different from assignee)
                     if (assigner.email !== employee.email) {
-                        await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(assigner.email, assigner.fullName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
+                        await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(assigner.email, assigner.fullName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                     }
                     // 3. Send to Manager (if exists)
                     if (employee.managerId) {
                         const manager = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employee.managerId } });
                         if (manager && manager.email) {
-                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(manager.email, manager.firstName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'MANAGER'));
+                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(manager.email, manager.firstName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'MANAGER'));
                         }
                     }
 
@@ -329,7 +342,7 @@ export class AssetInfoService {
                         // Avoid sending to self if admin is the assigner (optional, but good practice)
                         // Also avoid sending to assignee if they are an admin (covered above)
                         if (admin.email !== employee.email && admin.email !== assigner.email) {
-                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(admin.email, admin.fullName, assetName, assignedByName, assignedDate, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
+                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(admin.email, admin.fullName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                         }
                     }
                 }

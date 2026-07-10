@@ -240,7 +240,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
             >
                 {selectedLicense && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 border border-amber-100 dark:border-amber-800 shadow-sm">
                                 <Key className="h-8 w-8" />
                             </div>
@@ -255,14 +255,14 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Calendar className="h-3.5 w-3.5 text-blue-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Purchase Date</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{formatDate(selectedLicense.purchaseDate)}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <ShieldCheck className="h-3.5 w-3.5 text-red-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Expiry Date</span>
@@ -288,7 +288,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Description</label>
-                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed">
                                     {selectedLicense.description || 'No additional description provided for this software license.'}
                                 </div>
                             </div>
@@ -303,7 +303,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>

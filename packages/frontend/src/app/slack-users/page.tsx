@@ -285,7 +285,7 @@ const SlackUsersPage: React.FC = () => {
                                         )}
                                     </div>
 
-                                    <div className="mt-auto pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                    <div className="mt-auto pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                         <button
                                             onClick={(e) => handleDeleteClick(e, u.id)}
                                             className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-md transition-all"
@@ -318,7 +318,7 @@ const SlackUsersPage: React.FC = () => {
                 >
                     {selectedUser && (
                         <div className="space-y-6">
-                            <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                                 <div className="relative">
                                     <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
                                         <ImageWithFallback
@@ -328,7 +328,7 @@ const SlackUsersPage: React.FC = () => {
                                             fallback={<User className="h-12 w-12" />}
                                         />
                                     </div>
-                                    <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm z-20">
+                                    <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm z-20">
                                         <Slack className="h-5 w-5 text-[#4A154B]" />
                                     </div>
                                 </div>
@@ -351,14 +351,14 @@ const SlackUsersPage: React.FC = () => {
 
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
                                             <Hash className="h-3.5 w-3.5 text-indigo-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slack ID</span>
                                         </div>
                                         <p className="text-sm font-mono font-bold text-slate-700 dark:text-slate-200">{selectedUser.slackUserId || 'N/A'}</p>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
                                             <Briefcase className="h-3.5 w-3.5 text-amber-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Role</span>
@@ -367,7 +367,7 @@ const SlackUsersPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Mail className="h-3.5 w-3.5 text-blue-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
@@ -376,7 +376,7 @@ const SlackUsersPage: React.FC = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
                                             <MapPin className="h-3.5 w-3.5 text-red-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Company</span>
@@ -386,14 +386,14 @@ const SlackUsersPage: React.FC = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
                                             <Globe className="h-3.5 w-3.5 text-orange-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Timezone</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{(selectedUser as any).timezoneLabel || 'UTC'}</p>
                                     </div>
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
                                             <Activity className="h-3.5 w-3.5 text-cyan-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Team ID</span>

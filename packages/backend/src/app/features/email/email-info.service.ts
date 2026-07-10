@@ -441,7 +441,7 @@ export class EmailInfoService {
   }
   async sendAssetAssignedEmail(reqModel: SendAssetAssignedEmailModel): Promise<boolean> {
     console.log('sendAssetAssignedEmail called with model:', reqModel);
-    const { recipientEmail, recipientName, assetName, assignedBy, assignedDate, isReassignment, remarks, assignedToName, recipientRole } = reqModel;
+    const { recipientEmail, recipientName, assetName, assignedBy, assignedDate, isReassignment, remarks, assignedToName, recipientRole, assetType, serialNumber, specification } = reqModel;
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const emailUser = this.configService.get<string>('EMAIL_USER');
     const emailPass = this.configService.get<string>('EMAIL_PASS');
@@ -483,16 +483,28 @@ export class EmailInfoService {
   ${remarks ? `<div style="padding: 10px; border-left: 4px solid #e5e7eb; background: #f9fafb; margin: 15px 0; font-style: italic; font-size: 13px;">"${remarks}"</div>` : ''}
   
   <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border: 1px solid #f1f5f9;">
-    <table width="100%" cellpadding="0" cellspacing="0">
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
       <tr>
-        <td width="40%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Name</td>
-        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Assigned By</td>
-        <td width="30%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Date</td>
+        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Name</td>
+        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Asset Type</td>
+        <td width="34%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Serial Number</td>
       </tr>
       <tr>
-        <td width="40%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assetName}</td>
-        <td width="30%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assignedBy}</td>
-        <td width="30%" style="font-weight: bold; font-size: 14px; vertical-align: top;">${new Date(assignedDate).toLocaleDateString()}</td>
+        <td width="33%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assetName}</td>
+        <td width="33%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assetType}</td>
+        <td width="34%" style="font-weight: bold; font-size: 14px; vertical-align: top;">${serialNumber}</td>
+      </tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Specification</td>
+        <td width="33%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Assigned By</td>
+        <td width="34%" style="font-size: 11px; color: #64748b; text-transform: uppercase; padding-bottom: 6px;">Date</td>
+      </tr>
+      <tr>
+        <td width="33%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${specification}</td>
+        <td width="33%" style="font-weight: bold; font-size: 14px; vertical-align: top; padding-right: 15px;">${assignedBy}</td>
+        <td width="34%" style="font-weight: bold; font-size: 14px; vertical-align: top;">${new Date(assignedDate).toLocaleDateString()}</td>
       </tr>
     </table>
   </div>

@@ -402,7 +402,7 @@ const KnowledgeBasePage: React.FC = () => {
                 >
                     {selectedArticle && (
                         <div className="p-6 space-y-6">
-                            <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                            <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
                                 <span className="px-2.5 py-1 rounded-md bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300 text-xs font-bold uppercase tracking-wider">
                                     {formatCategory(selectedArticle.category)}
                                 </span>
@@ -420,7 +420,7 @@ const KnowledgeBasePage: React.FC = () => {
                             {selectedArticle.fileUrl && (
                                 <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 shadow-sm">
+                                        <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <FileText className="w-5 h-5 text-cyan-600" />
                                         </div>
                                         <div>
@@ -452,7 +452,7 @@ const KnowledgeBasePage: React.FC = () => {
                             )}
 
                             {selectedArticle.tags && selectedArticle.tags.length > 0 && (
-                                <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                                <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
                                     <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Related Tags</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {selectedArticle.tags.map((tag: string, i: number) => (

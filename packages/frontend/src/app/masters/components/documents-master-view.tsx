@@ -397,7 +397,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <Button
                             variant="outline"
                             onClick={() => {
@@ -455,7 +455,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                         autoFocus
                     />
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <Button
                             variant="outline"
                             onClick={() => {
@@ -522,7 +522,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                             )}
                         </>
                     )}
-                    <div className="flex justify-end gap-3 pt-4 mt-auto border-t border-slate-100 dark:border-slate-700">
+                    <div className="flex justify-end gap-3 pt-4 mt-auto border-t border-slate-200 dark:border-slate-700">
                         <Button
                             variant="outline"
                             onClick={() => setIsPreviewModalOpen(false)}

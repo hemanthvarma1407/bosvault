@@ -213,14 +213,14 @@ export default function ContractsPage() {
 
                                                 <div className="space-y-4 flex-1">
                                                     <div className="grid grid-cols-2 gap-4">
-                                                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 border border-slate-100 dark:border-white/5">
+                                                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 border border-slate-200 dark:border-white/5">
                                                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Value</p>
                                                             <div className="flex items-center gap-1">
                                                                 <span className="text-[10px] font-bold text-indigo-500">{contract.currency}</span>
                                                                 <p className="text-lg font-black text-slate-900 dark:text-white">{Number(contract.totalValue).toLocaleString()}</p>
                                                             </div>
                                                         </div>
-                                                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 border border-slate-100 dark:border-white/5">
+                                                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 border border-slate-200 dark:border-white/5">
                                                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Time Left</p>
                                                             <div className="flex items-center gap-1.5">
                                                                 <Clock className={`w-3.5 h-3.5 ${isExpired ? 'text-rose-500' : isExpiring ? 'text-amber-500' : 'text-emerald-500'}`} />
@@ -476,7 +476,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                     />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-white/5">
+                <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-white/5">
                     <button
                         type="button"
                         onClick={onClose}

@@ -578,7 +578,7 @@ const ProcurementPage: React.FC = () => {
                     >
                         <div className="space-y-6">
                             {/* Summary info */}
-                            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                 <div>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
                                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${getStatusStyle(selectedPO.status)}`}>
@@ -685,7 +685,7 @@ const ProcurementPage: React.FC = () => {
                             </div>
 
                             {/* Invoice Section */}
-                            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
                                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 mb-4">
                                     <FileText size={16} className="text-blue-500" />
                                     Procurement Documents

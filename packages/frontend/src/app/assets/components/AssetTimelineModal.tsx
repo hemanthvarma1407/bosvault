@@ -120,7 +120,7 @@ export const AssetTimelineModal: React.FC<AssetTimelineModalProps> = ({ isOpen, 
                                     </h3>
 
                                     {event.description && (
-                                        <p className="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50 mt-1">
+                                        <p className="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700/50 mt-1">
                                             {event.description}
                                         </p>
                                     )}

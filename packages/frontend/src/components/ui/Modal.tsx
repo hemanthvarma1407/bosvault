@@ -58,7 +58,7 @@ export function Modal({ isOpen, onClose, title, children, className, size = 'md'
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                         {title}
                     </h3>
@@ -77,7 +77,7 @@ export function Modal({ isOpen, onClose, title, children, className, size = 'md'
 
                 {/* Footer */}
                 {footer && (
-                    <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 rounded-b-xl flex justify-end gap-2">
+                    <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 rounded-b-xl flex justify-end gap-2">
                         {footer}
                     </div>
                 )}

@@ -24,16 +24,10 @@ export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({
 
     const [viewType, setViewType] = useState<'card' | 'table'>('table');
 
-    useEffect(() => {
-        const savedView = localStorage.getItem('assetsViewType');
-        if (savedView === 'card' || savedView === 'table') {
-            setViewType(savedView);
-        }
-    }, []);
+
 
     const handleViewTypeChange = (type: 'card' | 'table') => {
         setViewType(type);
-        localStorage.setItem('assetsViewType', type);
     };
 
     console.log(`AllAssetsTab[${status}] received ${assets?.length} assets`);

@@ -16,6 +16,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState<any[]>([]);
     const { user, logout } = useAuth();
+    const { theme, setTheme } = useTheme();
     const [currentTime, setCurrentTime] = useState(new Date());
     const [mounted, setMounted] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -121,7 +122,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                     </svg>
                 </button>
 
-                <div className="hidden md:flex items-center gap-4 px-4 lg:px-6 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md min-w-[200px] lg:min-w-[280px]">
+                <div className="hidden md:flex items-center gap-4 px-4 lg:px-6 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md min-w-[200px] lg:min-w-[280px]">
                     <Globe className="h-4 w-4 text-blue-500 animate-pulse shrink-0" />
                     <div className="flex items-center gap-3 whitespace-nowrap">
                         {mounted ? (
@@ -162,7 +163,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
 
                     {showNotifications && (
                         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl py-2 animate-in fade-in slide-in-from-top-2 duration-200 z-50 overflow-hidden">
-                            <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Stream</h3>
                                 <button onClick={handleFlushAll} className="text-[10px] font-black text-blue-500 hover:text-blue-600">Flush All</button>
                             </div>
@@ -174,7 +175,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                                     </div>
                                 ) : (
                                     notifications.map(notif => (
-                                        <div key={notif.id} onClick={() => handleReadNotification(notif.id)} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors border-b border-slate-50 dark:border-slate-800 last:border-0 cursor-pointer flex justify-between items-start gap-2">
+                                        <div key={notif.id} onClick={() => handleReadNotification(notif.id)} className="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors border-b border-slate-200 dark:border-slate-800 last:border-0 cursor-pointer flex justify-between items-start gap-2">
                                             <div>
                                                 <p className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</p>
                                                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">{notif.message}</p>
@@ -189,29 +190,34 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 </div>
                 */}
 
-                {/* Theme Toggle hidden
+                {/* Theme Toggle */}
                 <button
                     onClick={() => {
-                        const modes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
-                        const nextIndex = (modes.indexOf(theme) + 1) % modes.length;
+                        const modes: ('light' | 'dark')[] = ['light', 'dark'];
+                        // If current theme is 'system', default to 'light' as next, else toggle normally
+                        const currentIndex = modes.indexOf(theme as 'light' | 'dark');
+                        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % modes.length;
                         setTheme(modes[nextIndex]);
                     }}
                     className="p-2 rounded-lg text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2 group relative"
-                    title={`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`}
+                    title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
                 >
-                    {theme === 'light' && <Sun className="h-4 w-4 text-amber-500" />}
-                    {theme === 'dark' && <Moon className="h-4 w-4 text-indigo-400" />}
-                    {theme === 'system' && (
-                        <div className="relative">
-                            <Monitor className="h-4 w-4 text-slate-400" />
-                            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full border border-white dark:border-slate-950 bg-blue-500" />
-                        </div>
+                    {theme === 'light' ? (
+                        <>
+                            <Moon className="h-4 w-4 text-indigo-400" />
+                            <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-500 transition-colors">
+                                Dark
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <Sun className="h-4 w-4 text-amber-500" />
+                            <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-amber-500 transition-colors">
+                                Light
+                            </span>
+                        </>
                     )}
-                    <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-500 transition-colors">
-                        {theme}
-                    </span>
                 </button>
-                */}
 
                 <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-2" />
 

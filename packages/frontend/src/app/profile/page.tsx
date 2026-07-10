@@ -328,7 +328,7 @@ const ProfilePage: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="lg:col-span-2">
                             <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
-                                <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                                <div className="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <User className="w-4 h-4 text-indigo-500" />
                                         <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Account Credentials details</h3>
@@ -411,7 +411,7 @@ const ProfilePage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <hr className="border-slate-100 dark:border-slate-800/80" />
+                                    <hr className="border-slate-200 dark:border-slate-800/80" />
 
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -423,7 +423,7 @@ const ProfilePage: React.FC = () => {
                                     </div>
 
                                     {isEditing && (
-                                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800/80">
                                             <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
                                             <Button size="sm" onClick={handleSaveProfile}>Save Details</Button>
                                         </div>
@@ -460,7 +460,7 @@ const ProfilePage: React.FC = () => {
                                     <Activity className="w-4 h-4 text-indigo-500" />
                                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Active Device Footprint</h3>
                                 </div>
-                                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/20 text-xs">
+                                <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/20 text-xs">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
                                             <Laptop className="h-4 w-4" />
@@ -542,7 +542,7 @@ const ProfilePage: React.FC = () => {
 
                                 {/* Personal support logs */}
                                 <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
-                                    <div className="p-4 border-b border-slate-100 dark:border-slate-850 flex items-center justify-between">
+                                    <div className="p-4 border-b border-slate-200 dark:border-slate-850 flex items-center justify-between">
                                         <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Helpdesk History Logs</h4>
                                         <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-black px-2.5 py-0.5 rounded-full border border-indigo-500/10">
                                             {tickets.length} Active Records
@@ -629,7 +629,7 @@ const ProfilePage: React.FC = () => {
                 {activeTab === 'settings' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
-                            <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                            <div className="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Sliders className="w-4 h-4 text-indigo-500" />
                                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Application & Theme Settings</h3>
@@ -783,7 +783,7 @@ const ProfilePage: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                             <Button
                                 variant="outline"
                                 type="button"

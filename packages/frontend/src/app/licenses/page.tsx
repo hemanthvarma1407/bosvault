@@ -284,7 +284,7 @@ export default function LicensesPage() {
                     <div className="lg:col-span-3 space-y-3">
                         <>
                             {licenses.length === 0 ? (
-                                <div className="h-[450px] flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-100 dark:border-white/5 shadow-inner">
+                                <div className="h-[450px] flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-white/5 shadow-inner">
                                     <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/20 rounded-3xl flex items-center justify-center mb-8 shadow-inner animate-pulse">
                                         <Key className="h-8 w-8 text-indigo-400" />
                                     </div>
@@ -305,7 +305,7 @@ export default function LicensesPage() {
                                                 className="w-full flex items-center justify-between p-4 hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors group"
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-white/10 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
+                                                    <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
                                                         {firstLicense.application?.logo ? (
                                                             <img src={firstLicense.application.logo} alt="" className="w-6 h-6 object-contain" />
                                                         ) : (
@@ -348,11 +348,11 @@ export default function LicensesPage() {
                                             </button>
 
                                             {isExpanded && (
-                                                <div className="border-t border-slate-50 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
+                                                <div className="border-t border-slate-200 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
                                                     <div className="overflow-x-auto">
                                                         <table className="w-full text-left border-collapse">
                                                             <thead>
-                                                                <tr className="bg-slate-50/50 dark:bg-white/[0.01] border-b border-slate-50 dark:border-white/5">
+                                                                <tr className="bg-slate-50/50 dark:bg-white/[0.01] border-b border-slate-200 dark:border-white/5">
 
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Company</th>
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Assigned Employee</th>
@@ -366,7 +366,7 @@ export default function LicensesPage() {
                                                                 {appLicenses.map((license: License, idx: number) => {
 
                                                                     return (
-                                                                        <tr key={license.id} className={`group/row border-b last:border-0 border-slate-50 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
+                                                                        <tr key={license.id} className={`group/row border-b last:border-0 border-slate-200 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
 
                                                                             <td className="p-4">
                                                                                 <div className="flex items-center gap-2">

@@ -77,7 +77,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
     const [formData, setFormData] = useState({ name: '', email: '', slackUserId: '', displayName: '', role: '', phone: '', notes: '', companyId: '', employeeId: '', isActive: true, avatarUrl: '', isAdmin: false });
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [selectedSlackUser, setSelectedSlackUser] = useState<SlackUserModel | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
@@ -486,7 +486,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                         />
                                                     </div>
                                                     {item.isAdmin && (
-                                                        <div className="absolute -top-1 -right-1 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700 shadow-sm z-10">
+                                                        <div className="absolute -top-1 -right-1 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm z-10">
                                                             <Shield className="h-3 w-3 text-indigo-500" />
                                                         </div>
                                                     )}
@@ -523,7 +523,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="flex items-center gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800">
+                                                <div className="flex items-center gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
                                                     <Briefcase className="h-3 w-3 text-slate-400" />
                                                     <span className="text-[10px] text-slate-600 dark:text-slate-400 font-medium truncate">{item.role || 'Member'}</span>
                                                 </div>
@@ -591,7 +591,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
 
                     <Input label="Notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} className="h-14" />
 
-                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <Button variant="outline" onClick={handleCloseModal} type="button">Cancel</Button>
                         <Button variant="primary" type="submit">{isEditMode ? 'Update User' : 'Create User'}</Button>
                     </div>
@@ -613,7 +613,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             >
                 {selectedSlackUser && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="relative">
                                 <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
                                     <ImageWithFallback
@@ -623,7 +623,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                         fallback={<User className="h-12 w-12" />}
                                     />
                                 </div>
-                                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm z-20">
+                                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm z-20">
                                     <Slack className="h-5 w-5 text-[#4A154B]" />
                                 </div>
                             </div>
@@ -652,14 +652,14 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Hash className="h-3.5 w-3.5 text-indigo-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slack User ID</span>
                                     </div>
                                     <p className="text-sm font-mono font-bold text-slate-700 dark:text-slate-200">{selectedSlackUser.slackUserId || 'Not synced'}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Briefcase className="h-3.5 w-3.5 text-amber-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Designation</span>
@@ -669,14 +669,14 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Mail className="h-3.5 w-3.5 text-blue-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Email Address</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{selectedSlackUser.email}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Phone className="h-3.5 w-3.5 text-emerald-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Contact Number</span>
@@ -686,7 +686,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <MapPin className="h-3.5 w-3.5 text-red-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Organization</span>
@@ -697,14 +697,14 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Globe className="h-3.5 w-3.5 text-orange-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Timezone</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{selectedSlackUser.timezone || 'Not set'} ({selectedSlackUser.timezoneLabel || 'UTC'})</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Activity className="h-3.5 w-3.5 text-cyan-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slack Team ID</span>
@@ -715,7 +715,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Member Notes</label>
-                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                <div className="text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed">
                                     {selectedSlackUser.notes || 'No administrative notes available for this Slack member.'}
                                 </div>
                             </div>
@@ -730,7 +730,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-800">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)}>Close</Button>
                         </div>
                     </div>
@@ -765,7 +765,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         />
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
                         <Button variant="outline" onClick={() => setIsConfigModalOpen(false)} type="button">Cancel</Button>
                         <Button variant="primary" type="submit">Save Configuration</Button>
                     </div>

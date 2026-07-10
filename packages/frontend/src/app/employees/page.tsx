@@ -62,7 +62,7 @@ const EmployeesPage: React.FC = () => {
     const [selectedOrg, setSelectedOrg] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('active');
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState<any>(null);
     const [formData, setFormData] = useState({
@@ -527,7 +527,7 @@ const EmployeesPage: React.FC = () => {
                                             ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 opacity-80 hover:opacity-100 hover:border-amber-200 dark:hover:border-amber-900/50'
                                             : isDeactivated
                                                 ? 'bg-rose-50/30 dark:bg-rose-900/10 border-rose-100 dark:border-rose-900/30 opacity-70 hover:opacity-100 hover:border-rose-300'
-                                                : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700/60'
+                                                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700/60'
                                             }`}
                                     >
 
@@ -572,7 +572,7 @@ const EmployeesPage: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="px-3 py-1.5 border-t border-slate-50 dark:border-slate-700/70 flex items-center justify-between bg-slate-50/60 dark:bg-slate-800/60">
+                                        <div className="px-3 py-1.5 border-t border-slate-200 dark:border-slate-700/70 flex items-center justify-between bg-slate-50/60 dark:bg-slate-800/60">
                                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${emp.empStatus?.toLowerCase() === 'active' ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400' : emp.empStatus?.toLowerCase() === 'inactive' ? 'text-amber-600 bg-amber-50 dark:bg-amber-900/20' : 'text-rose-600 bg-rose-50 dark:bg-rose-900/20'}`}>
                                                 {emp.empStatus}
                                             </span>
@@ -599,11 +599,11 @@ const EmployeesPage: React.FC = () => {
                             key="list"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden"
+                            className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
                         >
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-700">
-                                    <tr className="bg-slate-50/50 dark:bg-white/[0.02] border-b border-slate-100 dark:border-white/5">
+                                <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700">
+                                    <tr className="bg-slate-50/50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/5">
                                         <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Employee</th>
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden md:table-cell">Contact</th>
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden lg:table-cell">Department</th>
@@ -615,7 +615,7 @@ const EmployeesPage: React.FC = () => {
                                 </thead>
                                 <tbody className="divide-y divide-slate-50 dark:divide-slate-700/50">
                                     {filteredEmployees.map((emp) => (
-                                        <tr key={emp.id} className="border-b border-slate-50 dark:border-white/5 hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors">
+                                        <tr key={emp.id} className="border-b border-slate-200 dark:border-white/5 hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors">
                                             <td className="p-4">
                                                 <div className="flex items-center gap-2">
                                                     <div className={`w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0 bg-gradient-to-br ${getDepartmentBg(emp)}`}>
@@ -791,7 +791,7 @@ const EmployeesPage: React.FC = () => {
                             />
                         </div>
 
-                        <div className="flex justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-700">
+                        <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-700">
                             <Button variant="outline" onClick={handleCloseModal} type="button">Cancel</Button>
                             <Button variant="primary" type="submit" isLoading={isLoading}>
                                 {editingEmployee ? 'Update Profile' : 'Add Employee'}
@@ -809,7 +809,7 @@ const EmployeesPage: React.FC = () => {
                     {selectedEmployee && (
                         <div className="space-y-6">
                             {/* Header Section */}
-                            <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 bg-gradient-to-br ${getDepartmentBg(selectedEmployee)} shadow-md`}>
                                     {getInitials(selectedEmployee.firstName, selectedEmployee.lastName)}
                                 </div>
@@ -831,7 +831,7 @@ const EmployeesPage: React.FC = () => {
                             {/* Details Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {/* Contact Details */}
-                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-3">
                                     <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Information</h5>
                                     <div className="space-y-2 text-xs">
                                         <div className="flex items-center gap-2">
@@ -852,7 +852,7 @@ const EmployeesPage: React.FC = () => {
                                 </div>
 
                                 {/* Organization Details */}
-                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-3">
                                     <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Organization Details</h5>
                                     <div className="space-y-2 text-xs">
                                         <div className="flex items-center gap-2">
@@ -874,7 +874,7 @@ const EmployeesPage: React.FC = () => {
                             </div>
 
                             {/* Lifecycle Dates */}
-                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3">
+                            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-3">
                                 <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lifecycle & Timeline</h5>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                                     <div className="flex items-center gap-2">
@@ -916,14 +916,14 @@ const EmployeesPage: React.FC = () => {
                             {selectedEmployee.remarks && (
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Additional Remarks</label>
-                                    <div className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 leading-relaxed">
+                                    <div className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 leading-relaxed">
                                         {selectedEmployee.remarks}
                                     </div>
                                 </div>
                             )}
 
                             {/* Action buttons */}
-                            <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+                            <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
                                 {selectedEmployee.empStatus?.toLowerCase() === 'deactivated' && (
                                     <Button variant="danger" onClick={() => { handleDeleteClick(selectedEmployee); setIsDetailModalOpen(false); }}>
                                         Delete Employee

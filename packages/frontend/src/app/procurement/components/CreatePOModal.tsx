@@ -269,7 +269,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
                     <div className="space-y-3">
                         {formData.items.map((item: any, index: number) => (
-                            <div key={index} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 grid grid-cols-12 gap-3 items-end group">
+                            <div key={index} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-12 gap-3 items-end group">
                                 <div className="col-span-12 md:col-span-4">
                                     <Input
                                         label="Item Name"

@@ -591,7 +591,7 @@ const SupportHubPage: React.FC = () => {
                                 rows={3}
                             />
 
-                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-100 dark:border-slate-800">
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-200 dark:border-slate-800">
                                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
                                     <Monitor className="h-3 w-3" />
                                     Classification
@@ -651,7 +651,7 @@ const SupportHubPage: React.FC = () => {
                             </div>
 
                             {/* Screenshots & Attachments Dropzone */}
-                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-100 dark:border-slate-800">
+                            <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl space-y-4 border border-slate-200 dark:border-slate-800">
                                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
                                     <Paperclip className="h-3 w-3" />
                                     Screenshots & File Attachments
@@ -684,7 +684,7 @@ const SupportHubPage: React.FC = () => {
                                                 <div key={idx} className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-xl text-xs gap-3">
                                                     <div className="flex items-center gap-2.5 min-w-0">
                                                         {file.preview ? (
-                                                            <img src={file.preview} alt="preview" className="h-9 w-9 object-cover rounded-lg border border-slate-100" />
+                                                            <img src={file.preview} alt="preview" className="h-9 w-9 object-cover rounded-lg border border-slate-200" />
                                                         ) : (
                                                             <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
                                                                 <FileIcon className="h-4.5 w-4.5" />
@@ -720,7 +720,7 @@ const SupportHubPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                             <Button
                                 type="button"
                                 variant="outline"

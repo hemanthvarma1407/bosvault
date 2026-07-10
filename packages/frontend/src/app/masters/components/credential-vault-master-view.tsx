@@ -307,7 +307,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                     </div>
                                 </div>
 
-                                <div className="bg-slate-50/50 dark:bg-white/5 rounded-xl p-3.5 space-y-3 border border-slate-100 dark:border-white/5">
+                                <div className="bg-slate-50/50 dark:bg-white/5 rounded-xl p-3.5 space-y-3 border border-slate-200 dark:border-white/5">
                                     <div className="flex items-center justify-between group/pw">
                                         <div className="space-y-0 text-xs font-mono font-bold text-slate-700 dark:text-slate-200 tracking-widest truncate mr-4">
                                             {revealedPasswords[item.id] ? item.password : '••••••••••••'}
@@ -409,7 +409,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
 
                     <Input label="Description / Security Notes" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-20" />
 
-                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-white/5">
                         <Button variant="outline" type="button" onClick={handleCloseModal} className="rounded-xl px-8 h-12 uppercase tracking-widest text-[10px] font-black">Cancel</Button>
                         <Button variant="primary" type="submit" className="rounded-xl px-8 h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/20 uppercase tracking-widest text-[10px] font-black">
                             {isEditMode ? 'Commit Changes' : 'Secure Credential'}
@@ -433,7 +433,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
             >
                 {selectedCredential && (
                     <div className="space-y-6">
-                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-100 dark:border-white/5">
+                        <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-white/5">
                             <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-lg shadow-blue-500/10">
                                 <Shield className="h-8 w-8" />
                             </div>
@@ -448,14 +448,14 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-1">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 space-y-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <User className="h-3.5 w-3.5 text-blue-500" />
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Administrative Owner</span>
                                     </div>
                                     <p className="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{selectedCredential.owner || 'System Default'}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-1">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 space-y-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Mail className="h-3.5 w-3.5 text-emerald-500" />
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Recovery Endpoint</span>
@@ -485,14 +485,14 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-1">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 space-y-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Hash className="h-3.5 w-3.5 text-amber-500" />
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Serial Number</span>
                                     </div>
                                     <p className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">{selectedCredential.deviceSerialNumber || 'Not logged'}</p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-1">
+                                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 space-y-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         <Globe className="h-3.5 w-3.5 text-purple-500" />
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">IP Binding</span>
@@ -514,7 +514,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-white/5">
+                        <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-white/5">
                             <Button variant="primary" onClick={() => setIsDetailModalOpen(false)} className="rounded-xl px-12 h-12 uppercase tracking-widest text-[10px] font-black">Close Session</Button>
                         </div>
                     </div>

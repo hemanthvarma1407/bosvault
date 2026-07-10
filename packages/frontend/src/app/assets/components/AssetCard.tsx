@@ -125,7 +125,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                     {/* Main Content Area */}
                     <div className="flex-1 space-y-3 mb-4">
                         {/* Serial Number - Prominent */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 border border-slate-100 dark:border-slate-800 flex items-center justify-between group/serial">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 border border-slate-200 dark:border-slate-800 flex items-center justify-between group/serial">
                             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Serial / Tag</span>
                             <span className="font-mono text-sm font-bold text-slate-700 dark:text-slate-300 select-all">{asset.serialNumber || 'N/A'}</span>
                         </div>
@@ -156,11 +156,11 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                         {/* Financial Info (Feature 4) */}
                         {(asset.purchaseCost > 0) && (
                             <div className="grid grid-cols-2 gap-2 mt-2">
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-100 dark:border-slate-800">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800">
                                     <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Purchase</p>
                                     <p className="text-xs font-bold text-slate-600 dark:text-slate-300">${Number(asset.purchaseCost).toLocaleString()}</p>
                                 </div>
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-100 dark:border-slate-800">
+                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800">
                                     <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Valuation</p>
                                     <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">${Number(asset.currentValue).toLocaleString()}</p>
                                 </div>
@@ -169,7 +169,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                     </div>
 
                     {/* Action Footer */}
-                    <div className="pt-3 mt-auto border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-2">
+                    <div className="pt-3 mt-auto border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
                         <button
                             onClick={() => onAssign(asset)}
                             className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${isAvailable
