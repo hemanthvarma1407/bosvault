@@ -159,6 +159,45 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
     const isGroup = formData.emailType === EmailTypeEnum.GROUP;
     const isCompany = formData.emailType === EmailTypeEnum.COMPANY;
 
+    const targetCompanyId = Number(selectedCompanyId) || companyId;
+    const companyEmployees = targetCompanyId > 0
+        ? employees.filter(emp => Number(emp.companyId) === targetCompanyId)
+        : employees;
+
+    const seenIds = new Set<number>();
+    const seenEmails = new Set<string>();
+    const deduplicatedEmployees = companyEmployees.filter(emp => {
+        if (!emp.id) return false;
+        const uid = Number(emp.id);
+        if (seenIds.has(uid)) return false;
+        seenIds.add(uid);
+
+        const email = (emp.email || '').toLowerCase().trim();
+        if (email) {
+            if (seenEmails.has(email)) return false;
+            seenEmails.add(email);
+        }
+        return true;
+    });
+
+    const formattedEmployeeOptions = deduplicatedEmployees.map(emp => {
+        const name = `${emp.firstName || ''} ${emp.lastName || ''}`.trim() || emp.email;
+        const isDuplicateName = deduplicatedEmployees.filter(other => 
+            (`${other.firstName || ''} ${other.lastName || ''}`.trim() || other.email) === name
+        ).length > 1;
+        const label = isDuplicateName && emp.email ? `${name} (${emp.email})` : name;
+        return {
+            id: emp.id,
+            email: emp.email,
+            firstName: emp.firstName,
+            lastName: emp.lastName,
+            empStatus: emp.empStatus,
+            departmentName: emp.departmentName,
+            label,
+            value: String(emp.id)
+        };
+    });
+
     return (
         <Modal
             isOpen={isOpen}
@@ -172,7 +211,15 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                         <Select
                             label="Target Company"
                             value={selectedCompanyId}
-                            onChange={e => setSelectedCompanyId(e.target.value)}
+                            onChange={e => {
+                                const newCompanyId = e.target.value;
+                                setSelectedCompanyId(newCompanyId);
+                                setFormData(prev => ({
+                                    ...prev,
+                                    employeeId: '',
+                                    memberIds: []
+                                }));
+                            }}
                             options={
                                 (companies || []).map(c => ({
                                     value: String(c.id),
@@ -296,7 +343,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                             value={formData.employeeId}
                             onChange={e => {
                                 const employeeId = e.target.value;
-                                const selectedEmp = employees.find(emp => String(emp.id) === employeeId);
+                                const selectedEmp = formattedEmployeeOptions.find(emp => String(emp.id) === employeeId);
                                 setFormData(prev => ({
                                     ...prev,
                                     employeeId,
@@ -305,7 +352,7 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                             }}
                             options={[
                                 { value: '', label: 'Unassigned' },
-                                ...employees
+                                ...formattedEmployeeOptions
                                     .filter(emp => {
                                         // For COMPANY or GROUP types, dept field is hidden — show all employees
                                         if (isCompany || isGroup) return true;
@@ -314,8 +361,8 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                                         return !emp.departmentName || emp.departmentName === formData.department;
                                     })
                                     .map(emp => ({
-                                        value: String(emp.id),
-                                        label: `${emp.firstName} ${emp.lastName}${emp.departmentName ? ` (${emp.departmentName})` : ''}`
+                                        value: emp.value,
+                                        label: `${emp.label}${emp.departmentName ? ` (${emp.departmentName})` : ''}`
                                     }))
                             ]}
                         />
@@ -323,10 +370,12 @@ export const AddEmailModal: React.FC<AddEmailModalProps> = ({ isOpen, onClose, o
                         {isGroup && (
                             <MultiSelect
                                 label="Group Members"
-                                options={employees.filter(emp => emp.empStatus?.toLowerCase() !== 'deactivated').map(emp => ({
-                                    value: String(emp.id),
-                                    label: `${emp.firstName} ${emp.lastName}`
-                                }))}
+                                options={formattedEmployeeOptions
+                                    .filter(emp => emp.empStatus?.toLowerCase() !== 'deactivated')
+                                    .map(emp => ({
+                                        value: emp.value,
+                                        label: emp.label
+                                    }))}
                                 value={formData.memberIds}
                                 onChange={(v: string[]) => setFormData({ ...formData, memberIds: v })}
                             />

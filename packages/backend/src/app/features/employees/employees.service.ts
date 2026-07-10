@@ -99,6 +99,7 @@ export class EmployeesService {
 
             await transManager.startTransaction();
             const updateData: Partial<EmployeesEntity> = {};
+            updateData.companyId = reqModel.companyId;
             updateData.firstName = reqModel.firstName;
             updateData.lastName = reqModel.lastName;
             updateData.email = reqModel.email;
@@ -115,21 +116,36 @@ export class EmployeesService {
             updateData.groupEmails = reqModel.groupEmails;
             await transManager.getRepository(EmployeesEntity).update(reqModel.id, updateData);
 
-            // Sync department name change to the employee's email info record
+            // Sync department name and company ID change to the employee's email info record
+            const emailUpdateData: Partial<EmailInfoEntity> = {};
+            if (reqModel.companyId && reqModel.companyId !== existingEmployee.companyId) {
+                emailUpdateData.companyId = reqModel.companyId;
+            }
             if (reqModel.departmentId && reqModel.departmentId !== existingEmployee.departmentId) {
                 const newDept = await this.dataSource.getRepository(DepartmentsMasterEntity).findOne({ where: { id: reqModel.departmentId } });
                 if (newDept) {
-                    await transManager.getRepository(EmailInfoEntity).update(
-                        { email: reqModel.email },
-                        { department: newDept.name }
-                    );
+                    emailUpdateData.department = newDept.name;
                 }
             }
+            if (Object.keys(emailUpdateData).length > 0) {
+                await transManager.getRepository(EmailInfoEntity).update(
+                    { email: reqModel.email },
+                    emailUpdateData
+                );
+            }
 
-            if (reqModel.userRole) {
-                const authUser = await transManager.getRepository(AuthUsersEntity).findOne({ where: [ { employeeId: String(reqModel.id) }, { email: reqModel.email } ] });
-                if (authUser) {
-                    await transManager.getRepository(AuthUsersEntity).update(authUser.id, { userRole: reqModel.userRole as any });
+            // Sync company ID and user role to AuthUsersEntity
+            const authUser = await transManager.getRepository(AuthUsersEntity).findOne({ where: [ { employeeId: String(reqModel.id) }, { email: reqModel.email } ] });
+            if (authUser) {
+                const authUpdateData: Partial<AuthUsersEntity> = {};
+                if (reqModel.userRole) {
+                    authUpdateData.userRole = reqModel.userRole as any;
+                }
+                if (reqModel.companyId && reqModel.companyId !== existingEmployee.companyId) {
+                    authUpdateData.companyId = reqModel.companyId;
+                }
+                if (Object.keys(authUpdateData).length > 0) {
+                    await transManager.getRepository(AuthUsersEntity).update(authUser.id, authUpdateData);
                 }
             }
 

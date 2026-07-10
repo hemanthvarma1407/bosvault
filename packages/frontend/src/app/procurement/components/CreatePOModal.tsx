@@ -177,7 +177,14 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                     <Select
                         label="Company"
                         value={formData.companyId ?? 0}
-                        onChange={(e) => setFormData({ ...formData, companyId: Number(e.target.value) })}
+                        onChange={(e) => {
+                            const newCompanyId = Number(e.target.value);
+                            setFormData({
+                                ...formData,
+                                companyId: newCompanyId,
+                                approverIds: [] // Reset selected approvers when company changes
+                            });
+                        }}
                         required
                         options={[
                             { label: 'Select Company', value: 0 },
@@ -232,14 +239,36 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                         onChange={(val: string[]) => setFormData({ ...formData, approverIds: val.map(Number) })}
                         options={[
                             ...(() => {
-                                const seen = new Set();
-                                return approvers.filter(a => {
+                                const selectedCompanyId = Number(formData.companyId);
+                                // Filter by selected company
+                                const companyApprovers = selectedCompanyId > 0
+                                    ? approvers.filter(a => Number(a.companyId) === selectedCompanyId)
+                                    : [];
+
+                                const seenIds = new Set<number>();
+                                const seenEmails = new Set<string>();
+                                const filtered = companyApprovers.filter(a => {
                                     if (!a.id) return false;
                                     const uid = Number(a.id);
-                                    if (seen.has(uid)) return false;
-                                    seen.add(uid);
+                                    if (seenIds.has(uid)) return false;
+                                    seenIds.add(uid);
+
+                                    const email = (a.email || '').toLowerCase().trim();
+                                    if (email) {
+                                        if (seenEmails.has(email)) return false;
+                                        seenEmails.add(email);
+                                    }
                                     return true;
-                                }).map(a => ({ label: `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email, value: String(a.id) }));
+                                });
+
+                                return filtered.map(a => {
+                                    const name = `${a.firstName || ''} ${a.lastName || ''}`.trim() || a.email;
+                                    const isDuplicateName = filtered.filter(other => 
+                                        (`${other.firstName || ''} ${other.lastName || ''}`.trim() || other.email) === name
+                                    ).length > 1;
+                                    const label = isDuplicateName && a.email ? `${name} (${a.email})` : name;
+                                    return { label, value: String(a.id) };
+                                });
                             })()
                         ]}
                     />
