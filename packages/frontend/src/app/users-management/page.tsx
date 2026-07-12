@@ -22,13 +22,8 @@ const TABS = [
 
 const ALL_ROLES = [
     { value: UserRoleEnum.SUPER_ADMIN, label: 'Super Admin', desc: 'Full system access and configurations' },
-    { value: UserRoleEnum.ADMIN, label: 'Admin', desc: 'Administrative access and bypass controls' },
-    { value: UserRoleEnum.SITE_ADMIN, label: 'Site Admin', desc: 'Manage site config and user accounts' },
-    { value: UserRoleEnum.SUPPORT_ADMIN, label: 'Support Admin', desc: 'Handle support chat, requests and tickets' },
     { value: UserRoleEnum.ASSET_ADMIN, label: 'Asset Admin', desc: 'Manage hardware assets, licenses, and procurement' },
-    { value: UserRoleEnum.MANAGER, label: 'Manager', desc: 'Access to employees and general operations' },
     { value: UserRoleEnum.USER, label: 'User', desc: 'Standard employee system access' },
-    { value: UserRoleEnum.VIEWER, label: 'Viewer', desc: 'Read-only view across workspace sections' },
 ];
 
 interface UserRow {
@@ -628,7 +623,7 @@ export default function UsersManagementPage() {
                     {activeTab === 'password-resets' && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 p-6 space-y-6">
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                
+
                                 {/* Card 1: Trigger Reset Link */}
                                 <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                                     <div className="flex items-center gap-3">
@@ -642,7 +637,7 @@ export default function UsersManagementPage() {
                                             </p>
                                         </div>
                                     </div>
-                                    
+
                                     <form onSubmit={handleTriggerForgotPassword} className="space-y-4 pt-2">
                                         <Select
                                             label="Select User Account"
@@ -651,12 +646,12 @@ export default function UsersManagementPage() {
                                             options={[{ value: '', label: 'Select user...' }, ...userOptions]}
                                             disabled={forgotLoading}
                                         />
-                                        
+
                                         <div className="flex justify-end">
-                                            <Button 
-                                                variant="primary" 
+                                            <Button
+                                                variant="primary"
                                                 size="sm"
-                                                type="submit" 
+                                                type="submit"
                                                 disabled={forgotLoading || !resetEmail}
                                                 className="shadow-md shadow-indigo-500/20 px-4"
                                                 leftIcon={forgotLoading ? undefined : <Send className="h-3 w-3" />}
@@ -685,7 +680,7 @@ export default function UsersManagementPage() {
                                             </p>
                                         </div>
                                     </div>
-                                    
+
                                     <form onSubmit={handleForceResetPassword} className="space-y-4 pt-2">
                                         <Select
                                             label="Select User Account"
@@ -694,7 +689,7 @@ export default function UsersManagementPage() {
                                             options={[{ value: '', label: 'Select user...' }, ...userOptions]}
                                             disabled={forceResetLoading}
                                         />
-                                        
+
                                         <div>
                                             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                                                 New Password <span className="text-red-500">*</span>
@@ -718,12 +713,12 @@ export default function UsersManagementPage() {
                                                 </button>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="flex justify-end">
-                                            <Button 
-                                                variant="primary" 
+                                            <Button
+                                                variant="primary"
                                                 size="sm"
-                                                type="submit" 
+                                                type="submit"
                                                 disabled={forceResetLoading || !forceResetEmail || !forceResetPassword}
                                                 className="shadow-md shadow-amber-500/20 bg-amber-600 hover:bg-amber-700 border-amber-600 hover:border-amber-700 font-bold px-4"
                                                 leftIcon={forceResetLoading ? undefined : <Key className="h-3 w-3" />}
@@ -738,7 +733,7 @@ export default function UsersManagementPage() {
                                         </div>
                                     </form>
                                 </div>
-                                
+
                             </div>
                         </div>
                     )}
@@ -839,11 +834,10 @@ export default function UsersManagementPage() {
                                                     role: nextRoles[0] || UserRoleEnum.USER
                                                 });
                                             }}
-                                            className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
-                                                isSelected
+                                            className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer ${isSelected
                                                     ? 'border-indigo-600 bg-indigo-50/40 dark:bg-indigo-950/20 dark:border-indigo-500 shadow-sm'
                                                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
-                                            }`}
+                                                }`}
                                         >
                                             <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-slate-300 dark:border-slate-700 text-white transition-all duration-200">
                                                 {isSelected && (
@@ -862,9 +856,8 @@ export default function UsersManagementPage() {
                                                 )}
                                             </div>
                                             <div className="space-y-0.5">
-                                                <div className={`text-xs font-bold leading-none ${
-                                                    isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-900 dark:text-slate-100'
-                                                }`}>
+                                                <div className={`text-xs font-bold leading-none ${isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-900 dark:text-slate-100'
+                                                    }`}>
                                                     {roleOpt.label}
                                                 </div>
                                                 <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-normal">
