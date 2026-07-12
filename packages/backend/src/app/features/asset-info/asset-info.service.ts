@@ -331,27 +331,19 @@ export class AssetInfoService {
 
                     const assetName = brandModelName;
 
-                    // 1. Send to Assignee (User)
+                    // 1. Send to Assignee (the employee receiving the asset)
                     await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(employee.email, employee.firstName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ASSIGNEE'));
-                    // 2. Send to Assigner (if different from assignee)
+
+                    // 2. Send to the Asset Admin who performed the assignment (if different from assignee)
                     if (assigner.email !== employee.email) {
                         await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(assigner.email, assigner.fullName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                     }
-                    // 3. Send to Manager (if exists)
+
+                    // 3. Send to the Manager of the assigned employee (if exists and not already notified)
                     if (employee.managerId) {
                         const manager = await this.dataSource.getRepository(EmployeesEntity).findOne({ where: { id: employee.managerId } });
-                        if (manager && manager.email) {
+                        if (manager && manager.email && manager.email !== assigner.email) {
                             await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(manager.email, manager.firstName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'MANAGER'));
-                        }
-                    }
-
-                    // 3. Send to Admins
-                    const admins = await this.dataSource.getRepository(AuthUsersEntity).find({ where: { companyId: employee.companyId, userRole: UserRoleEnum.SUPER_ADMIN } });
-                    for (const admin of admins) {
-                        // Avoid sending to self if admin is the assigner (optional, but good practice)
-                        // Also avoid sending to assignee if they are an admin (covered above)
-                        if (admin.email !== employee.email && admin.email !== assigner.email) {
-                            await this.emailInfoService.sendAssetAssignedEmail(new SendAssetAssignedEmailModel(admin.email, admin.fullName, assetName, assignedByName, assignedDate, assetType, serialNumber, specification, isReassignment, remarks, `${employee.firstName} ${employee.lastName}`.trim(), 'ADMIN'));
                         }
                     }
                 }

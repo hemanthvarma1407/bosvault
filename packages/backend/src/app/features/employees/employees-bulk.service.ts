@@ -10,6 +10,7 @@ import { EmailInfoEntity } from '../email/entities/email-info.entity';
 
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { UserRoleEnum } from '@bosvault/shared-models';
+import { IUserPayload } from '../../interfaces/auth.interface';
 
 @Injectable()
 export class EmployeesBulkService {
@@ -19,9 +20,15 @@ export class EmployeesBulkService {
         private departmentRepo: DepartmentRepository
     ) { }
 
-    async processBulkImport(reqModel: BulkImportRequestModel): Promise<BulkImportResponseModel> {
+    async processBulkImport(reqModel: BulkImportRequestModel, user?: IUserPayload): Promise<BulkImportResponseModel> {
         try {
-            const { fileBuffer, companyId, userId } = reqModel;
+            let { fileBuffer, companyId, userId } = reqModel;
+            if (user) {
+                const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                if (!isSuperAdmin) {
+                    companyId = user.companyId;
+                }
+            }
 
             // ── Departments ───────────────────────────────────────────────
             const departments = await this.departmentRepo.find();
@@ -141,6 +148,13 @@ export class EmployeesBulkService {
 
                     if (!rowCompanyId) {
                         throw new Error('Company is required. Fill the "Company Name" column in the sheet with a valid company name or ID.');
+                    }
+
+                    if (user) {
+                        const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                        if (!isSuperAdmin && Number(rowCompanyId) !== Number(user.companyId)) {
+                            throw new Error('You do not have permission to import employees to another company.');
+                        }
                     }
 
 

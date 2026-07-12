@@ -8,14 +8,16 @@ export class RegisterUserModel {
     phNumber: string;
     password: string;
     role?: UserRoleEnum;
+    roles?: UserRoleEnum[];
 
-    constructor(fullName: string, companyId: number, email: string, phNumber: string, password: string, role?: UserRoleEnum) {
+    constructor(fullName: string, companyId: number, email: string, phNumber: string, password: string, role?: UserRoleEnum, roles?: UserRoleEnum[]) {
         this.fullName = fullName;
         this.companyId = companyId;
         this.email = email;
         this.phNumber = phNumber;
         this.password = password;
         this.role = role;
+        this.roles = roles;
     }
 }
 
@@ -27,8 +29,9 @@ export class UpdateUserModel {
     phNumber?: string;
     password?: string;
     role?: UserRoleEnum;
+    roles?: UserRoleEnum[];
 
-    constructor(id: number, fullName?: string, companyId?: number, email?: string, phNumber?: string, password?: string, role?: UserRoleEnum) {
+    constructor(id: number, fullName?: string, companyId?: number, email?: string, phNumber?: string, password?: string, role?: UserRoleEnum, roles?: UserRoleEnum[]) {
         this.id = id;
         this.fullName = fullName;
         this.companyId = companyId;
@@ -36,6 +39,7 @@ export class UpdateUserModel {
         this.phNumber = phNumber;
         this.password = password;
         this.role = role;
+        this.roles = roles;
     }
 }
 
@@ -107,8 +111,9 @@ export class UserResponseModel {
     role: UserRoleEnum;
     department?: string;
     createdAt?: Date;
+    roles?: UserRoleEnum[];
 
-    constructor(id: number, fullName: string, companyId: number, email: string, phNumber: string, role: UserRoleEnum, department?: string, createdAt?: Date) {
+    constructor(id: number, fullName: string, companyId: number, email: string, phNumber: string, role: UserRoleEnum, department?: string, createdAt?: Date, roles?: UserRoleEnum[]) {
         this.id = id;
         this.fullName = fullName;
         this.companyId = companyId;
@@ -117,6 +122,7 @@ export class UserResponseModel {
         this.role = role;
         this.department = department;
         this.createdAt = createdAt;
+        this.roles = roles;
     }
 }
 
@@ -151,10 +157,10 @@ export class UsersResponseModel {
     userRole: string;
     status: boolean;
     lastLogin?: Date;
-    roles?: UserRoleEnum;
+    roles?: UserRoleEnum[];
     createdAt: Date;
     updatedAt: Date;
-    constructor(id: number, fullName: string, email: string, phNumber: string, companyId: number, userRole: string, status: boolean, lastLogin: Date, roles: UserRoleEnum, createdAt: Date, updatedAt: Date) {
+    constructor(id: number, fullName: string, email: string, phNumber: string, companyId: number, userRole: string, status: boolean, lastLogin: Date, roles: UserRoleEnum[], createdAt: Date, updatedAt: Date) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;

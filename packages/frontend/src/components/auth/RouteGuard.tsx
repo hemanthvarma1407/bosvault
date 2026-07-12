@@ -36,14 +36,19 @@ export function RouteGuard({
             }
 
             // Check if user has required role
-            const userRole = user?.role?.toUpperCase() || '';
+            const userRoles: string[] = (user as any).roles || (user?.role ? [user.role] : []);
+            const normalizedUserRoles = userRoles.map(r => r.toUpperCase());
             const normalizedRequiredRoles = requiredRoles.map(r => r.toUpperCase());
 
-            // Flexible check: If ADMIN is required, any role containing "ADMIN" is allowed
-            const isAdminPath = normalizedRequiredRoles.includes('ADMIN') || normalizedRequiredRoles.includes('SUPER_ADMIN');
-            const hasPermission = isAdminPath
-                ? (userRole.includes('ADMIN') || normalizedRequiredRoles.includes(userRole))
-                : normalizedRequiredRoles.includes(userRole);
+            // Flexible check: If ADMIN or SUPER_ADMIN is required, any role containing "ADMIN" is allowed (except ASSET_ADMIN)
+            const isAdminPath = normalizedRequiredRoles.some(r => (r.includes('ADMIN') && r !== 'ASSET_ADMIN') || r === 'SUPER_ADMIN');
+            
+            const hasPermission = normalizedRequiredRoles.some(reqRole => {
+                if (isAdminPath) {
+                    return normalizedUserRoles.some(uRole => uRole.includes('ADMIN') || uRole === reqRole);
+                }
+                return normalizedUserRoles.includes(reqRole);
+            });
 
             if (!hasPermission) {
                 window.location.href = fallbackPath;

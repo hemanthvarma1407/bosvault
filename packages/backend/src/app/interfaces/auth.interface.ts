@@ -5,6 +5,7 @@ export interface IUserPayload {
     email: string;
     companyId: number;
     role: string;
+    roles?: string[];
 }
 
 export interface IAuthenticatedRequest extends Request {

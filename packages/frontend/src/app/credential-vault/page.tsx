@@ -203,7 +203,7 @@ const CredentialVaultPage: React.FC = () => {
     };
 
     return (
-        <RouteGuard requiredRoles={[UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN]}>
+        <RouteGuard requiredRoles={[UserRoleEnum.ASSET_ADMIN]}>
             <div className="p-4 lg:p-8 min-h-screen bg-slate-50 dark:bg-slate-950/50 space-y-8 flex flex-col items-center">
 
                 <div className="w-full">

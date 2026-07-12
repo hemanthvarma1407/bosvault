@@ -16,13 +16,14 @@ interface AllAssetsTabProps {
     onHistory: (asset: any) => void;
     onAssign: (asset: any) => void;
     onView: (asset: any) => void;
+    canAssign?: boolean;
 }
 
 export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({
-    assets, isLoading, status, onEdit, onDelete, onPrint, onHistory, onAssign, onView,
+    assets, isLoading, status, onEdit, onDelete, onPrint, onHistory, onAssign, onView, canAssign = false,
 }: AllAssetsTabProps) => {
 
-    const [viewType, setViewType] = useState<'card' | 'table'>('table');
+    const [viewType, setViewType] = useState<'card' | 'table'>('card');
 
 
 
@@ -112,6 +113,7 @@ export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({
                     onHistory={onHistory}
                     onAssign={onAssign}
                     onView={onView}
+                    canAssign={canAssign}
                 />
             ) : (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6 p-2">
@@ -125,6 +127,7 @@ export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({
                             onHistory={onHistory}
                             onAssign={onAssign}
                             onView={onView}
+                            canAssign={canAssign}
                         />
                     ))}
                 </div>

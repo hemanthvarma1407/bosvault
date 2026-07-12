@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GlobalResponse, returnException } from '@bosvault/backend-utils';
@@ -30,13 +30,13 @@ export class EmployeesController {
         },
     })
     @UseInterceptors(FileInterceptor('file'))
-    async bulkImport(@UploadedFile() file: any, @Body('companyId') companyId: number, @Body('userId') userId: number): Promise<BulkImportResponseModel> {
+    async bulkImport(@Req() req: any, @UploadedFile() file: any, @Body('companyId') companyId: number, @Body('userId') userId: number): Promise<BulkImportResponseModel> {
         try {
             if (!file) {
                 return new BulkImportResponseModel(false, 400, 'No file provided', 0, 0, []);
             }
             const reqModel = new BulkImportRequestModel(file.buffer, Number(companyId), Number(userId));
-            return await this.bulkService.processBulkImport(reqModel);
+            return await this.bulkService.processBulkImport(reqModel, req.user);
         } catch (error) {
             return returnException(BulkImportResponseModel, error);
         }
@@ -44,9 +44,9 @@ export class EmployeesController {
 
     @Post('createEmployee')
     @ApiBody({ type: CreateEmployeeModel })
-    async createEmployee(@Body() reqModel: CreateEmployeeModel): Promise<GlobalResponse> {
+    async createEmployee(@Req() req: any, @Body() reqModel: CreateEmployeeModel): Promise<GlobalResponse> {
         try {
-            return await this.service.createEmployee(reqModel);
+            return await this.service.createEmployee(reqModel, req.user);
         } catch (error) {
             return returnException(GlobalResponse, error);
         }
@@ -54,9 +54,9 @@ export class EmployeesController {
 
     @Post('updateEmployee')
     @ApiBody({ type: UpdateEmployeeModel })
-    async updateEmployee(@Body() reqModel: UpdateEmployeeModel): Promise<GlobalResponse> {
+    async updateEmployee(@Req() req: any, @Body() reqModel: UpdateEmployeeModel): Promise<GlobalResponse> {
         try {
-            return await this.service.updateEmployee(reqModel);
+            return await this.service.updateEmployee(reqModel, req.user);
         } catch (error) {
             return returnException(GlobalResponse, error);
         }
@@ -64,9 +64,9 @@ export class EmployeesController {
 
     @Post('getEmployee')
     @ApiBody({ type: GetEmployeeModel })
-    async getEmployee(@Body() reqModel: GetEmployeeModel): Promise<GetEmployeeResponseModel> {
+    async getEmployee(@Req() req: any, @Body() reqModel: GetEmployeeModel): Promise<GetEmployeeResponseModel> {
         try {
-            return await this.service.getEmployee(reqModel);
+            return await this.service.getEmployee(reqModel, req.user);
         } catch (error) {
             return returnException(GetEmployeeResponseModel, error);
         }
@@ -74,9 +74,9 @@ export class EmployeesController {
 
     @Post('getAllEmployees')
     @ApiBody({ type: GetAllEmployeesRequestModel })
-    async getAllEmployees(@Body() reqModel: GetAllEmployeesRequestModel): Promise<GetAllEmployeesResponseModel> {
+    async getAllEmployees(@Req() req: any, @Body() reqModel: GetAllEmployeesRequestModel): Promise<GetAllEmployeesResponseModel> {
         try {
-            return await this.service.getAllEmployees(reqModel);
+            return await this.service.getAllEmployees(reqModel, req.user);
         } catch (error) {
             return returnException(GetAllEmployeesResponseModel, error);
         }
@@ -84,9 +84,9 @@ export class EmployeesController {
 
     @Post('deleteEmployee')
     @ApiBody({ type: DeleteEmployeeModel })
-    async deleteEmployee(@Body() reqModel: DeleteEmployeeModel): Promise<GlobalResponse> {
+    async deleteEmployee(@Req() req: any, @Body() reqModel: DeleteEmployeeModel): Promise<GlobalResponse> {
         try {
-            return await this.service.deleteEmployee(reqModel);
+            return await this.service.deleteEmployee(reqModel, req.user);
         } catch (error) {
             return returnException(GlobalResponse, error);
         }

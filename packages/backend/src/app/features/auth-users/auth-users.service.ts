@@ -23,12 +23,12 @@ const DEFAULT_MENUS = [
         key: 'main',
         label: 'Workspace',
         icon: 'LayoutGrid',
-        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
+        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
         children: [
             // { key: 'welcome', label: 'Welcome', icon: 'Sparkles', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+            { key: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
             { key: 'masters', label: 'Masters', icon: 'Settings2', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'reports', label: 'Reports', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+            { key: 'reports', label: 'Reports', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
             { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
         ]
     },
@@ -47,22 +47,22 @@ const DEFAULT_MENUS = [
         key: 'itam',
         label: 'IT Assets',
         icon: 'Laptop',
-        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN],
+        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
         children: [
-            { key: 'assets', label: 'Hardware Assets', icon: 'Monitor', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'licenses', label: 'Software Licenses', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
-            { key: 'procurement', label: 'Procurement', icon: 'ShoppingCart', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] }
+            { key: 'assets', label: 'Hardware Assets', icon: 'Monitor', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
+            { key: 'licenses', label: 'Software Licenses', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
+            { key: 'procurement', label: 'Procurement', icon: 'ShoppingCart', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     },
     {
         key: 'security',
         label: 'Security & Access',
         icon: 'Shield',
-        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN],
+        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
         children: [
             { key: 'users-management', label: 'Authentication', icon: 'UserCheck', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
             // { key: 'security-center', label: 'Security Center', icon: 'ShieldAlert', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN] },
-            { key: 'credential-vault', label: 'Credential Vault', icon: 'Lock', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN] },
+            { key: 'credential-vault', label: 'Credential Vault', icon: 'Lock', roles: [UserRoleEnum.ASSET_ADMIN] },
 
         ]
     },
@@ -139,7 +139,8 @@ export class AuthUsersService {
             newUser.phNumber = reqModel.phNumber
             newUser.companyId = reqModel.companyId
             newUser.passwordHash = passwordHash
-            newUser.userRole = reqModel.role
+            newUser.userRole = reqModel.role || (reqModel.roles && reqModel.roles[0]) || UserRoleEnum.USER
+            newUser.roles = reqModel.roles || (reqModel.role ? [reqModel.role] : [UserRoleEnum.USER])
             newUser.status = true
             newUser.employeeId = employeeId
             newUser.passwordChangedAt = new Date()
@@ -190,7 +191,8 @@ export class AuthUsersService {
                 }
             }
 
-            const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole };
+            const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+            const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole, roles: userRoles };
             const accessToken = this.generateAccessToken(payload);
             const refreshToken = this.generateRefreshToken({ ...payload, sub: user.id });
             const tokenEntity = new AuthTokensEntity();
@@ -198,7 +200,7 @@ export class AuthUsersService {
             tokenEntity.token = refreshToken;
             tokenEntity.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             await this.authTokensRepo.save(tokenEntity);
-            const menus = this.getMenusForRole(user.userRole);
+            const menus = this.getMenusForRole(userRoles);
             const userInfo = await this.buildUserResponse(user);
             return new LoginResponseModel(true, 0, "User Logged In Successfully", userInfo, accessToken, refreshToken, menus);
         } catch (err) {
@@ -228,7 +230,8 @@ export class AuthUsersService {
                 throw new ErrorResponse(401, "User no longer active");
             }
 
-            const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole };
+            const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+            const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole, roles: userRoles };
             const newAccessToken = this.generateAccessToken(payload);
             const newRefreshToken = this.generateRefreshToken({ ...payload, sub: user.id });
             // Revoke old token and save new one
@@ -379,7 +382,10 @@ export class AuthUsersService {
             const updateData: Partial<AuthUsersEntity> = {};
             updateData.fullName = reqModel.fullName;
             updateData.phNumber = reqModel.phNumber;
-            updateData.userRole = reqModel.role as any;
+            if (reqModel.role || reqModel.roles) {
+                updateData.userRole = (reqModel.role || (reqModel.roles && reqModel.roles[0])) as any;
+                updateData.roles = reqModel.roles || (reqModel.role ? [reqModel.role] : undefined);
+            }
             updateData.companyId = reqModel.companyId;
             updateData.email = reqModel.email;
             if (reqModel.password) {
@@ -428,19 +434,22 @@ export class AuthUsersService {
                 throw new ErrorResponse(0, "No users found");
             }
 
-            const formattedUsers = users.map(user => new UsersResponseModel(
-                user.id,
-                user.fullName,
-                user.email,
-                user.phNumber,
-                user.companyId,
-                user.userRole,
-                user.status,
-                user.lastLogin,
-                user.userRole,
-                user.createdAt,
-                user.updatedAt
-            ));
+            const formattedUsers = users.map(user => {
+                const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+                return new UsersResponseModel(
+                    user.id,
+                    user.fullName,
+                    user.email,
+                    user.phNumber,
+                    user.companyId,
+                    user.userRole,
+                    user.status,
+                    user.lastLogin,
+                    userRoles,
+                    user.createdAt,
+                    user.updatedAt
+                );
+            });
             return new GetAllUsersModel(true, 0, "Users Retrieved Successfully", formattedUsers);
         } catch (err) {
             throw err;
@@ -539,7 +548,8 @@ export class AuthUsersService {
     }
 
     async loginUserFromOAuth(user: AuthUsersEntity): Promise<LoginResponseModel> {
-        const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole };
+        const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+        const payload = { username: user.email, email: user.email, sub: user.id, companyId: user.companyId, role: user.userRole, roles: userRoles };
         const accessToken = this.generateAccessToken(payload);
         const refreshToken = this.generateRefreshToken({ ...payload, sub: user.id });
         const tokenEntity = new AuthTokensEntity();
@@ -547,7 +557,7 @@ export class AuthUsersService {
         tokenEntity.token = refreshToken;
         tokenEntity.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         await this.authTokensRepo.save(tokenEntity);
-        const menus = this.getMenusForRole(user.userRole);
+        const menus = this.getMenusForRole(userRoles);
         const userInfo = await this.buildUserResponse(user);
         return new LoginResponseModel(true, 0, "User Logged In via OAuth Successfully", userInfo, accessToken, refreshToken, menus);
     }
@@ -563,7 +573,8 @@ export class AuthUsersService {
                 throw new ErrorResponse(404, "User not found");
             }
 
-            const menus = this.getMenusForRole(user.userRole);
+            const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+            const menus = this.getMenusForRole(userRoles);
             const userInfo = await this.buildUserResponse(user);
 
             return new LoginResponseModel(true, 0, "Profile retrieved successfully", userInfo, undefined, undefined, menus);
@@ -573,32 +584,39 @@ export class AuthUsersService {
     }
 
 
-    private getMenusForRole(role: string): any[] {
-        if (role === UserRoleEnum.SUPER_ADMIN || role === UserRoleEnum.SITE_ADMIN) {
-            return DEFAULT_MENUS.map(m => ({
-                ...m,
-                permissions: { create: true, read: true, update: true, delete: true, scopes: ['*'] },
-                children: m.children?.map(c => ({
-                    ...c,
-                    permissions: { create: true, read: true, update: true, delete: true, scopes: ['*'] }
-                }))
-            }));
-        }
+    private getMenusForRole(roleOrRoles: string | string[]): any[] {
+        const roles = Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles];
+        const isSuperOrSite = roles.includes(UserRoleEnum.SUPER_ADMIN) || roles.includes(UserRoleEnum.SITE_ADMIN);
 
-        const fullPermissions = { create: true, read: true, update: true, delete: true };
-        const readOnlyPermissions = { create: false, read: true, update: false, delete: false };
-
-        const filterMenus = (menus: any[]): any[] => {
+        const filterAndMapMenus = (menus: any[]): any[] => {
             return menus
-                .filter(m => m.roles.includes(role))
+                .filter(m => {
+                    if (m.key === 'credential-vault') {
+                        return roles.includes(UserRoleEnum.ASSET_ADMIN);
+                    }
+                    if (isSuperOrSite) {
+                        return true;
+                    }
+                    return m.roles.some((r: any) => roles.includes(r));
+                })
                 .map(m => {
-                    const permissions = (role === UserRoleEnum.ADMIN) ? fullPermissions : readOnlyPermissions;
-                    const children = m.children ? filterMenus(m.children) : undefined;
+                    const children = m.children ? filterAndMapMenus(m.children) : undefined;
+                    
+                    let permissions;
+                    if (isSuperOrSite) {
+                        permissions = { create: true, read: true, update: true, delete: true, scopes: ['*'] };
+                    } else {
+                        const hasWriteAccess = roles.includes(UserRoleEnum.ADMIN) || roles.includes(UserRoleEnum.ASSET_ADMIN);
+                        permissions = hasWriteAccess 
+                            ? { create: true, read: true, update: true, delete: true }
+                            : { create: false, read: true, update: false, delete: false };
+                    }
+
                     return { ...m, permissions, children };
                 });
         };
 
-        return filterMenus(DEFAULT_MENUS);
+        return filterAndMapMenus(DEFAULT_MENUS);
     }
 
     private async buildUserResponse(user: AuthUsersEntity): Promise<UserResponseModel> {
@@ -613,6 +631,7 @@ export class AuthUsersService {
                 console.error("Failed to query user department:", e);
             }
         }
-        return new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber || '', user.userRole, department, user.createdAt);
+        const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
+        return new UserResponseModel(user.id, user.fullName, user.companyId, user.email, user.phNumber || '', user.userRole, department, user.createdAt, userRoles);
     }
 }

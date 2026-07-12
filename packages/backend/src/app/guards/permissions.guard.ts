@@ -38,9 +38,13 @@ export class PermissionsGuard implements CanActivate {
             return false;
         }
 
-        // Bypass for ADMIN or SUPER_ADMIN in legacy field
-        const legacyRole = userEntity.userRole?.toUpperCase() || '';
-        if (legacyRole.includes('ADMIN') || legacyRole === 'SUPER_ADMIN') {
+        // Bypass for ADMIN or SUPER_ADMIN
+        const userRoles: string[] = userEntity.roles || (userEntity.userRole ? [userEntity.userRole] : []);
+        const hasAdminBypass = userRoles.some(role => {
+            const upperRole = role?.toUpperCase() || '';
+            return upperRole.includes('ADMIN') || upperRole === 'SUPER_ADMIN';
+        });
+        if (hasAdminBypass) {
             return true;
         }
 

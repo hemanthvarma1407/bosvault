@@ -36,6 +36,9 @@ export class AuthUsersEntity {
   @Column('enum', { name: 'user_role', enum: UserRoleEnum, default: UserRoleEnum.USER, nullable: false, comment: 'Legacy user role' })
   userRole: UserRoleEnum;
 
+  @Column('simple-array', { name: 'roles', nullable: true, comment: 'User roles' })
+  roles: UserRoleEnum[];
+
   @Column('boolean', { name: 'status', default: true, nullable: false, comment: 'User active status' })
   status: boolean;
 

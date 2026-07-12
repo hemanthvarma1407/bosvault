@@ -6,8 +6,9 @@ export function usePermissions() {
     const { user } = useAuth();
 
     const hasRole = (roles: UserRoleEnum[]): boolean => {
-        if (!user?.role) return false;
-        return roles.includes(user.role as UserRoleEnum);
+        if (!user) return false;
+        const userRoles: UserRoleEnum[] = (user as any).roles || (user.role ? [user.role as UserRoleEnum] : []);
+        return roles.some(role => userRoles.includes(role));
     };
 
     const isAdmin = (): boolean => {

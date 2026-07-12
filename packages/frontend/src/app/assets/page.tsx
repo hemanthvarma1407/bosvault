@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { UserRoleEnum, AssetSearchRequestModel, IdRequestModel } from '@bosvault/shared-models';
+import { usePermissions } from '@/hooks/usePermissions';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { assetService, companyService } from '@/lib/api/services';
@@ -56,6 +57,8 @@ interface AssetStatistics {
 }
 
 const AssetsPage: React.FC = () => {
+    const { hasRole } = usePermissions();
+    const canAssign = hasRole([UserRoleEnum.ASSET_ADMIN]);
     const [selectedCompanyId, setSelectedCompanyId] = useState<number>(0);
     const [companies, setCompanies] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState('store');
@@ -399,6 +402,7 @@ const AssetsPage: React.FC = () => {
                                 onHistory={handleHistory}
                                 onAssign={handleAssign}
                                 onView={handleView}
+                                canAssign={canAssign}
                             />
                         )}
                         {activeTab === 'assigned' && (
@@ -412,6 +416,7 @@ const AssetsPage: React.FC = () => {
                                 onHistory={handleHistory}
                                 onAssign={handleAssign}
                                 onView={handleView}
+                                canAssign={canAssign}
                             />
                         )}
                         {activeTab === 'maintenance' && (
@@ -425,6 +430,7 @@ const AssetsPage: React.FC = () => {
                                 onHistory={handleHistory}
                                 onAssign={handleAssign}
                                 onView={handleView}
+                                canAssign={canAssign}
                             />
                         )}
                         {activeTab === 'not_used' && (
@@ -438,6 +444,7 @@ const AssetsPage: React.FC = () => {
                                 onHistory={handleHistory}
                                 onAssign={handleAssign}
                                 onView={handleView}
+                                canAssign={canAssign}
                             />
                         )}
                     </div>

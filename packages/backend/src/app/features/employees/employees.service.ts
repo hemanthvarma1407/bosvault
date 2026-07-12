@@ -11,6 +11,7 @@ import { EmailInfoService } from '../email/email-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuthUsersEntity } from '../auth-users/entities/auth-users.entity';
 import { EmailInfoEntity } from '../email/entities/email-info.entity';
+import { IUserPayload } from '../../interfaces/auth.interface';
 
 @Injectable()
 export class EmployeesService {
@@ -21,9 +22,16 @@ export class EmployeesService {
         private notificationsService: NotificationsService
     ) { }
 
-    async createEmployee(reqModel: CreateEmployeeModel): Promise<GlobalResponse> {
+    async createEmployee(reqModel: CreateEmployeeModel, user?: IUserPayload): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
+            if (user) {
+                const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                if (!isSuperAdmin) {
+                    reqModel.companyId = user.companyId;
+                }
+            }
+
             if (!reqModel.companyId) {
                 throw new ErrorResponse(0, "Company ID is required");
             }
@@ -85,7 +93,7 @@ export class EmployeesService {
         }
     }
 
-    async updateEmployee(reqModel: UpdateEmployeeModel): Promise<GlobalResponse> {
+    async updateEmployee(reqModel: UpdateEmployeeModel, user?: IUserPayload): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
             if (!reqModel.id) {
@@ -95,6 +103,16 @@ export class EmployeesService {
             const existingEmployee = await this.employeesRepo.findOne({ where: { id: reqModel.id } });
             if (!existingEmployee) {
                 throw new ErrorResponse(0, "Employee not found");
+            }
+
+            if (user) {
+                const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                if (!isSuperAdmin) {
+                    if (existingEmployee.companyId !== user.companyId) {
+                        throw new ErrorResponse(0, "Permission Denied: Employee belongs to another company");
+                    }
+                    reqModel.companyId = user.companyId;
+                }
             }
 
             await transManager.startTransaction();
@@ -159,7 +177,7 @@ export class EmployeesService {
         }
     }
 
-    async getEmployee(reqModel: GetEmployeeModel): Promise<GetEmployeeResponseModel> {
+    async getEmployee(reqModel: GetEmployeeModel, user?: IUserPayload): Promise<GetEmployeeResponseModel> {
         try {
             if (!reqModel.id) {
                 throw new ErrorResponse(0, "Employee ID is required");
@@ -170,6 +188,13 @@ export class EmployeesService {
             });
             if (!employee) {
                 throw new ErrorResponse(0, "Employee not found");
+            }
+
+            if (user) {
+                const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                if (!isSuperAdmin && employee.companyId !== user.companyId) {
+                    throw new ErrorResponse(0, "Permission Denied: Employee belongs to another company");
+                }
             }
 
             let deptName = `Dept ID: ${employee.departmentId}`;
@@ -224,9 +249,15 @@ export class EmployeesService {
         }
     }
 
-    async getAllEmployees(reqModel: GetAllEmployeesRequestModel): Promise<GetAllEmployeesResponseModel> {
+    async getAllEmployees(reqModel: GetAllEmployeesRequestModel, user?: IUserPayload): Promise<GetAllEmployeesResponseModel> {
         let employees: EmployeesEntity[];
-        const companyId = Number(reqModel.companyId);
+        let companyId = Number(reqModel.companyId);
+        if (user) {
+            const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+            if (!isSuperAdmin) {
+                companyId = Number(user.companyId);
+            }
+        }
         const includeDeactivated = reqModel.includeDeactivated === true;
 
         try {
@@ -302,7 +333,7 @@ export class EmployeesService {
         }
     }
 
-    async deleteEmployee(reqModel: DeleteEmployeeModel): Promise<GlobalResponse> {
+    async deleteEmployee(reqModel: DeleteEmployeeModel, user?: IUserPayload): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
         try {
             if (!reqModel.id) {
@@ -312,6 +343,13 @@ export class EmployeesService {
             const existingEmployee = await this.employeesRepo.findOne({ where: { id: reqModel.id } });
             if (!existingEmployee) {
                 throw new ErrorResponse(0, "Employee not found");
+            }
+
+            if (user) {
+                const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
+                if (!isSuperAdmin && existingEmployee.companyId !== user.companyId) {
+                    throw new ErrorResponse(0, "Permission Denied: Employee belongs to another company");
+                }
             }
 
             await transManager.startTransaction();

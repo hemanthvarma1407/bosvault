@@ -11,6 +11,7 @@ interface AssetTableProps {
     onHistory: (asset: any) => void;
     onAssign: (asset: any) => void;
     onView: (asset: any) => void;
+    canAssign?: boolean;
 }
 
 const getAssetIcon = (name?: string) => {
@@ -71,7 +72,8 @@ export const AssetTable: React.FC<AssetTableProps> = ({
     onQRCode,
     onHistory,
     onAssign,
-    onView
+    onView,
+    canAssign = false
 }) => {
     return (
         <div className="w-full overflow-hidden bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md">
@@ -161,18 +163,20 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                     <td className="p-4 border border-slate-200 dark:border-slate-800 text-center">
                                         <div className="flex items-center justify-center gap-1">
                                             {/* Assign Action */}
-                                            <button
-                                                onClick={() => onAssign(asset)}
-                                                className={`p-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
-                                                    isAvailable
-                                                        ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50'
-                                                        : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                                }`}
-                                                title={isAvailable ? "Assign" : "Reassign"}
-                                            >
-                                                <UserPlus className="h-3.5 w-3.5" />
-                                                <span className="hidden md:inline">{isAvailable ? 'Assign' : 'Reassign'}</span>
-                                            </button>
+                                            {canAssign && (
+                                                <button
+                                                    onClick={() => onAssign(asset)}
+                                                    className={`p-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                                                        isAvailable
+                                                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50'
+                                                            : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                                    }`}
+                                                    title={isAvailable ? "Assign" : "Reassign"}
+                                                >
+                                                    <UserPlus className="h-3.5 w-3.5" />
+                                                    <span className="hidden md:inline">{isAvailable ? 'Assign' : 'Reassign'}</span>
+                                                </button>
+                                            )}
 
                                             {/* History */}
                                             <button

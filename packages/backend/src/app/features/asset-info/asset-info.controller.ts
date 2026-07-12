@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseInterceptors, Req, ForbiddenException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { AssetInfoService } from './asset-info.service';
@@ -6,7 +6,7 @@ import { AssetTabsService } from './asset-tabs.service';
 import { AssetBulkService } from './asset-bulk.service';
 import { AssetHistoryService } from './asset-history.service';
 import { IAuthenticatedRequest } from '../../interfaces/auth.interface';
-import { CreateAssetModel, UpdateAssetModel, DeleteAssetModel, GetAssetModel, GetAllAssetsModel, GetAssetByIdModel, AssetStatisticsResponseModel, AssetSearchRequestModel, GetAssetsWithAssignmentsResponseModel, GetStoreAssetsRequestModel, GetStoreAssetsResponseModel, GetReturnAssetsRequestModel, GetReturnAssetsResponseModel, ProcessReturnRequestModel, ProcessReturnResponseModel, GetNextAssignmentsRequestModel, GetNextAssignmentsResponseModel, CreateNextAssignmentRequestModel, CreateNextAssignmentResponseModel, AssignFromQueueRequestModel, AssignFromQueueResponseModel, BulkImportResponseModel, BulkImportRequestModel, AssetTimelineResponseModel, AssetTimelineRequestModel, IdRequestModel, CreateAssetAssignModel, UpdateAssetAssignModel, GetAssetAssignModel, GetAllAssetAssignsModel, GetAssetAssignByIdModel, AssignAssetOpRequestModel, ReturnAssetOpRequestModel, GlobalResponse } from '@bosvault/shared-models';
+import { CreateAssetModel, UpdateAssetModel, DeleteAssetModel, GetAssetModel, GetAllAssetsModel, GetAssetByIdModel, AssetStatisticsResponseModel, AssetSearchRequestModel, GetAssetsWithAssignmentsResponseModel, GetStoreAssetsRequestModel, GetStoreAssetsResponseModel, GetReturnAssetsRequestModel, GetReturnAssetsResponseModel, ProcessReturnRequestModel, ProcessReturnResponseModel, GetNextAssignmentsRequestModel, GetNextAssignmentsResponseModel, CreateNextAssignmentRequestModel, CreateNextAssignmentResponseModel, AssignFromQueueRequestModel, AssignFromQueueResponseModel, BulkImportResponseModel, BulkImportRequestModel, AssetTimelineResponseModel, AssetTimelineRequestModel, IdRequestModel, CreateAssetAssignModel, UpdateAssetAssignModel, GetAssetAssignModel, GetAllAssetAssignsModel, GetAssetAssignByIdModel, AssignAssetOpRequestModel, ReturnAssetOpRequestModel, GlobalResponse, UserRoleEnum } from '@bosvault/shared-models';
 import { returnException } from '@bosvault/backend-utils';
 
 
@@ -233,8 +233,12 @@ export class AssetInfoController {
 
     @Post('assignAssetOp')
     @ApiBody({ type: AssignAssetOpRequestModel })
-    async assignAssetOp(@Body() reqModel: AssignAssetOpRequestModel): Promise<GlobalResponse> {
+    async assignAssetOp(@Body() reqModel: AssignAssetOpRequestModel, @Req() req: IAuthenticatedRequest): Promise<GlobalResponse> {
         try {
+            const userRoles = req.user?.roles || (req.user?.role ? [req.user.role] : []);
+            if (!userRoles.includes(UserRoleEnum.ASSET_ADMIN)) {
+                throw new ForbiddenException("Only Asset Administrators can assign assets");
+            }
             return await this.service.assignAssetOp(reqModel);
         } catch (error) {
             return returnException(GlobalResponse, error);

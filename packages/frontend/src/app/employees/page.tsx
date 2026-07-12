@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { employeeService, companyService, departmentService } from '@/lib/api/services';
 import { Button } from '@/components/ui/Button';
@@ -56,13 +56,21 @@ interface Department {
 
 const EmployeesPage: React.FC = () => {
     const { user } = useAuth();
+    const isSuperAdmin = !!(user?.roles?.includes('super_admin') || user?.role === 'super_admin');
+
+    // Stable refs so fetchEmployees callback doesn't need user/isSuperAdmin as deps
+    const userRef = React.useRef(user);
+    const isSuperAdminRef = React.useRef(isSuperAdmin);
+    React.useEffect(() => { userRef.current = user; }, [user]);
+    React.useEffect(() => { isSuperAdminRef.current = isSuperAdmin; }, [isSuperAdmin]);
+
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
     const [selectedOrg, setSelectedOrg] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('active');
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState<any>(null);
     const [formData, setFormData] = useState({
@@ -91,16 +99,28 @@ const EmployeesPage: React.FC = () => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isBulkImportModalOpen, setIsBulkImportModalOpen] = useState(false);
 
+    // Track the current fetch so stale responses are ignored
+    const fetchCounterRef = React.useRef(0);
 
     const fetchEmployees = useCallback(async () => {
+        const currentUser = userRef.current;
+        if (!currentUser) return;
+
+        // Increment so any previously in-flight fetch is treated as stale
+        fetchCounterRef.current += 1;
+        const myFetchId = fetchCounterRef.current;
+
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            const companyId = Number(selectedOrg) || 0;
+            const currentIsSuperAdmin = isSuperAdminRef.current;
+            // Always fetch ALL employees — company filtering is done client-side
+            const companyId = !currentIsSuperAdmin ? Number(currentUser.companyId) : 0;
             const includeDeactivated = true;
             const req = new GetAllEmployeesRequestModel(companyId, includeDeactivated);
             const response = await employeeService.getAllEmployees(req);
-            
 
+            // Discard result if a newer fetch was triggered while we awaited
+            if (myFetchId !== fetchCounterRef.current) return;
 
             if (response.status) {
                 const data = response.data || [];
@@ -131,11 +151,17 @@ const EmployeesPage: React.FC = () => {
                 AlertMessages.getErrorMessage(response.message);
             }
         } catch (error) {
-            console.error('Failed to fetch employees:', error);
+            if (myFetchId === fetchCounterRef.current) {
+                console.error('Failed to fetch employees:', error);
+            }
         } finally {
-            setIsLoading(false);
+            // Only clear loading for the latest fetch
+            if (myFetchId === fetchCounterRef.current) {
+                setIsLoading(false);
+            }
         }
-    }, [selectedOrg, statusFilter]);
+    // No selectedOrg dep — company filter is applied client-side, not via re-fetch
+    }, []);
 
     const fetchCompanies = useCallback(async () => {
         try {
@@ -165,12 +191,21 @@ const EmployeesPage: React.FC = () => {
 
     useEffect(() => {
         fetchEmployees();
-    }, [selectedOrg, fetchEmployees]);
+    }, [fetchEmployees]);
 
     useEffect(() => {
         fetchCompanies();
         fetchDepartments();
     }, []);
+
+    // For non-super-admins, lock selectedOrg to their own company (only once on mount)
+    const orgInitialisedRef = React.useRef(false);
+    useEffect(() => {
+        if (!orgInitialisedRef.current && user && !isSuperAdmin && user.companyId) {
+            orgInitialisedRef.current = true;
+            setSelectedOrg(String(user.companyId));
+        }
+    }, [user, isSuperAdmin]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -277,6 +312,20 @@ const EmployeesPage: React.FC = () => {
 
 
 
+    const handleAddEmployee = () => {
+        setEditingEmployee(null);
+        setFormData({
+            firstName: '', lastName: '', email: '', phone: '',
+            companyId: !isSuperAdmin ? String(user?.companyId || '') : '',
+            departmentId: '',
+            accountStatus: EmployeeStatusEnum.ACTIVE as string,
+            billingAmount: '', remarks: '', managerId: '',
+            joiningDate: '', emailCreatedDate: '', lastWorkingDay: '', emailDeletionDate: '',
+            groupEmails: [] as string[], userRole: ''
+        });
+        setIsModalOpen(true);
+    };
+
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingEmployee(null);
@@ -356,6 +405,9 @@ const EmployeesPage: React.FC = () => {
     };
 
     const filteredEmployees = employees.filter(emp => {
+        // Company filter — client-side, no re-fetch
+        const matchesCompany = !selectedOrg || emp.companyId === Number(selectedOrg);
+
         const searchLower = searchQuery.toLowerCase();
         const deptName = getDepartmentName(emp).toLowerCase();
         const matchesSearch = !!(
@@ -369,19 +421,24 @@ const EmployeesPage: React.FC = () => {
         const empStatus = emp.empStatus?.toLowerCase() || 'active';
         const matchesStatus = (statusFilter === 'all' || empStatus === statusFilter);
 
-        return matchesSearch && matchesStatus;
+        return matchesCompany && matchesSearch && matchesStatus;
     }).sort((a, b) => {
         const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
         const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
         return nameA.localeCompare(nameB);
     });
 
+    // Stats reflect current company filter (same pool as filteredEmployees before status/search)
+    const companyFilteredEmployees = !selectedOrg
+        ? employees
+        : employees.filter(e => e.companyId === Number(selectedOrg));
+
     const stats = {
-        total: employees.length,
-        active: employees.filter(e => e.empStatus?.toLowerCase() === 'active').length,
-        inactive: employees.filter(e => e.empStatus?.toLowerCase() === 'inactive').length,
-        deactivated: employees.filter(e => e.empStatus?.toLowerCase() === 'deactivated').length,
-        totalBilling: employees.filter(e => e.empStatus?.toLowerCase() !== 'deactivated').reduce((sum, emp) => sum + Number(emp.billingAmount || 0), 0),
+        total: companyFilteredEmployees.length,
+        active: companyFilteredEmployees.filter(e => e.empStatus?.toLowerCase() === 'active').length,
+        inactive: companyFilteredEmployees.filter(e => e.empStatus?.toLowerCase() === 'inactive').length,
+        deactivated: companyFilteredEmployees.filter(e => e.empStatus?.toLowerCase() === 'deactivated').length,
+        totalBilling: companyFilteredEmployees.filter(e => e.empStatus?.toLowerCase() !== 'deactivated').reduce((sum, emp) => sum + Number(emp.billingAmount || 0), 0),
     };
 
     const containerVariants = {
@@ -413,7 +470,7 @@ const EmployeesPage: React.FC = () => {
                         },
                         {
                             label: 'Add Employee',
-                            onClick: () => setIsModalOpen(true),
+                            onClick: handleAddEmployee,
                             icon: <Plus className="h-3.5 w-3.5" />,
                             variant: 'primary'
                         }
@@ -447,22 +504,24 @@ const EmployeesPage: React.FC = () => {
                         />
                     </div>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2 shrink-0">
-                        <div className="relative w-full sm:w-48 group shrink-0">
-                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-500 group-focus-within:scale-110 transition-transform" />
-                            <select
-                                value={selectedOrg}
-                                onChange={(e) => setSelectedOrg(e.target.value)}
-                                className="w-full pl-9 pr-8 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none shadow-sm cursor-pointer uppercase tracking-widest"
-                            >
-                                <option value="">All Companies</option>
-                                {companies.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.companyName || (c as any).name}</option>
-                                ))}
-                            </select>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                <Search className="h-3 w-3" />
+                        {isSuperAdmin && (
+                            <div className="relative w-full sm:w-48 group shrink-0">
+                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-500 group-focus-within:scale-110 transition-transform" />
+                                <select
+                                    value={selectedOrg}
+                                    onChange={(e) => setSelectedOrg(e.target.value)}
+                                    className="w-full pl-9 pr-8 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none shadow-sm cursor-pointer uppercase tracking-widest"
+                                >
+                                    <option value="">All Companies</option>
+                                    {companies.map((c) => (
+                                        <option key={c.id} value={c.id}>{c.companyName || (c as any).name}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                    <Search className="h-3 w-3" />
+                                </div>
                             </div>
-                        </div>
+                        )}
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -692,6 +751,7 @@ const EmployeesPage: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
                                 options={[{ value: '', label: 'Select Organization' }, ...companies.map(c => ({ value: String(c.id), label: c.companyName || 'Unknown Company' }))]}
                                 required
+                                disabled={!isSuperAdmin}
                             />
                             <PhoneInput
                                 label="Phone Number"
@@ -951,7 +1011,7 @@ const EmployeesPage: React.FC = () => {
                 <EmployeeBulkImportModal
                     isOpen={isBulkImportModalOpen}
                     onClose={() => setIsBulkImportModalOpen(false)}
-                    companyId={Number(selectedOrg)}
+                    companyId={isSuperAdmin ? (Number(selectedOrg) || 0) : (user?.companyId || 0)}
                     onSuccess={fetchEmployees}
                 />
 

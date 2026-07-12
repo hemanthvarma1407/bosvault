@@ -12,6 +12,7 @@ interface User {
     email: string;
     companyId: number;
     role?: string;
+    roles?: string[];
     phNumber?: string;
     department?: string;
     createdAt?: Date | string;
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             email: response.userInfo.email,
                             companyId: response.userInfo.companyId,
                             role: response.userInfo.role,
+                            roles: response.userInfo.roles,
                             phNumber: response.userInfo.phNumber,
                             department: response.userInfo.department,
                             createdAt: response.userInfo.createdAt,
@@ -113,6 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     email: response.userInfo.email,
                     companyId: response.userInfo.companyId,
                     role: response.userInfo.role,
+                    roles: response.userInfo.roles,
                     phNumber: response.userInfo.phNumber,
                     department: response.userInfo.department,
                     createdAt: response.userInfo.createdAt,
@@ -166,6 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     email: response.userInfo.email,
                     companyId: response.userInfo.companyId,
                     role: response.userInfo.role,
+                    roles: response.userInfo.roles,
                     phNumber: response.userInfo.phNumber,
                     department: response.userInfo.department,
                     createdAt: response.userInfo.createdAt,

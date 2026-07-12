@@ -10,6 +10,7 @@ interface AssetCardProps {
     onHistory: (asset: any) => void;
     onAssign: (asset: any) => void;
     onView: (asset: any) => void;
+    canAssign?: boolean;
 }
 
 const getAssetIcon = (name?: string) => {
@@ -48,7 +49,7 @@ const getStatusConfig = (status?: string) => {
     return configs[statusUpper] || configs['AVAILABLE'];
 };
 
-export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, onQRCode, onHistory, onAssign, onView }: AssetCardProps) => {
+export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, onQRCode, onHistory, onAssign, onView, canAssign = false }: AssetCardProps) => {
     const assetName = asset.assetName || 'Unnamed Asset';
     const AssetIcon = getAssetIcon(asset.assetName);
     const statusConfig = getStatusConfig(asset.status);
@@ -170,17 +171,19 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
 
                     {/* Action Footer */}
                     <div className="pt-3 mt-auto border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-2">
-                        <button
-                            onClick={() => onAssign(asset)}
-                            className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${isAvailable
-                                ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
-                                : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
-                                }`}
-                            title={isAvailable ? "Assign Asset" : "Reassign Asset"}
-                        >
-                            <UserPlus className="h-3.5 w-3.5 shrink-0" />
-                            <span className="whitespace-nowrap">{isAvailable ? 'Assign' : 'Reassign'}</span>
-                        </button>
+                        {canAssign && (
+                            <button
+                                onClick={() => onAssign(asset)}
+                                className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${isAvailable
+                                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
+                                    : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                    }`}
+                                title={isAvailable ? "Assign Asset" : "Reassign Asset"}
+                            >
+                                <UserPlus className="h-3.5 w-3.5 shrink-0" />
+                                <span className="whitespace-nowrap">{isAvailable ? 'Assign' : 'Reassign'}</span>
+                            </button>
+                        )}
 
                         <div className="flex gap-2">
                             <button
