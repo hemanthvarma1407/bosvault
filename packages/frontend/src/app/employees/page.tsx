@@ -771,7 +771,11 @@ const EmployeesPage: React.FC = () => {
                                 label="Reporting Manager"
                                 value={formData.managerId}
                                 onChange={(e) => setFormData({ ...formData, managerId: e.target.value })}
-                                options={[{ value: '', label: '' }, ...employees.filter(emp => !editingEmployee || emp.id !== editingEmployee.id).map(emp => ({ value: String(emp.id), label: `${emp.firstName} ${emp.lastName}` }))]}
+                                disabled={!formData.companyId}
+                                options={[{ value: '', label: 'Select Reporting Manager' }, ...(Number(formData.companyId) ? employees.filter(emp => {
+                                    if (editingEmployee && emp.id === editingEmployee.id) return false;
+                                    return emp.companyId === Number(formData.companyId);
+                                }).map(emp => ({ value: String(emp.id), label: `${emp.firstName} ${emp.lastName}` })) : [])]}
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -18,15 +18,9 @@ import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal
 
 
 // Category Definitions
-type EmailCategory = 'COMPANY' | 'USER' | 'GROUP';
+type EmailCategory = 'USER' | 'GROUP';
 
 const CategoryConfig: Record<EmailCategory, { label: string, icon: any, color: string, types: EmailTypeEnum[] }> = {
-    COMPANY: {
-        label: 'Company Emails',
-        icon: Globe,
-        color: 'indigo',
-        types: [EmailTypeEnum.COMPANY]
-    },
     USER: {
         label: 'Employee Emails',
         icon: User,
@@ -459,7 +453,7 @@ const InfoEmailsPage: React.FC = () => {
                                             <div className="text-left">
                                                 <div className="text-[11px] font-black uppercase tracking-tight">{config.label}</div>
                                                 <div className={`text-[9px] font-medium opacity-70 ${isActive ? 'text-indigo-100' : 'text-slate-400'}`}>
-                                                    {cat === 'COMPANY' ? 'Company' : cat === 'USER' ? 'Employees' : 'Groups'}
+                                                    {cat === 'USER' ? 'Employees' : 'Groups'}
                                                 </div>
                                             </div>
                                         </div>
@@ -473,86 +467,86 @@ const InfoEmailsPage: React.FC = () => {
                             <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{filteredEmails.length}</div>
                         </div>
 
-                        {activeTab === 'COMPANY' && (
+                        {/* {activeTab === 'COMPANY' && (
                             <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm mt-3">
                                 <div className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-1">Total Billing</div>
                                 <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                                     ${filteredEmails.reduce((sum, email) => sum + (Number(email.billing) || 0), 0).toFixed(2)}
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
 
                     {/* Collapsible Panel List */}
                     <div className="lg:col-span-3 space-y-3">
                         {Object.entries(groupedData).map(([dept, emails]) => {
-                                const config = DeptConfig[dept] || DeptConfig['Default'];
-                                const Icon = config.icon;
-                                const isExpanded = !!expandedDepts[dept];
+                            const config = DeptConfig[dept] || DeptConfig['Default'];
+                            const Icon = config.icon;
+                            const isExpanded = !!expandedDepts[dept];
 
-                                if (emails.length === 0 && searchQuery !== '') return null;
+                            if (emails.length === 0 && searchQuery !== '') return null;
 
-                                return (
-                                    <div key={dept} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
-                                        <button
-                                            onClick={() => toggleDept(dept)}
-                                            className="w-full flex items-center justify-between p-4 hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors group"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-9 h-9 rounded-xl ${config.bg} ${config.color} border ${config.border} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
-                                                    <Icon className="w-4 h-4" />
-                                                </div>
-                                                <div className="text-left">
-                                                    <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-900 dark:text-white leading-none">{dept}</h3>
-                                                </div>
+                            return (
+                                <div key={dept} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
+                                    <button
+                                        onClick={() => toggleDept(dept)}
+                                        className="w-full flex items-center justify-between p-4 hover:bg-slate-50/50 dark:hover:bg-white/[0.01] transition-colors group"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-9 h-9 rounded-xl ${config.bg} ${config.color} border ${config.border} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                                                <Icon className="w-4 h-4" />
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <div className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
-                                                    {emails.length} Records
-                                                </div>
-                                                {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+                                            <div className="text-left">
+                                                <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-900 dark:text-white leading-none">{dept}</h3>
                                             </div>
-                                        </button>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
+                                                {emails.length} Records
+                                            </div>
+                                            {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+                                        </div>
+                                    </button>
 
-                                        {isExpanded && (
-                                            <div className="border-t border-slate-200 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
-                                                {emails.length === 0 ? (
-                                                    <div className="p-8 text-center text-slate-400 opacity-50">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest">No records found for this department</p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="overflow-x-auto">
-                                                        <table className="w-full text-center border-collapse border border-slate-200 dark:border-white/10">
-                                                            <thead>
-                                                                <tr className="bg-slate-50/50 dark:bg-white/[0.01]">
-                                                                    <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Full Name</th>
-                                                                    <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Email Address</th>
-                                                                    <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Status</th>
-                                                                    <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {emails.map((acc, idx) => (
-                                                                    <EmailRow
-                                                                        key={acc.id}
-                                                                        acc={acc}
-                                                                        idx={idx}
-                                                                        employees={employees}
-                                                                        activeTab={activeTab}
-                                                                        onToggleStatus={handleToggleStatus}
-                                                                        onEdit={handleEdit}
-                                                                        onDelete={handleDeleteEmailInfo}
-                                                                    />
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })
+                                    {isExpanded && (
+                                        <div className="border-t border-slate-200 dark:border-white/5 animate-in slide-in-from-top-2 duration-300">
+                                            {emails.length === 0 ? (
+                                                <div className="p-8 text-center text-slate-400 opacity-50">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest">No records found for this department</p>
+                                                </div>
+                                            ) : (
+                                                <div className="overflow-x-auto">
+                                                    <table className="w-full text-center border-collapse border border-slate-200 dark:border-white/10">
+                                                        <thead>
+                                                            <tr className="bg-slate-50/50 dark:bg-white/[0.01]">
+                                                                <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Full Name</th>
+                                                                <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Email Address</th>
+                                                                <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Status</th>
+                                                                <th className="p-4 text-[9px] font-black text-center text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-white/10">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {emails.map((acc, idx) => (
+                                                                <EmailRow
+                                                                    key={acc.id}
+                                                                    acc={acc}
+                                                                    idx={idx}
+                                                                    employees={employees}
+                                                                    activeTab={activeTab}
+                                                                    onToggleStatus={handleToggleStatus}
+                                                                    onEdit={handleEdit}
+                                                                    onDelete={handleDeleteEmailInfo}
+                                                                />
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })
                         }
                     </div>
                 </div>
