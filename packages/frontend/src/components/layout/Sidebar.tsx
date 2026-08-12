@@ -10,7 +10,7 @@ import {
     ShieldCheck, Ticket, PlusCircle, UserCircle, BookOpen, CheckSquare,
     Library, Globe, HelpCircle, LayoutGrid, Slack, Contact, Monitor,
     History, ClipboardCheck, Store, ShieldAlert, Shield, Lock, UserCheck,
-    User, UserSquare2
+    User, UserSquare2, DollarSign, CreditCard
 } from 'lucide-react';
 
 const IconMap: Record<string, any> = {
@@ -37,6 +37,7 @@ const IconMap: Record<string, any> = {
     Slack,
     Contact,
     Monitor,
+    CreditCard,
     History,
     ClipboardCheck,
     Store,
@@ -45,7 +46,8 @@ const IconMap: Record<string, any> = {
     Lock,
     UserCheck,
     User,
-    UserSquare2
+    UserSquare2,
+    DollarSign
 };
 
 const getIcon = (name: string) => IconMap[name] || Package;

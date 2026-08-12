@@ -50,8 +50,7 @@ const DEFAULT_MENUS = [
         roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
         children: [
             { key: 'assets', label: 'Hardware Assets', icon: 'Monitor', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
-            { key: 'licenses', label: 'Software Licenses', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
-            { key: 'procurement', label: 'Procurement', icon: 'ShoppingCart', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
+            { key: 'licenses', label: 'Software Licenses', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     },
     {
@@ -64,6 +63,16 @@ const DEFAULT_MENUS = [
             // { key: 'security-center', label: 'Security Center', icon: 'ShieldAlert', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN] },
             { key: 'credential-vault', label: 'Credential Vault', icon: 'Lock', roles: [UserRoleEnum.ASSET_ADMIN] },
 
+        ]
+    },
+    {
+        key: 'billing',
+        label: 'Billing',
+        icon: 'CreditCard',
+        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
+        children: [
+            { key: 'payroll', label: 'Payroll Info', icon: 'DollarSign', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER] },
+            { key: 'procurement', label: 'Procurement', icon: 'ShoppingCart', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     },
     // {

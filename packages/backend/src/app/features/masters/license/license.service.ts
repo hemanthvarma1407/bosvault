@@ -47,6 +47,7 @@ export class LicenseService {
                 }
             }
             newLicense.totalQuantity = reqModel.totalQuantity;
+            newLicense.price = reqModel.price || 0;
 
             await transManager.getRepository(LicensesMasterEntity).save(newLicense);
             await transManager.completeTransaction();
@@ -126,7 +127,8 @@ export class LicenseService {
                 isActive: reqModel.isActive,
                 purchaseDate: reqModel.purchaseDate,
                 expiryDate: reqModel.expiryDate,
-                totalQuantity: reqModel.totalQuantity
+                totalQuantity: reqModel.totalQuantity,
+                price: reqModel.price
             };
 
             await transManager.getRepository(LicensesMasterEntity).update(reqModel.id, updateData);

@@ -23,4 +23,7 @@ export class LicensesMasterEntity extends MasterBaseEntity {
 
     @Column('int', { name: 'used_count', default: 0, nullable: true, comment: 'Total number of licenses assigned to members' })
     usedCount: number;
+
+    @Column('decimal', { name: 'price', precision: 12, scale: 2, default: 0, nullable: true, comment: 'Price per license unit' })
+    price: number;
 }

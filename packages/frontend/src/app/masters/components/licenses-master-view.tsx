@@ -22,7 +22,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [formData, setFormData] = useState<{ name: string, description: string, purchaseDate: string, expiryDate: string, isActive: boolean, totalQuantity: string | number }>({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '' });
+    const [formData, setFormData] = useState<{ name: string, description: string, purchaseDate: string, expiryDate: string, isActive: boolean, totalQuantity: string | number, price: string | number }>({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '', price: '' });
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
@@ -57,7 +57,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
         try {
 
             if (isEditMode && editingId) {
-                const model = new UpdateLicenseMasterModel(editingId, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity));
+                const model = new UpdateLicenseMasterModel(editingId, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity), Number(formData.price));
                 const response = await licenseService.updateLicense(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -67,7 +67,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                     AlertMessages.getErrorMessage(response.message);
                 }
             } else {
-                const model = new CreateLicenseMasterModel(user.id, user.companyId!, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity));
+                const model = new CreateLicenseMasterModel(user.id, user.companyId!, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity), undefined, Number(formData.price));
                 const response = await licenseService.createLicense(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -91,7 +91,8 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
             purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : '',
             expiryDate: item.expiryDate ? new Date(item.expiryDate).toISOString().split('T')[0] : '',
             isActive: item.isActive ?? true,
-            totalQuantity: (item as any).totalQuantity || 0
+            totalQuantity: (item as any).totalQuantity || 0,
+            price: (item as any).price || 0
         });
         setIsModalOpen(true);
     };
@@ -121,7 +122,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
         setIsModalOpen(false);
         setIsEditMode(false);
         setEditingId(null);
-        setFormData({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '' });
+        setFormData({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '', price: '' });
     };
 
     const formatDate = (date: Date | string | null | undefined): string => {
@@ -153,42 +154,63 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">License Name</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Total</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Used</th>
+                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Price</th>
+                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Consumed Price</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Status</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-900">
                                 {licenses?.length === 0 ? (
-                                    <tr><td colSpan={5} className="p-8 text-center text-slate-500">No licenses found</td></tr>
+                                    <tr><td colSpan={7} className="p-8 text-center text-slate-500">No licenses found</td></tr>
                                 ) : (
-                                    licenses?.map((item: License) => (
-                                        <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{(item as any).totalQuantity || 0}</td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{(item as any).usedCount ?? (item as any).usedQuantity ?? 0}</td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
-                                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${item.isActive
-                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
-                                                    : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800'
-                                                    }`}>
-                                                    {item.isActive ? 'Active' : 'Inactive'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
-                                                <div className="flex justify-center gap-2">
-                                                    <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
-                                                        <Eye className="h-4 w-4" />
-                                                    </button>
-                                                    <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
-                                                        <Pencil className="h-4 w-4" />
-                                                    </button>
-                                                    <button onClick={() => handleDeleteClick(item.id)} className="h-7 w-7 flex items-center justify-center rounded bg-red-500 hover:bg-red-600 text-white transition-colors shadow-sm" title="Delete">
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                    licenses?.map((item: License) => {
+                                        const total = Number((item as any).totalQuantity || 0);
+                                        const used = Number((item as any).usedCount ?? (item as any).usedQuantity ?? 0);
+                                        const unitPrice = Number((item as any).price || 0);
+                                        const isExceeded = used > total && total > 0;
+
+                                        return (
+                                            <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{total}</td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold">
+                                                    <span className={isExceeded ? 'text-rose-600 dark:text-rose-400 font-black' : 'text-slate-500'}>
+                                                        {used}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-indigo-600 dark:text-indigo-400">${unitPrice.toLocaleString()}</td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-amber-600 dark:text-amber-400">${(unitPrice * used).toLocaleString()}</td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
+                                                    {isExceeded ? (
+                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800" title={`Used count (${used}) exceeds total quantity (${total})`}>
+                                                            Over-allocated (+{used - total})
+                                                        </span>
+                                                    ) : (
+                                                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${item.isActive
+                                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
+                                                            : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800'
+                                                            }`}>
+                                                            {item.isActive ? 'Active' : 'Inactive'}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
+                                                    <div className="flex justify-center gap-2">
+                                                        <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                            <Eye className="h-4 w-4" />
+                                                        </button>
+                                                        <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
+                                                            <Pencil className="h-4 w-4" />
+                                                        </button>
+                                                        <button onClick={() => handleDeleteClick(item.id)} className="h-7 w-7 flex items-center justify-center rounded bg-red-500 hover:bg-red-600 text-white transition-colors shadow-sm" title="Delete">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -200,9 +222,19 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <Input label="License Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-14" required />
                     <Input label="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-14" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Input label="Total Quantity" type="number" value={formData.totalQuantity} onChange={e => setFormData({ ...formData, totalQuantity: Number(e.target.value) })} className="h-14" />
+                        <Input label="Price ($)" type="number" min="0" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="h-14" />
                         <Input label="Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })} className="h-14" />
+                    </div>
+
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 rounded-xl flex items-center justify-between">
+                        <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
+                            Calculated Total Value:
+                        </span>
+                        <span className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+                            ${((Number(formData.price) || 0) * (Number(formData.totalQuantity) || 0)).toLocaleString()}
+                        </span>
                     </div>
 
                     <div className="flex items-center gap-2">

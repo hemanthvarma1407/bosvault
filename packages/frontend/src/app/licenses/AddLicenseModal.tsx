@@ -23,6 +23,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
         assignedDate: '',
         remarks: '',
         assignedEmployeeId: '',
+        totalSeats: '1',
         costPerSeat: '0',
         billingCycle: 'MONTHLY',
         role: 'Member'
@@ -37,6 +38,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                 assignedDate: initialLicense.assignedDate ? new Date(initialLicense.assignedDate).toISOString().split('T')[0] : '',
                 remarks: initialLicense.remarks || '',
                 assignedEmployeeId: initialLicense.assignedEmployeeId?.toString() || '',
+                totalSeats: initialLicense.totalSeats?.toString() || initialLicense.seats?.toString() || '1',
                 costPerSeat: initialLicense.costPerSeat?.toString() || '0',
                 billingCycle: initialLicense.billingCycle || 'MONTHLY',
                 role: initialLicense.role || 'Member'
@@ -46,6 +48,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                 applicationId: '', companyId: '', licenseKey: '',
                 assignedDate: '',
                 remarks: '', assignedEmployeeId: '',
+                totalSeats: '1',
                 costPerSeat: '0', billingCycle: 'MONTHLY',
                 role: 'Member'
             });
@@ -64,6 +67,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                 assignedDate: formData.assignedDate || null,
                 remarks: formData.remarks || null,
                 assignedEmployeeId: formData.assignedEmployeeId ? Number(formData.assignedEmployeeId) : null,
+                totalSeats: Number(formData.totalSeats) || 1,
                 costPerSeat: Number(formData.costPerSeat),
                 billingCycle: formData.billingCycle,
                 role: formData.role
@@ -74,6 +78,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                     applicationId: '', companyId: '', licenseKey: '',
                     assignedDate: '',
                     remarks: '', assignedEmployeeId: '',
+                    totalSeats: '1',
                     costPerSeat: '0', billingCycle: 'MONTHLY',
                     role: 'Member'
                 });
@@ -112,16 +117,49 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                         ]}
                     />
 
-                    <Select
-                        label="Software Product"
-                        value={formData.applicationId}
-                        onChange={e => setFormData({ ...formData, applicationId: e.target.value })}
-                        required
-                        options={[
-                            { label: 'Select Software Product', value: '' },
-                            ...applications.map(app => ({ label: app.name, value: app.id }))
-                        ]}
-                    />
+                    <div className="space-y-1">
+                        <Select
+                            label="Software Product"
+                            value={formData.applicationId}
+                            onChange={e => {
+                                const appId = e.target.value;
+                                const selectedApp = applications.find(a => Number(a.id) === Number(appId));
+                                const appPrice = selectedApp?.price ? selectedApp.price.toString() : '0';
+                                setFormData({
+                                    ...formData,
+                                    applicationId: appId,
+                                    costPerSeat: appPrice !== '0' ? appPrice : (formData.costPerSeat === '0' ? '0' : formData.costPerSeat)
+                                });
+                            }}
+                            required
+                            options={[
+                                { label: 'Select Software Product', value: '' },
+                                ...applications.map(app => ({ label: app.name, value: app.id }))
+                            ]}
+                        />
+                        {(() => {
+                            const selectedApp = applications.find(a => Number(a.id) === Number(formData.applicationId));
+                            if (!selectedApp) return null;
+                            const total = Number(selectedApp.totalQuantity || 0);
+                            const used = Number(selectedApp.usedCount ?? selectedApp.usedQuantity ?? 0);
+                            const available = Math.max(0, total - used);
+                            if (total <= 0) return null;
+
+                            return (
+                                <div className="text-[10px] font-bold px-1">
+                                    {used >= total ? (
+                                        <span className="text-rose-600 dark:text-rose-400">
+                                            ⚠️ Limit Reached: All {total} seat(s) assigned ({used}/{total})
+                                        </span>
+                                    ) : (
+                                        <span className="text-emerald-600 dark:text-emerald-400">
+                                            ✓ {available} of {total} seat(s) available
+                                        </span>
+                                    )}
+                                </div>
+                            );
+                        })()}
+                    </div>
 
                     <Select
                         label="Assign To Employee"
@@ -169,6 +207,16 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                         step="0.01"
                         value={formData.costPerSeat}
                         onChange={e => setFormData({ ...formData, costPerSeat: e.target.value })}
+                        disabled
+                    />
+
+                    <Input
+                        label="Seats / Quantity"
+                        type="number"
+                        min="1"
+                        value={formData.totalSeats}
+                        onChange={e => setFormData({ ...formData, totalSeats: e.target.value })}
+                        disabled
                     />
 
                     <Select
@@ -181,6 +229,15 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                             { label: 'Others', value: 'Others' }
                         ]}
                     />
+                </div>
+
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 rounded-xl flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
+                        Calculated Total Price:
+                    </span>
+                    <span className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+                        ${((Number(formData.costPerSeat) || 0) * (Number(formData.totalSeats) || 1)).toLocaleString()}
+                    </span>
                 </div>
 
                 <div className="space-y-2">

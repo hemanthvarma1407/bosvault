@@ -83,8 +83,10 @@ export class DashboardRepository {
             .select([
                 'license.id as id',
                 'license.application_id as applicationId',
-                'COALESCE(app.name, \'Unknown Application\') as applicationName',
-                'license.expiryDate as expiryDate',
+                'COALESCE(app.name, \'Software License\') as applicationName',
+                'license.expiry_date as expiryDate',
+                'license.assigned_date as assignedDate',
+                'license.billing_cycle as billingCycle',
                 'COALESCE(CONCAT(emp.first_name, \' \', emp.last_name), \'Unassigned\') as assignedTo',
                 'license.assigned_employee_id as assignedEmployeeId'
             ]);
@@ -94,9 +96,9 @@ export class DashboardRepository {
         }
 
         const expiring = await query
-            .andWhere('license.expiryDate > :today', { today: new Date() })
-            .orderBy('license.expiryDate', 'ASC')
-            .limit(5)
+            .orderBy('license.expiry_date', 'ASC')
+            .addOrderBy('license.created_at', 'DESC')
+            .limit(10)
             .getRawMany();
 
         const total = await repo.count({ where: companyId > 0 ? { companyId } : {} });

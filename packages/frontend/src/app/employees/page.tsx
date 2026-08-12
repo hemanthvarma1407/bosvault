@@ -375,6 +375,26 @@ const EmployeesPage: React.FC = () => {
         });
     };
 
+    const calculateTotalPaid = (emp: any) => {
+        if (!emp.joiningDate || !emp.billingAmount) return 0;
+        const start = new Date(emp.joiningDate);
+        if (isNaN(start.getTime())) return 0;
+
+        let end = new Date();
+        if (emp.empStatus?.toLowerCase() === 'deactivated' && emp.lastWorkingDay) {
+            const lwd = new Date(emp.lastWorkingDay);
+            if (!isNaN(lwd.getTime())) end = lwd;
+        }
+
+        if (start > end) return 0;
+
+        const diffTime = end.getTime() - start.getTime();
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+        const diffMonths = diffDays / 30.4375;
+
+        return Math.round(diffMonths * Number(emp.billingAmount));
+    };
+
     const getDepartmentName = (emp: any) => {
         if (emp.departmentId && departments.length > 0) {
             const dept = departments.find(d => d.id === Number(emp.departmentId));
@@ -626,7 +646,11 @@ const EmployeesPage: React.FC = () => {
                                                 </div>
                                                 <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
                                                     <DollarSign className="h-2.5 w-2.5 shrink-0 opacity-70" />
-                                                    <span>${Number(emp.billingAmount || 0).toLocaleString()}</span>
+                                                    <span>${Number(emp.billingAmount || 0).toLocaleString()} /mo</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-bold">
+                                                    <DollarSign className="h-2.5 w-2.5 shrink-0 opacity-70" />
+                                                    <span>${calculateTotalPaid(emp).toLocaleString()} total</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -669,6 +693,7 @@ const EmployeesPage: React.FC = () => {
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden xl:table-cell">Manager</th>
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right hidden lg:table-cell">Billing</th>
+                                        <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right hidden lg:table-cell">Total Paid</th>
                                         <th className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -711,6 +736,11 @@ const EmployeesPage: React.FC = () => {
                                             <td className="px-3 py-2 text-right hidden lg:table-cell">
                                                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                                                     ${Number(emp.billingAmount || 0).toLocaleString('en-US')}
+                                                </span>
+                                            </td>
+                                            <td className="px-3 py-2 text-right hidden lg:table-cell">
+                                                <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                                                    ${calculateTotalPaid(emp).toLocaleString('en-US')}
                                                 </span>
                                             </td>
                                             <td className="px-3 py-2">
@@ -931,6 +961,13 @@ const EmployeesPage: React.FC = () => {
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Monthly Billing</p>
                                                 <p className="font-semibold text-emerald-600 dark:text-emerald-400">${Number(selectedEmployee.billingAmount || 0).toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <DollarSign className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <div>
+                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Total Paid</p>
+                                                <p className="font-semibold text-indigo-600 dark:text-indigo-400">${calculateTotalPaid(selectedEmployee).toLocaleString()}</p>
                                             </div>
                                         </div>
                                     </div>

@@ -262,6 +262,7 @@ export class License extends MasterBase {
     totalQuantity?: number;
     usedQuantity?: number;
     usedCount?: number;
+    price?: number;
 
     constructor(
         id: number,
@@ -998,12 +999,14 @@ export class CreateLicenseMasterModel extends CreateMasterModel {
     purchaseDate?: Date;
     expiryDate?: Date;
     totalQuantity?: number;
+    price?: number;
 
-    constructor(userId: number, companyId: number, name: string, description?: string, isActive?: boolean, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number, id?: number) {
+    constructor(userId: number, companyId: number, name: string, description?: string, isActive?: boolean, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number, id?: number, price?: number) {
         super(userId, companyId, name, description, isActive, id);
         this.purchaseDate = purchaseDate;
         this.expiryDate = expiryDate;
         this.totalQuantity = totalQuantity;
+        this.price = price;
     }
 }
 
@@ -1015,8 +1018,9 @@ export class UpdateLicenseMasterModel {
     purchaseDate?: Date;
     expiryDate?: Date;
     totalQuantity?: number;
+    price?: number;
 
-    constructor(id: number, name: string, description?: string, isActive = true, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number) {
+    constructor(id: number, name: string, description?: string, isActive = true, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number, price?: number) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -1024,6 +1028,7 @@ export class UpdateLicenseMasterModel {
         this.purchaseDate = purchaseDate;
         this.expiryDate = expiryDate;
         this.totalQuantity = totalQuantity;
+        this.price = price;
     }
 }
 

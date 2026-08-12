@@ -395,19 +395,25 @@ const DashboardPage: React.FC = () => {
                                     ) : (
                                         <div className="space-y-2">
                                             {stats.licenses.expiringSoon.map((lic: any) => {
-                                                const daysLeft = Math.ceil((new Date(lic.expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                                                const isCritical = daysLeft <= 7;
-                                                const isWarning = daysLeft > 7 && daysLeft <= 30;
+                                                const rawDate = lic.expiryDate || lic.assignedDate;
+                                                const targetDate = rawDate ? new Date(rawDate) : null;
+                                                const isValidDate = targetDate && !isNaN(targetDate.getTime());
+                                                const daysLeft = isValidDate 
+                                                    ? Math.ceil((targetDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                                                    : null;
+                                                
+                                                const isCritical = daysLeft !== null && daysLeft <= 7;
+                                                const isWarning = daysLeft !== null && daysLeft > 7 && daysLeft <= 30;
                                                 const badgeColor = isCritical 
                                                     ? 'bg-rose-500/10 text-rose-600 border-rose-500/10' 
                                                     : isWarning 
                                                         ? 'bg-amber-500/10 text-amber-600 border-amber-500/10' 
-                                                        : 'bg-blue-500/10 text-blue-600 border-blue-500/10';
+                                                        : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/10';
 
                                                 return (
                                                     <div key={lic.id} className="flex items-center justify-between p-2 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/30 hover:border-indigo-500/20 transition-all duration-300">
                                                         <div className="flex items-center gap-2">
-                                                            <div className={`w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-blue-500'} animate-pulse`} />
+                                                            <div className={`w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse`} />
                                                             <div>
                                                                 <p className="text-[10px] font-black text-slate-800 dark:text-white tracking-tight uppercase leading-none mb-0.5">{lic.applicationName}</p>
                                                                 <p className="text-[8px] text-slate-400 dark:text-slate-500 font-medium">Assigned to: {lic.assignedTo || 'Unassigned'}</p>
@@ -415,10 +421,10 @@ const DashboardPage: React.FC = () => {
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${badgeColor}`}>
-                                                                {daysLeft <= 0 ? 'Expired' : `${daysLeft} days left`}
+                                                                {daysLeft === null ? 'Active' : daysLeft <= 0 ? 'Expired' : `${daysLeft} days left`}
                                                             </span>
                                                             <p className="text-[8px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">
-                                                                {new Date(lic.expiryDate).toLocaleDateString()}
+                                                                {isValidDate ? targetDate.toLocaleDateString() : 'Active'}
                                                             </p>
                                                         </div>
                                                     </div>

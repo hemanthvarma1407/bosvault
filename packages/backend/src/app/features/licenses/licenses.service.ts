@@ -63,6 +63,7 @@ export class LicensesService {
             const company = companyMap.get(Number(l.companyId));
             const app = appMap.get(Number(l.applicationId));
             const emp = l.assignedEmployeeId ? empMap.get(Number(l.assignedEmployeeId)) : undefined;
+            const effectiveCost = Number(l.costPerSeat) > 0 ? Number(l.costPerSeat) : Number(app?.price || 0);
 
             return new LicenseResponseModel(
                 l.id,
@@ -77,12 +78,12 @@ export class LicensesService {
                 l.expiryDate,
                 undefined, // seats
                 l.totalSeats,
-                Number(l.costPerSeat),
+                effectiveCost,
                 l.billingCycle,
                 l.remarks,
                 l.role,
                 company ? { id: company.id, companyName: company.companyName } : undefined,
-                app ? { id: app.id, name: app.name, logo: '' } : undefined,
+                app ? { id: app.id, name: app.name, price: Number(app.price || 0), logo: '' } as any : undefined,
                 emp ? { id: emp.id, firstName: emp.firstName, lastName: emp.lastName, avatar: emp.slackAvatar } : undefined
             );
         });
@@ -194,6 +195,35 @@ export class LicensesService {
      * @returns GlobalResponse indicating creation success
      */
     async createLicense(reqModel: CreateLicenseModel, userId?: number, ipAddress?: string): Promise<GlobalResponse> {
+        if (reqModel.applicationId && reqModel.assignedEmployeeId) {
+            const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
+            const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
+            if (master && master.totalQuantity > 0) {
+                const currentAssigned = await this.repo.createQueryBuilder('l')
+                    .where('l.applicationId = :appId', { appId: reqModel.applicationId })
+                    .andWhere('l.assignedEmployeeId IS NOT NULL')
+                    .getCount();
+
+                const requestedSeats = reqModel.seats || 1;
+                if (currentAssigned + requestedSeats > master.totalQuantity) {
+                    return new GlobalResponse(
+                        false,
+                        400,
+                        `Cannot assign license for "${master.name}": Exceeds total available seats (${currentAssigned}/${master.totalQuantity} already assigned).`
+                    );
+                }
+            }
+        }
+
+        let finalCostPerSeat = Number((reqModel as any).costPerSeat || 0);
+        if (finalCostPerSeat <= 0 && reqModel.applicationId) {
+            const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
+            const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
+            if (master && master.price) {
+                finalCostPerSeat = Number(master.price);
+            }
+        }
+
         const licenseData: Partial<CompanyLicenseEntity> = {
             companyId: reqModel.companyId,
             applicationId: reqModel.applicationId,
@@ -204,16 +234,13 @@ export class LicensesService {
             expiryDate: reqModel.expiryDate,
             remarks: reqModel.remarks,
             totalSeats: reqModel.seats || 1,
-            costPerSeat: (reqModel as any).costPerSeat,
+            costPerSeat: finalCostPerSeat,
             billingCycle: (reqModel as any).billingCycle,
             role: reqModel.role || null
         };
 
         const license = this.repo.create(licenseData);
         const saved = await this.repo.save(license);
-        // ... existing notification logic
-
-
 
         try {
             await this.licenseMasterService.updateUsedCount(reqModel.applicationId);
@@ -232,6 +259,27 @@ export class LicensesService {
      * @returns GlobalResponse indicating update success
      */
     async updateLicense(reqModel: UpdateLicenseModel, userId?: number, ipAddress?: string): Promise<GlobalResponse> {
+        if (reqModel.applicationId && reqModel.assignedEmployeeId) {
+            const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
+            const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
+            if (master && master.totalQuantity > 0) {
+                const currentAssigned = await this.repo.createQueryBuilder('l')
+                    .where('l.applicationId = :appId', { appId: reqModel.applicationId })
+                    .andWhere('l.assignedEmployeeId IS NOT NULL')
+                    .andWhere('l.id != :id', { id: reqModel.id })
+                    .getCount();
+
+                const requestedSeats = reqModel.seats || 1;
+                if (currentAssigned + requestedSeats > master.totalQuantity) {
+                    return new GlobalResponse(
+                        false,
+                        400,
+                        `Cannot update license assignment for "${master.name}": Exceeds total available seats (${currentAssigned}/${master.totalQuantity} already assigned to other employees).`
+                    );
+                }
+            }
+        }
+
         const updateData: Partial<CompanyLicenseEntity> = {
             applicationId: reqModel.applicationId,
             assignedEmployeeId: reqModel.assignedEmployeeId,
@@ -240,6 +288,7 @@ export class LicensesService {
             assignedDate: reqModel.assignedDate,
             expiryDate: reqModel.expiryDate,
             remarks: reqModel.remarks,
+            totalSeats: reqModel.seats ? reqModel.seats : undefined,
             costPerSeat: reqModel.costPerSeat,
             billingCycle: reqModel.billingCycle,
             role: reqModel.role || null
