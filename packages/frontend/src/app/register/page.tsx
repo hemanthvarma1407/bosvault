@@ -75,8 +75,8 @@ const RegisterPage: React.FC = () => {
 
             {/* Left Side: Brand/Art (60%) */}
             <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden flex-col justify-between p-16 text-white bg-[#0F172A]">
-                <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--tw-gradient-stops))] from-blue-700/30 via-slate-900/0 to-slate-900/0" />
-                <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-indigo-600/30 via-slate-900/0 to-slate-900/0" />
+                <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--tw-gradient-stops))] from-slate-900/30 via-slate-900/0 to-slate-900/0" />
+                <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-slate-900/30 via-slate-900/0 to-slate-900/0" />
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.04] z-0" />
 
                 <div className="relative z-10 h-full flex flex-col justify-between">
@@ -96,8 +96,8 @@ const RegisterPage: React.FC = () => {
 
                     <div className="space-y-6 max-w-sm">
                         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                                <ShieldCheck className="w-5 h-5 text-blue-400" />
+                            <div className="w-10 h-10 rounded-xl bg-slate-900/20 flex items-center justify-center">
+                                <ShieldCheck className="w-5 h-5 text-slate-300" />
                             </div>
                             <div>
                                 <h4 className="font-bold text-sm">Secure by Design</h4>
@@ -105,8 +105,8 @@ const RegisterPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                                <CheckCircle2 className="w-5 h-5 text-indigo-400" />
+                            <div className="w-10 h-10 rounded-xl bg-slate-900/20 flex items-center justify-center">
+                                <CheckCircle2 className="w-5 h-5 text-slate-300" />
                             </div>
                             <div>
                                 <h4 className="font-bold text-sm">Instant Access</h4>
@@ -124,7 +124,7 @@ const RegisterPage: React.FC = () => {
             {/* Right Side: Form (40%) */}
             <div className="w-full lg:w-[40%] flex flex-col justify-center relative bg-white dark:bg-[#020617] transition-colors duration-300">
                 <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                    <div className="absolute top-[-20%] right-[-20%] w-[60%] h-[60%] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px]" />
+                    <div className="absolute top-[-20%] right-[-20%] w-[60%] h-[60%] bg-slate-900/5 dark:bg-slate-900/10 rounded-full blur-[100px]" />
                 </div>
 
                 <div className="w-full max-w-[500px] mx-auto px-8 sm:px-12 py-10 relative z-10 overflow-y-auto max-h-screen custom-scrollbar">
@@ -132,7 +132,7 @@ const RegisterPage: React.FC = () => {
                     <div className="mb-8">
                         <div className="lg:hidden flex justify-center mb-6">
                             <div className="inline-flex items-center gap-2">
-                                <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg">
+                                <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-lg">
                                     <Building2 className="w-6 h-6" />
                                 </div>
                                 <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">BosVault</span>
@@ -238,7 +238,7 @@ const RegisterPage: React.FC = () => {
                         <div className="pt-4">
                             <Button
                                 type="submit"
-                                className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-sm rounded-2xl shadow-xl shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                className="w-full h-14 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-900 hover:to-slate-900 text-white font-black text-sm rounded-2xl shadow-xl shadow-black/20 active:scale-95 transition-all flex items-center justify-center gap-2"
                                 isLoading={isLoading}
                             >
                                 Construct Profile
@@ -250,7 +250,7 @@ const RegisterPage: React.FC = () => {
                     <div className="mt-8 text-center">
                         <p className="text-sm font-medium text-slate-500">
                             Already part of the network?{' '}
-                            <Link href="/login" className="font-bold text-blue-600 hover:underline">
+                            <Link href="/login" className="font-bold text-slate-900 dark:text-white hover:underline">
                                 Return to Login
                             </Link>
                         </p>

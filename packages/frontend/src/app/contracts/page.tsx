@@ -132,22 +132,22 @@ export default function ContractsPage() {
                     title="Contract Management"
                     description="Monitor vendor agreements, renewals, and compliance"
                     icon={<Library />}
-                    gradient="from-indigo-600 to-violet-700"
+                    gradient="from-slate-900 to-violet-700"
                 >
                     <div className="flex items-center gap-3">
                         <div className="relative group">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search contracts..."
-                                className="pl-9 pr-3 py-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                                className="pl-9 pr-3 py-1.5 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all shadow-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                         <button
                             onClick={() => { setEditContract(null); setIsModalOpen(true); }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
+                            className="bg-slate-900 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
                         >
                             <Plus className="h-4 w-4" />
                             New Contract
@@ -165,7 +165,7 @@ export default function ContractsPage() {
                     <div className="grid grid-cols-1 gap-4">
                         {isLoading ? (
                             <div className="py-24 text-center">
-                                <div className="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4" />
+                                <div className="animate-spin h-8 w-8 border-4 border-slate-700 border-t-transparent rounded-full mx-auto mb-4" />
                                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest leading-relaxed">Syncing your contracts hub...</p>
                             </div>
                         ) : filteredContracts.length === 0 ? (
@@ -191,7 +191,7 @@ export default function ContractsPage() {
                                             className="group bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all relative overflow-hidden"
                                         >
                                             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                                <FileText className="w-24 h-24 text-indigo-500 rotate-12" />
+                                                <FileText className="w-24 h-24 text-slate-900 dark:text-white rotate-12" />
                                             </div>
 
                                             <div className="relative z-10 flex flex-col h-full">
@@ -199,7 +199,7 @@ export default function ContractsPage() {
                                                     <div>
                                                         <h3 className="font-black text-sm uppercase tracking-tight text-slate-900 dark:text-white mb-1">{contract.contractNumber}</h3>
                                                         <div className="flex items-center gap-1.5">
-                                                            <Store className="w-3 h-3 text-indigo-500" />
+                                                            <Store className="w-3 h-3 text-slate-900 dark:text-white" />
                                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{contract.vendor?.name}</span>
                                                         </div>
                                                     </div>
@@ -216,7 +216,7 @@ export default function ContractsPage() {
                                                         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 border border-slate-200 dark:border-white/5">
                                                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Value</p>
                                                             <div className="flex items-center gap-1">
-                                                                <span className="text-[10px] font-bold text-indigo-500">{contract.currency}</span>
+                                                                <span className="text-[10px] font-bold text-slate-900 dark:text-white">{contract.currency}</span>
                                                                 <p className="text-lg font-black text-slate-900 dark:text-white">{Number(contract.totalValue).toLocaleString()}</p>
                                                             </div>
                                                         </div>
@@ -238,7 +238,7 @@ export default function ContractsPage() {
                                                         <div className="flex items-center gap-1">
                                                             <button
                                                                 onClick={() => { setEditContract(contract); setIsModalOpen(true); }}
-                                                                className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-white/5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all"
+                                                                className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-white/5 text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/20 transition-all"
                                                             >
                                                                 <Pencil className="w-3.5 h-3.5" />
                                                             </button>
@@ -379,7 +379,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Vendor Partner</label>
                         <select
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all"
                             value={formData.vendorId}
                             onChange={e => setFormData({ ...formData, vendorId: e.target.value })}
                             required
@@ -391,7 +391,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Agreement #</label>
                         <input
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all"
                             placeholder="e.g. CON-2024-001"
                             value={formData.contractNumber}
                             onChange={e => setFormData({ ...formData, contractNumber: e.target.value })}
@@ -405,7 +405,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Effective Date</label>
                         <input
                             type="date"
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold"
                             value={formData.startDate}
                             onChange={e => setFormData({ ...formData, startDate: e.target.value })}
                             required
@@ -415,7 +415,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Termination Date</label>
                         <input
                             type="date"
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold"
                             value={formData.endDate}
                             onChange={e => setFormData({ ...formData, endDate: e.target.value })}
                             required
@@ -430,7 +430,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black">$</span>
                             <input
                                 type="number"
-                                className="w-full pl-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                                className="w-full pl-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all"
                                 placeholder="0.00"
                                 value={formData.totalValue}
                                 onChange={e => setFormData({ ...formData, totalValue: e.target.value })}
@@ -443,7 +443,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                         <div className="relative group">
                             <input
                                 type="number"
-                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all"
                                 value={formData.renewalAlertDays}
                                 onChange={e => setFormData({ ...formData, renewalAlertDays: e.target.value })}
                                 required
@@ -454,7 +454,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Lifecycle Status</label>
                         <select
-                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all"
                             value={formData.status}
                             onChange={e => setFormData({ ...formData, status: e.target.value as any })}
                         >
@@ -468,7 +468,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                 <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Strategic Overview</label>
                     <textarea
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2rem] p-5 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all resize-none"
+                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2rem] p-5 text-sm font-bold outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all resize-none"
                         placeholder="Key highlights, deliverables, and service levels..."
                         rows={4}
                         value={formData.description}
@@ -486,7 +486,7 @@ function ContractModal({ isOpen, onClose, editContract, vendors, onSuccess }: an
                     </button>
                     <button
                         type="submit"
-                        className="px-8 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-black uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
+                        className="px-8 py-3 rounded-2xl bg-slate-900 text-white text-xs font-black uppercase tracking-widest hover:bg-slate-900 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
                     >
                         {editContract ? 'Update Agreement' : 'Finalize Agreement'}
                     </button>

@@ -28,8 +28,8 @@ const getStatusConfig = (status?: string) => {
     const statusUpper = (status || 'AVAILABLE').toUpperCase();
     const configs: Record<string, { color: string; bg: string; gradient: string; icon: React.ElementType }> = {
         'AVAILABLE': { color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', gradient: 'from-emerald-500/10 to-teal-500/10', icon: CheckCircle2 },
-        'IN_USE': { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', gradient: 'from-blue-500/10 to-cyan-500/10', icon: User },
-        'INUSE': { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', gradient: 'from-blue-500/10 to-cyan-500/10', icon: User },
+        'IN_USE': { color: 'text-slate-900 dark:text-white dark:text-slate-300', bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20', gradient: 'from-slate-900/10 to-cyan-500/10', icon: User },
+        'INUSE': { color: 'text-slate-900 dark:text-white dark:text-slate-300', bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20', gradient: 'from-slate-900/10 to-cyan-500/10', icon: User },
     };
     return configs[statusUpper] || configs['AVAILABLE'];
 };
@@ -83,7 +83,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                         <div className="flex items-center gap-0.5 shrink-0">
                             <button
                                 onClick={() => onView(asset)}
-                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-indigo-600 transition-colors"
+                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
                                 title="View Details"
                             >
                                 <Eye className="h-4 w-4" />
@@ -91,7 +91,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
 
                             <button
                                 onClick={() => onEdit(asset)}
-                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-blue-600 transition-colors"
+                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
                                 title="Edit"
                             >
                                 <Pencil className="h-4 w-4" />
@@ -117,14 +117,14 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
 
                         {/* Assignment Info - Only show for IN_USE assets */}
                         {['IN_USE', 'INUSE'].includes((asset.status || '').toUpperCase()) ? (
-                            <div className="bg-blue-50/50 dark:bg-blue-900/10 rounded-lg p-2.5 border border-blue-100 dark:border-blue-900/20">
+                            <div className="bg-slate-100 dark:bg-slate-800/60/50 dark:bg-blue-900/10 rounded-lg p-2.5 border border-blue-100 dark:border-blue-900/20">
                                 <div className="flex items-center gap-2.5">
                                     <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                                        <User className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                                        <User className="h-3.5 w-3.5 text-slate-900 dark:text-white dark:text-slate-300" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] font-bold text-blue-400 uppercase tracking-wide mb-0.5">Assigned To</p>
-                                        <p className="text-sm font-bold text-blue-700 dark:text-blue-300 truncate" title={asset.assignedTo}>{asset.assignedTo || 'Unknown User'}</p>
+                                        <p className="text-[10px] font-bold text-slate-300 uppercase tracking-wide mb-0.5">Assigned To</p>
+                                        <p className="text-sm font-bold text-blue-700 dark:text-slate-300 truncate" title={asset.assignedTo}>{asset.assignedTo || 'Unknown User'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                                 </div>
                                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-800">
                                     <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Valuation</p>
-                                    <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">${Number(asset.currentValue).toLocaleString()}</p>
+                                    <p className="text-xs font-bold text-slate-900 dark:text-white dark:text-slate-300">${Number(asset.currentValue).toLocaleString()}</p>
                                 </div>
                             </div>
                         )}
@@ -159,7 +159,7 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
                             <button
                                 onClick={() => onAssign(asset)}
                                 className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${isAvailable
-                                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
+                                    ? 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/40'
                                     : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                                     }`}
                                 title={isAvailable ? "Assign Asset" : "Reassign Asset"}

@@ -42,17 +42,17 @@ export default function KnowledgeHubPage() {
             {/* Hero Section */}
             <div className={`relative p-8 md:p-12 rounded-[3.5rem] overflow-hidden border ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-indigo-950 shadow-2xl shadow-indigo-500/10 border-indigo-900'}`}>
                 {/* Background Glow */}
-                <div className="absolute -top-32 -right-32 w-80 h-80 bg-indigo-500 rounded-full blur-[120px] opacity-20 animate-pulse"></div>
-                <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-blue-500 rounded-full blur-[120px] opacity-10 animate-pulse delay-75"></div>
+                <div className="absolute -top-32 -right-32 w-80 h-80 bg-slate-900 rounded-full blur-[120px] opacity-20 animate-pulse"></div>
+                <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-slate-900 rounded-full blur-[120px] opacity-10 animate-pulse delay-75"></div>
 
                 <div className="relative z-10 max-w-3xl space-y-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/20 border border-slate-700/30 text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]">
                         <BookOpen className="h-3 w-3" />
                         BosVault Academy
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight">
                         Knowledge is power. <br />
-                        <span className="text-indigo-400">Share your expertise.</span>
+                        <span className="text-slate-300">Share your expertise.</span>
                     </h1>
                     <p className="text-indigo-100/60 text-lg font-medium max-w-xl">
                         A collaborative hub for technical documentation, system architecture boards, and standard operating procedures.
@@ -61,13 +61,13 @@ export default function KnowledgeHubPage() {
                     {/* Hero Search */}
                     <div className="pt-4 max-w-2xl">
                         <div className="relative group">
-                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-400 group-focus-within:scale-110 transition-transform" />
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:scale-110 transition-transform" />
                             <input
                                 type="text"
                                 placeholder="Search by documentation, topic, or system..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-14 pr-6 py-5 rounded-[2rem] bg-indigo-900/40 border border-white/10 text-white placeholder-indigo-300/50 outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-400/50 transition-all text-lg"
+                                className="w-full pl-14 pr-6 py-5 rounded-[2rem] bg-indigo-900/40 border border-white/10 text-white placeholder-indigo-300/50 outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-slate-700/50 transition-all text-lg"
                             />
                         </div>
                     </div>
@@ -94,7 +94,7 @@ export default function KnowledgeHubPage() {
                     </div>
 
                     {/* New Doc Button */}
-                    <Button className="w-full h-14 rounded-3xl bg-indigo-600 hover:bg-indigo-700 text-white font-black tracking-tight shadow-xl shadow-indigo-600/20">
+                    <Button className="w-full h-14 rounded-3xl bg-slate-900 hover:bg-slate-900 text-white font-black tracking-tight shadow-xl shadow-indigo-600/20">
                         <Edit3 className="h-5 w-5 mr-3" />
                         Create Document
                     </Button>
@@ -121,10 +121,10 @@ export default function KnowledgeHubPage() {
                                 <button
                                     key={tab}
                                     onClick={() => setSelectedTab(tab)}
-                                    className={`relative pb-3 text-sm font-black transition-all ${selectedTab === tab ? 'text-indigo-500' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`relative pb-3 text-sm font-black transition-all ${selectedTab === tab ? 'text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-300'}`}
                                 >
                                     {tab}
-                                    {selectedTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-500 rounded-full" />}
+                                    {selectedTab === tab && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-slate-900 rounded-full" />}
                                 </button>
                             ))}
                         </div>
@@ -137,11 +137,11 @@ export default function KnowledgeHubPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {popularArticles.map((article) => (
                             <div key={article.id} className={`group p-6 rounded-[2.5rem] border transition-all hover:scale-[1.02] ${isDarkMode
-                                ? 'bg-slate-900/50 border-slate-800 hover:bg-slate-900 hover:border-indigo-500/30'
+                                ? 'bg-slate-900/50 border-slate-800 hover:bg-slate-900 hover:border-slate-700/30'
                                 : 'bg-white border-slate-200 hover:shadow-2xl shadow-indigo-500/5'}`}>
                                 <div className="space-y-4">
                                     <div className="flex items-start justify-between">
-                                        <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-indigo-500/10 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+                                        <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isDarkMode ? 'bg-slate-900/10 text-slate-300' : 'bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white'}`}>
                                             {article.category}
                                         </div>
                                         <div className="flex items-center gap-1 text-[10px] font-black text-slate-500">
@@ -171,8 +171,8 @@ export default function KnowledgeHubPage() {
                     </div>
 
                     {/* Quick Guide Card */}
-                    <div className={`p-8 rounded-[3rem] border relative overflow-hidden group ${isDarkMode ? 'bg-indigo-600/5 border-indigo-500/20' : 'bg-slate-50 border-slate-200'}`}>
-                        <div className="absolute top-0 right-0 p-8 text-indigo-500/10 group-hover:scale-110 transition-transform">
+                    <div className={`p-8 rounded-[3rem] border relative overflow-hidden group ${isDarkMode ? 'bg-slate-900/5 border-slate-700/20' : 'bg-slate-50 border-slate-200'}`}>
+                        <div className="absolute top-0 right-0 p-8 text-slate-900 dark:text-white/10 group-hover:scale-110 transition-transform">
                             <BookOpen className="h-32 w-32" />
                         </div>
                         <div className="relative z-10 space-y-4">

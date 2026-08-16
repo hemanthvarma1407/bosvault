@@ -30,8 +30,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 focus-ring btn-ripple disabled:opacity-50 disabled:cursor-not-allowed';
 
         const variants = {
-            primary: 'bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 shadow-md shadow-primary-500/25 hover:shadow-lg hover:shadow-primary-500/30 dark:shadow-primary-900/20',
-            secondary: 'bg-white dark:bg-slate-800 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700/50 hover:bg-primary-50 dark:hover:bg-slate-700/50 shadow-sm',
+            primary: 'bg-slate-900 text-white hover:bg-slate-800 border border-slate-800 shadow-md dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-700',
+            secondary: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm',
             outline: 'border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
             ghost: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
             danger: 'bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:from-rose-700 hover:to-rose-800 shadow-md shadow-rose-500/25 dark:shadow-rose-900/20',

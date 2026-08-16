@@ -26,9 +26,9 @@ import {
 const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gradient: string }> = {
     [TicketCategoryEnum.HARDWARE]: {
         icon: Monitor,
-        color: 'text-blue-600 dark:text-blue-400',
-        bg: 'bg-blue-50 dark:bg-blue-900/20',
-        gradient: 'from-blue-500 to-cyan-500'
+        color: 'text-slate-900 dark:text-white dark:text-slate-300',
+        bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20',
+        gradient: 'from-slate-900 to-cyan-500'
     },
     [TicketCategoryEnum.SOFTWARE]: {
         icon: Cpu,
@@ -44,9 +44,9 @@ const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gra
     },
     [TicketCategoryEnum.EMAIL]: {
         icon: Mail,
-        color: 'text-indigo-600 dark:text-indigo-400',
-        bg: 'bg-indigo-50 dark:bg-indigo-900/20',
-        gradient: 'from-indigo-500 to-blue-500'
+        color: 'text-slate-900 dark:text-white dark:text-slate-300',
+        bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20',
+        gradient: 'from-slate-900 to-slate-900'
     },
     [TicketCategoryEnum.ACCESS]: {
         icon: Lock,
@@ -415,7 +415,7 @@ const SupportHubPage: React.FC = () => {
                 <PageHeader
                     icon={<Ticket />}
                     title={`Support Hub`}
-                    gradient="from-indigo-500 to-purple-600"
+                    gradient="from-slate-900 to-purple-600"
                 >
                     <div className="flex items-center gap-3 w-full">
                         <div className="relative flex-1 max-w-md">
@@ -502,7 +502,7 @@ const SupportHubPage: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wide border ${ticket.ticketStatus === TicketStatusEnum.OPEN ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800' :
+                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wide border ${ticket.ticketStatus === TicketStatusEnum.OPEN ? 'bg-slate-100 dark:bg-slate-800/60 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-slate-300 dark:border-blue-800' :
                                                         ticket.ticketStatus === TicketStatusEnum.IN_PROGRESS ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800' :
                                                             ticket.ticketStatus === TicketStatusEnum.RESOLVED ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800' :
                                                                 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
@@ -537,14 +537,14 @@ const SupportHubPage: React.FC = () => {
                                                     <div className="flex items-center justify-center gap-1 opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => router.push(`/support?ticketId=${ticket.id}&ticketTitle=${encodeURIComponent(ticket.subject)}`)}
-                                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                                                            className="p-2 text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                                             title="Chat & Details"
                                                         >
                                                             <MessageSquare className="h-4 w-4" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEdit(ticket)}
-                                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                                                            className="p-2 text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                                             title="Edit Ticket"
                                                         >
                                                             <Edit className="h-4 w-4" />
@@ -600,7 +600,7 @@ const SupportHubPage: React.FC = () => {
                                     <div>
                                         <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2 text-center">Category</label>
                                         <select
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500 text-center"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500 text-center"
                                             value={formData.categoryEnum}
                                             onChange={(e) => {
                                                 const newCategory = e.target.value as TicketCategoryEnum;
@@ -620,7 +620,7 @@ const SupportHubPage: React.FC = () => {
                                     <div>
                                         <label className="block text-sm font-black text-slate-700 dark:text-slate-300 mb-2 text-center">Sub-Category</label>
                                         <select
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500 text-center"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:text-slate-500 text-center"
                                             value={formData.subCategory}
                                             onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
                                             disabled={!!editingTicket}
@@ -657,7 +657,7 @@ const SupportHubPage: React.FC = () => {
                                     Screenshots & File Attachments
                                 </h4>
                                 
-                                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 rounded-2xl p-6 text-center cursor-pointer transition-all relative group bg-white dark:bg-slate-950">
+                                <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-slate-700 dark:hover:border-slate-700 rounded-2xl p-6 text-center cursor-pointer transition-all relative group bg-white dark:bg-slate-950">
                                     <input 
                                         type="file" 
                                         multiple 
@@ -666,7 +666,7 @@ const SupportHubPage: React.FC = () => {
                                         className="absolute inset-0 opacity-0 cursor-pointer"
                                     />
                                     <div className="flex flex-col items-center gap-2">
-                                        <div className="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-xl group-hover:scale-110 transition-transform">
+                                        <div className="p-3 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/50 text-slate-900 dark:text-white dark:text-slate-300 rounded-xl group-hover:scale-110 transition-transform">
                                             <UploadCloud className="h-6 w-6" />
                                         </div>
                                         <div>
@@ -686,14 +686,14 @@ const SupportHubPage: React.FC = () => {
                                                         {file.preview ? (
                                                             <img src={file.preview} alt="preview" className="h-9 w-9 object-cover rounded-lg border border-slate-200" />
                                                         ) : (
-                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/50 text-slate-900 dark:text-white dark:text-slate-300 rounded-lg">
                                                                 <FileIcon className="h-4.5 w-4.5" />
                                                             </div>
                                                         )}
                                                         <div className="min-w-0">
                                                             <span className="font-extrabold text-slate-850 dark:text-slate-200 block truncate" title={file.name}>{file.name}</span>
                                                             {file.status === 'uploading' ? (
-                                                                <div className="flex items-center gap-1 text-[10px] text-indigo-500 font-bold">
+                                                                <div className="flex items-center gap-1 text-[10px] text-slate-900 dark:text-white font-bold">
                                                                     <RefreshCw className="h-3 w-3 animate-spin" />
                                                                     <span>Uploading to backend...</span>
                                                                 </div>

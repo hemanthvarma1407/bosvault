@@ -202,7 +202,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">{item.configuration || '-'}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <div className="flex justify-center gap-2">
-                                                    <button onClick={() => { setSelectedConfig(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                    <button onClick={() => { setSelectedConfig(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -269,14 +269,14 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
                 {selectedConfig && (
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
-                            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-sm">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-sm">
                                 <Laptop className="h-8 w-8" />
                             </div>
                             <div className="text-center">
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{selectedConfig.laptopCompany}</p>
                                 <h4 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{selectedConfig.model}</h4>
                             </div>
-                            <span className="mt-3 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800 uppercase tracking-widest">
+                            <span className="mt-3 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800/60 text-indigo-700 border border-indigo-200 dark:bg-indigo-900/20 dark:text-slate-300 dark:border-indigo-800 uppercase tracking-widest">
                                 {selectedConfig.assetType || 'Standard Device'}
                             </span>
                         </div>
@@ -285,7 +285,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Cpu className="h-3.5 w-3.5 text-blue-500" />
+                                        <Cpu className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">RAM Memory</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{selectedConfig.ram || 'Not specified'}</p>

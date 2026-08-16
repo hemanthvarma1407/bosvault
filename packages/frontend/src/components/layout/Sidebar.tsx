@@ -79,7 +79,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
     // Build hierarchy for sidebar categories
     // The backend now sends a nested structure with 'children'
     const menuTree = useMemo(() => {
-        return allowedMenus || [];
+        const baseMenus = allowedMenus || [];
+        const hasSupport = baseMenus.some(m => m.key === 'support' || m.key === 'helpdesk');
+        if (!hasSupport && baseMenus.length > 0) {
+            return [
+                ...baseMenus,
+                {
+                    key: 'support',
+                    label: 'Helpdesk',
+                    icon: 'HelpCircle',
+                    children: [
+                        { key: 'tickets', label: 'Support Tickets', icon: 'Ticket' },
+                        { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle' },
+                        { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3' },
+                        { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen' }
+                    ]
+                }
+            ];
+        }
+        return baseMenus;
     }, [allowedMenus]);
 
     // Sync active group based on current pathname and handle initial expansion
@@ -143,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <Icon strokeWidth={2.5} className={`h-4 w-4 shrink-0 ${isExpanded ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                                    <Icon strokeWidth={2.5} className={`h-4 w-4 shrink-0 ${isExpanded ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
                                     <span className="text-sm font-semibold tracking-tight truncate">{item.label}</span>
                                 </div>
                                 <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''} text-slate-400`} />
@@ -152,11 +170,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                             <Link
                                 href={`/${item.key === 'dashboard' ? 'dashboard' : item.key}`}
                                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all group ${isActive
-                                    ? 'bg-blue-900/20 text-blue-400'
+                                    ? 'bg-slate-800 text-white font-bold shadow-sm'
                                     : 'text-slate-400 hover:bg-slate-900 hover:text-white'
                                     }`}
                             >
-                                <Icon strokeWidth={2.5} className={`h-4 w-4 shrink-0 ${isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                                <Icon strokeWidth={2.5} className={`h-4 w-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
                                 <span className="text-sm font-semibold tracking-tight truncate">{item.label}</span>
                             </Link>
                         )}
@@ -188,7 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                         <div className="w-8 h-8 flex items-center justify-center text-white shrink-0 overflow-hidden group-hover:scale-110 transition-transform">
                             <img src="/logo.jpeg" alt="Logo" className="h-8 w-8 object-contain" />
                         </div>
-                        <h1 className="text-lg font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">
+                        <h1 className="text-lg font-black text-white tracking-tight group-hover:text-slate-300 transition-colors">
                             BOS Vault
                         </h1>
                     </Link>

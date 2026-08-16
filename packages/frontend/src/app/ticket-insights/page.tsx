@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 import { ticketService, companyService } from '@/lib/api/services';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -64,13 +65,13 @@ const EmptyStats = {
 
 export default function TicketInsightsPage() {
     const { user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [stats, setStats] = useState<any>(EmptyStats);
     const [isLoading, setIsLoading] = useState(true);
     const [companies, setCompanies] = useState<any[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(0);
 
     const fetchAnalytics = useCallback(async (companyId?: number) => {
-        const targetId = (companyId !== undefined) ? companyId : (selectedCompanyId !== null ? selectedCompanyId : (user?.companyId ? Number(user.companyId) : 0));
+        const targetId = (companyId !== undefined) ? companyId : (reduxCompanyId ? Number(reduxCompanyId) : (user?.companyId ? Number(user.companyId) : 0));
 
         setIsLoading(true);
         try {
@@ -89,7 +90,12 @@ export default function TicketInsightsPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [user?.companyId, selectedCompanyId]);
+    }, [user?.companyId, reduxCompanyId]);
+
+    useEffect(() => {
+        const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+        fetchAnalytics(compId);
+    }, [reduxCompanyId, fetchAnalytics]);
 
     useEffect(() => {
         const init = async () => {
@@ -97,25 +103,9 @@ export default function TicketInsightsPage() {
                 const response = await companyService.getAllCompaniesDropdown();
                 if (response && response.status && response.data) {
                     setCompanies(response.data);
-                    const initialId = 0; // Default to All Companies
-                    setSelectedCompanyId(initialId);
-                    
-                    // Fetch real statistics
-                    const req = new GetTicketStatisticsRequestModel(initialId);
-                    const statsRes = await ticketService.getStatistics(req);
-                    if (statsRes && statsRes.status !== false) {
-                        setStats(statsRes.data || statsRes);
-                    } else {
-                        setStats(EmptyStats);
-                    }
-                } else {
-                    setStats(EmptyStats);
                 }
             } catch (error) {
                 console.error('Initialization of insights failed:', error);
-                setStats(EmptyStats);
-            } finally {
-                setIsLoading(false);
             }
         };
         init();
@@ -125,7 +115,7 @@ export default function TicketInsightsPage() {
         return (
             <RouteGuard requiredRoles={[UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN]}>
                 <div className="p-4 lg:p-8 min-h-screen bg-slate-50/50 dark:bg-slate-950/50 space-y-8 flex flex-col justify-center items-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-slate-700"></div>
                     <p className="text-slate-500 dark:text-slate-400 font-semibold">Generating Helpdesk Insights...</p>
                 </div>
             </RouteGuard>
@@ -178,29 +168,9 @@ export default function TicketInsightsPage() {
                     icon={<BarChart3 />}
                     title="Helpdesk Analytics"
                     description="Real-time insights on SLA compliance, CSAT scores, and technical team performance."
-                    gradient="from-indigo-600 to-violet-750"
+                    gradient="from-slate-900 to-violet-750"
                 >
                     <div className="flex flex-wrap items-center gap-3">
-                        {companies.length > 0 && (
-                            <div className="w-56">
-                                <Select
-                                    value={selectedCompanyId?.toString() || ''}
-                                    onChange={(e) => {
-                                        const newId = Number(e.target.value);
-                                        setSelectedCompanyId(newId);
-                                        fetchAnalytics(newId);
-                                    }}
-                                    options={[
-                                        { value: '0', label: 'All Companies' },
-                                        ...companies.map((c) => ({
-                                            value: c.id.toString(),
-                                            label: c.name
-                                        }))
-                                    ]}
-                                    className="h-9 font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
-                                />
-                            </div>
-                        )}
                         <button
                             onClick={() => fetchAnalytics()}
                             className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
@@ -217,9 +187,9 @@ export default function TicketInsightsPage() {
                         title="Total Tickets Handled"
                         value={currentStats.total || 0}
                         icon={Users}
-                        gradient="from-indigo-500 to-purple-600"
-                        iconBg="bg-indigo-50 dark:bg-indigo-950/20"
-                        iconColor="text-indigo-600 dark:text-indigo-400"
+                        gradient="from-slate-900 to-purple-600"
+                        iconBg="bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/20"
+                        iconColor="text-slate-900 dark:text-white dark:text-slate-300"
                         isLoading={false}
                     />
                     
@@ -233,7 +203,7 @@ export default function TicketInsightsPage() {
                         isLoading={false}
                         subText={
                             <div className="flex items-center gap-1 mt-0.5 text-[8px] font-bold text-slate-500">
-                                <ShieldCheck className="h-3 w-3 text-indigo-500" />
+                                <ShieldCheck className="h-3 w-3 text-slate-900 dark:text-white" />
                                 <span>Status: <strong className={complianceColor}>{complianceRatingText}</strong></span>
                             </div>
                         }
@@ -369,7 +339,7 @@ export default function TicketInsightsPage() {
                     {/* Line Chart: Trends */}
                     <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
                         <h3 className="text-base font-black text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-indigo-500" />
+                            <TrendingUp className="h-5 w-5 text-slate-900 dark:text-white" />
                             Ticket Volume Trends (Last 6 Months)
                         </h3>
                         <div className="h-64 flex flex-col justify-center items-center">
@@ -435,10 +405,10 @@ export default function TicketInsightsPage() {
                 <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                         <h3 className="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
-                            <Award className="h-5 w-5 text-indigo-500" />
+                            <Award className="h-5 w-5 text-slate-900 dark:text-white" />
                             IT Support Technicians Performance
                         </h3>
-                        <span className="text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-extrabold px-3 py-1 rounded-full border border-indigo-100 dark:border-indigo-850">
+                        <span className="text-xs bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/40 text-slate-900 dark:text-white dark:text-slate-300 font-extrabold px-3 py-1 rounded-full border border-indigo-100 dark:border-indigo-850">
                             Leaderboard
                         </span>
                     </div>
@@ -473,7 +443,7 @@ export default function TicketInsightsPage() {
                                                 </td>
                                                 <td className="py-4 px-6 text-left">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-black shadow-sm">
+                                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-900 to-purple-600 flex items-center justify-center text-white text-xs font-black shadow-sm">
                                                             {perf.name.charAt(0).toUpperCase()}
                                                         </div>
                                                         <span className="text-sm font-black text-slate-800 dark:text-white">{perf.name}</span>

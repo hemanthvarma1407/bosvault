@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 export default function NotFound() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-[#020617] p-4 text-center">
-            <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-full flex items-center justify-center mb-8 shadow-xl shadow-indigo-500/10">
+            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white rounded-full flex items-center justify-center mb-8 shadow-xl shadow-indigo-500/10">
                 <Search className="w-10 h-10" />
             </div>
 

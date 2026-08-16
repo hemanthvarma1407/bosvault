@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { slackUserService, companyService } from '@/lib/api/services';
 import { SlackUserModel, CompanyDropdownModel } from '@bosvault/shared-models';
@@ -12,6 +12,7 @@ import { UserRoleEnum } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 
@@ -51,9 +52,9 @@ const ImageWithFallback: React.FC<{
 
 const SlackUsersPage: React.FC = () => {
     const { user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [users, setUsers] = useState<SlackUserModel[]>([]);
     const [companies, setCompanies] = useState<CompanyDropdownModel[]>([]);
-    const [selectedSyncCompanyId, setSelectedSyncCompanyId] = useState<string>('all');
     const [isLoading, setIsLoading] = useState(true);
     const [isImporting, setIsImporting] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -86,7 +87,8 @@ const SlackUsersPage: React.FC = () => {
     const handleImportFromSlack = async () => {
         try {
             setIsImporting(true);
-            if (selectedSyncCompanyId === 'all') {
+            const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            if (targetCompanyId === 0) {
                 if (companies.length === 0) {
                     AlertMessages.getErrorMessage('No companies found to sync');
                     return;
@@ -102,7 +104,7 @@ const SlackUsersPage: React.FC = () => {
                 }
                 AlertMessages.getSuccessMessage(`Bulk sync complete. Success: ${successCount}, Failed: ${failCount}`);
             } else {
-                const response = await slackUserService.importSlackUsers(Number(selectedSyncCompanyId));
+                const response = await slackUserService.importSlackUsers(targetCompanyId);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message || 'Imported successfully');
                 } else {
@@ -126,9 +128,6 @@ const SlackUsersPage: React.FC = () => {
     const handleConfirmDelete = async () => {
         if (!deletingUserId) return;
         try {
-            // Correcting service call - assuming deleteSlackUser exists or we use a generic delete if available
-            // Looking at master-models.ts, there is DeleteCompanyModel but not specifically DeleteSlackUserModel.
-            // Let's assume generic id-based delete if service supports it.
             const response = await (slackUserService as any).deleteSlackUser({ id: deletingUserId, userId: user?.id || 0 });
             if (response.status) {
                 AlertMessages.getSuccessMessage('Slack member removed successfully');
@@ -144,18 +143,21 @@ const SlackUsersPage: React.FC = () => {
         }
     };
 
-    const filtered = users.filter(u => {
-        const matchesSearch =
-            u.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            u.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            u.displayName?.toLowerCase().includes(searchQuery.toLowerCase());
-
-        const matchesCompany =
-            selectedSyncCompanyId === 'all' ||
-            u.companyId?.toString() === selectedSyncCompanyId;
-
-        return matchesSearch && matchesCompany;
-    });
+    const filteredUsers = useMemo(() => {
+        const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+        let list = users;
+        if (targetCompanyId > 0) {
+            list = users.filter(u => Number(u.companyId) === targetCompanyId);
+        }
+        if (!searchQuery.trim()) return list;
+        const q = searchQuery.toLowerCase();
+        return list.filter(u =>
+            (u as any).realName?.toLowerCase().includes(q) ||
+            u.email?.toLowerCase().includes(q) ||
+            u.name?.toLowerCase().includes(q) ||
+            (u as any).title?.toLowerCase().includes(q)
+        );
+    }, [users, reduxCompanyId, searchQuery]);
 
     return (
         <RouteGuard requiredRoles={[UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN]}>
@@ -177,22 +179,10 @@ const SlackUsersPage: React.FC = () => {
                         }
                     ]}
                 >
-                    <div className="flex items-center gap-4">
-                        <select
-                            value={selectedSyncCompanyId}
-                            onChange={(e) => setSelectedSyncCompanyId(e.target.value)}
-                            className="bg-white/10 dark:bg-slate-800/50 border border-white/20 dark:border-slate-700 text-white text-[11px] font-bold rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-white/30 cursor-pointer hover:bg-white/20 dark:hover:bg-slate-700 transition-all uppercase tracking-wide"
-                        >
-                            <option value="all" className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800">All Companies</option>
-                            {companies.map(comp => (
-                                <option key={comp.id} value={comp.id} className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800">{comp.name}</option>
-                            ))}
-                        </select>
-                        <div className="hidden md:flex items-center gap-1.5">
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-white/10 text-white border border-white/20">
-                                <span className="text-[10px] font-medium opacity-70">Total</span> {users.length}
-                            </span>
-                        </div>
+                    <div className="hidden md:flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-white/10 text-white border border-white/20">
+                            <span className="text-[10px] font-medium opacity-70">Total</span> {filteredUsers.length}
+                        </span>
                     </div>
                 </PageHeader>
 
@@ -221,7 +211,7 @@ const SlackUsersPage: React.FC = () => {
                 {/* Cards */}
                 {isLoading ? (
                     <div className="flex justify-center py-20"><Spinner size="lg" /></div>
-                ) : filtered.length === 0 ? (
+                ) : filteredUsers.length === 0 ? (
                     <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4A154B] to-[#7C3085] flex items-center justify-center mx-auto mb-3">
                             <Slack className="h-6 w-6 text-white" />
@@ -231,7 +221,7 @@ const SlackUsersPage: React.FC = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-8 gap-3">
-                        {filtered.map(u => {
+                        {filteredUsers.map(u => {
                             const a = u as any;
                             const initials = u.name?.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || '?';
                             return (
@@ -247,7 +237,7 @@ const SlackUsersPage: React.FC = () => {
                                                 alt={u.name}
                                                 className="w-10 h-10 rounded-lg object-cover shadow-sm ring-1 ring-slate-100 dark:ring-slate-700/50"
                                                 fallback={
-                                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-inner">
+                                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-slate-900 flex items-center justify-center text-white font-bold text-sm shadow-inner">
                                                         {initials}
                                                     </div>
                                                 }
@@ -320,7 +310,7 @@ const SlackUsersPage: React.FC = () => {
                         <div className="space-y-6">
                             <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                                 <div className="relative">
-                                    <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
+                                    <div className="w-24 h-24 rounded-3xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
                                         <ImageWithFallback
                                             src={(selectedUser as any).avatarUrl}
                                             alt={selectedUser.name}
@@ -340,7 +330,7 @@ const SlackUsersPage: React.FC = () => {
                                             <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{selectedUser.displayName || 'no-display-name'}</span>
                                         </div>
                                         {(selectedUser as any).isAdmin && (
-                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 mt-1">
+                                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white dark:bg-indigo-900/30 dark:text-slate-300 border border-indigo-100 dark:border-indigo-800/50 mt-1">
                                                 <Shield className="h-3 w-3" />
                                                 <span className="text-[10px] font-black uppercase tracking-widest">Workspace Administrator</span>
                                             </div>
@@ -353,7 +343,7 @@ const SlackUsersPage: React.FC = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Hash className="h-3.5 w-3.5 text-indigo-500" />
+                                            <Hash className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slack ID</span>
                                         </div>
                                         <p className="text-sm font-mono font-bold text-slate-700 dark:text-slate-200">{selectedUser.slackUserId || 'N/A'}</p>
@@ -369,7 +359,7 @@ const SlackUsersPage: React.FC = () => {
 
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Mail className="h-3.5 w-3.5 text-blue-500" />
+                                        <Mail className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Email</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{selectedUser.email}</p>

@@ -49,8 +49,8 @@ const RequestAccessPage: React.FC = () => {
             }`}>
             {/* Animated Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-float ${isDarkMode ? 'bg-gradient-to-r from-blue-500/30 to-cyan-500/30' : 'bg-gradient-to-r from-blue-400/20 to-cyan-300/20 opacity-70'}`}></div>
-                <div className={`absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl animate-float-delayed ${isDarkMode ? 'bg-gradient-to-r from-indigo-500/30 to-purple-500/30' : 'bg-gradient-to-r from-indigo-400/20 to-purple-300/20 opacity-70'}`}></div>
+                <div className={`absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl animate-float ${isDarkMode ? 'bg-gradient-to-r from-slate-900/30 to-cyan-500/30' : 'bg-gradient-to-r from-blue-400/20 to-cyan-300/20 opacity-70'}`}></div>
+                <div className={`absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl animate-float-delayed ${isDarkMode ? 'bg-gradient-to-r from-slate-900/30 to-purple-500/30' : 'bg-gradient-to-r from-indigo-400/20 to-purple-300/20 opacity-70'}`}></div>
             </div>
 
             {/* Main Content */}
@@ -58,7 +58,7 @@ const RequestAccessPage: React.FC = () => {
                 <div className="relative group">
                     {/* Glow Effect */}
                     <div className={`absolute -inset-1 rounded-3xl blur-2xl transition-all duration-1000 ${isDarkMode
-                        ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-40 group-hover:opacity-60 group-hover:blur-3xl'
+                        ? 'bg-gradient-to-r from-slate-900 via-slate-900 to-purple-600 opacity-40 group-hover:opacity-60 group-hover:blur-3xl'
                         : 'bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-20 group-hover:opacity-40 group-hover:blur-3xl'
                         }`}></div>
 
@@ -84,7 +84,7 @@ const RequestAccessPage: React.FC = () => {
                                 </label>
                                 <div className="relative group/input">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <User className="h-3.5 w-3.5 text-gray-500 group-focus-within/input:text-blue-400 transition-colors" />
+                                        <User className="h-3.5 w-3.5 text-gray-500 group-focus-within/input:text-slate-300 transition-colors" />
                                     </div>
                                     <input
                                         type="text"
@@ -94,7 +94,7 @@ const RequestAccessPage: React.FC = () => {
                                         placeholder="John Doe"
                                         required
                                         disabled={isLoading}
-                                        className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50 ${isDarkMode
+                                        className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-slate-700 focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50 ${isDarkMode
                                             ? 'bg-slate-800/50 border border-slate-600 text-white placeholder-gray-500 hover:border-slate-500'
                                             : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 hover:border-gray-400'
                                             }`}
@@ -108,7 +108,7 @@ const RequestAccessPage: React.FC = () => {
                                 </label>
                                 <div className="relative group/input">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Mail className="h-3.5 w-3.5 text-gray-500 group-focus-within/input:text-blue-400 transition-colors" />
+                                        <Mail className="h-3.5 w-3.5 text-gray-500 group-focus-within/input:text-slate-300 transition-colors" />
                                     </div>
                                     <input
                                         type="email"
@@ -118,7 +118,7 @@ const RequestAccessPage: React.FC = () => {
                                         placeholder="you@company.com"
                                         required
                                         disabled={isLoading}
-                                        className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50 ${isDarkMode
+                                        className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-slate-700 focus:ring-2 focus:ring-blue-500/30 transition-all disabled:opacity-50 ${isDarkMode
                                             ? 'bg-slate-800/50 border border-slate-600 text-white placeholder-gray-500 hover:border-slate-500'
                                             : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-400 hover:border-gray-400'
                                             }`}
@@ -130,7 +130,7 @@ const RequestAccessPage: React.FC = () => {
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-sm uppercase"
+                                className="w-full py-3.5 bg-gradient-to-r from-slate-900 via-slate-900 to-purple-600 hover:from-slate-900 hover:via-slate-900 hover:to-purple-500 text-white font-black rounded-xl shadow-lg shadow-black/20 hover:shadow-black/20 transition-all disabled:opacity-50 group/btn relative overflow-hidden text-sm uppercase"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
                                 {isLoading ? (

@@ -245,7 +245,7 @@ export const AddLicenseModal: React.FC<AddLicenseModalProps> = ({ isOpen, onClos
                     <textarea
                         placeholder="Add notes, serial numbers, or license keys here..."
                         rows={3}
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all resize-none"
                         value={formData.remarks}
                         onChange={e => setFormData({ ...formData, remarks: e.target.value })}
                     />

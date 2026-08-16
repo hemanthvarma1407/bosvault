@@ -243,7 +243,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                     <tr key={item.id} className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="h-7 w-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-800 shrink-0">
+                                                <div className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center border border-indigo-100 dark:border-indigo-800 shrink-0">
                                                     <Key className="h-4 w-4" />
                                                 </div>
                                                 <span className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">{item.appName}</span>
@@ -265,7 +265,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                         </td>
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex items-center justify-end gap-1.5">
-                                                <button onClick={(e) => { e.stopPropagation(); setSelectedCredential(item); setIsDetailModalOpen(true); }} className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"><Eye className="h-3.5 w-3.5" /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); setSelectedCredential(item); setIsDetailModalOpen(true); }} className="p-1.5 rounded-lg bg-slate-900/10 text-slate-900 dark:text-white hover:bg-slate-900 hover:text-white transition-all"><Eye className="h-3.5 w-3.5" /></button>
                                                 <button onClick={(e) => handleEdit(item, e)} className="p-1.5 rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white transition-all"><Pencil className="h-3.5 w-3.5" /></button>
                                                 <button disabled className="h-7 w-7 flex items-center justify-center rounded bg-red-500/50 text-white grayscale opacity-50 cursor-not-allowed shadow-sm" title="Delete disabled">
                                                     <Trash2 className="h-4 w-4" />
@@ -283,19 +283,19 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                     {filteredVaults.map((item) => (
                         <div
                             key={item.id}
-                            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[1.5rem] shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 p-5 overflow-hidden min-h-[220px]"
+                            className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[1.5rem] shadow-sm hover:shadow-xl hover:shadow-black/20 transition-all duration-300 p-5 overflow-hidden min-h-[220px]"
                             onClick={() => { setSelectedCredential(item); setIsDetailModalOpen(true); }}
                         >
                             {/* Card Background Decoration */}
                             <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.08] group-hover:scale-110 transition-all duration-500">
-                                <Key className="h-24 w-24 text-blue-500 rotate-12" />
+                                <Key className="h-24 w-24 text-slate-900 dark:text-white rotate-12" />
                             </div>
 
                             <div className="relative z-10 flex flex-col h-full space-y-4">
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center gap-2.5 min-w-0">
-                                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 flex items-center justify-center border border-blue-500/20 shadow-sm flex-shrink-0">
-                                            <span className="text-sm font-black text-blue-600 uppercase">{item.appName?.charAt(0)}</span>
+                                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-slate-900/10 to-slate-900/10 flex items-center justify-center border border-slate-700/20 shadow-sm flex-shrink-0">
+                                            <span className="text-sm font-black text-slate-900 dark:text-white uppercase">{item.appName?.charAt(0)}</span>
                                         </div>
                                         <div className="min-w-0">
                                             <h3 className="text-sm font-black text-slate-900 dark:text-white tracking-tight truncate uppercase leading-none">{item.appName}</h3>
@@ -313,10 +313,10 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                             {revealedPasswords[item.id] ? item.password : '••••••••••••'}
                                         </div>
                                         <div className="flex items-center gap-1 opacity-0 group-hover/pw:opacity-100 transition-opacity">
-                                            <button onClick={(e) => toggleReveal(item.id, e)} className="p-1 hover:bg-white dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-500 transition-all">
+                                            <button onClick={(e) => toggleReveal(item.id, e)} className="p-1 hover:bg-white dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-900 dark:text-white transition-all">
                                                 {revealedPasswords[item.id] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                             </button>
-                                            <button onClick={(e) => copyToClipboard(item.password, e)} className="p-1 hover:bg-white dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-blue-500 transition-all">
+                                            <button onClick={(e) => copyToClipboard(item.password, e)} className="p-1 hover:bg-white dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-900 dark:text-white transition-all">
                                                 <Copy className="h-3.5 w-3.5" />
                                             </button>
                                         </div>
@@ -353,7 +353,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
 
                                 <div className="mt-auto flex items-center justify-between pt-1">
                                     <div className="flex items-center gap-1.5">
-                                        <button onClick={(e) => handleEdit(item, e)} className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg text-slate-400 hover:text-blue-600 transition-all">
+                                        <button onClick={(e) => handleEdit(item, e)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-blue-900/20 rounded-lg text-slate-400 hover:text-slate-900 dark:text-white transition-all">
                                             <Pencil className="h-3.5 w-3.5" />
                                         </button>
                                         <button onClick={(e) => handleDeleteClick(item.id, e)} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg text-slate-400 hover:text-rose-600 transition-all">
@@ -361,7 +361,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                         </button>
                                     </div>
                                     {item.description?.includes('http') && (
-                                        <a href={item.description} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg text-blue-500 hover:text-blue-600 shadow-sm border border-transparent hover:border-blue-100 transition-all" onClick={(e) => e.stopPropagation()}>
+                                        <a href={item.description} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-blue-900/20 rounded-lg text-slate-900 dark:text-white hover:text-slate-900 dark:text-white shadow-sm border border-transparent hover:border-blue-100 transition-all" onClick={(e) => e.stopPropagation()}>
                                             <ExternalLink className="h-3.5 w-3.5" />
                                         </a>
                                     )}
@@ -400,7 +400,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                                     type="checkbox"
                                     checked={formData.isActive}
                                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                    className="w-5 h-5 text-blue-600 border-slate-300 rounded-lg focus:ring-blue-500 transition-all"
+                                    className="w-5 h-5 text-slate-900 dark:text-white border-slate-300 rounded-lg focus:ring-blue-500 transition-all"
                                 />
                                 <span className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">Active Access</span>
                             </label>
@@ -411,7 +411,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
 
                     <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-white/5">
                         <Button variant="outline" type="button" onClick={handleCloseModal} className="rounded-xl px-8 h-12 uppercase tracking-widest text-[10px] font-black">Cancel</Button>
-                        <Button variant="primary" type="submit" className="rounded-xl px-8 h-12 bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-500/20 uppercase tracking-widest text-[10px] font-black">
+                        <Button variant="primary" type="submit" className="rounded-xl px-8 h-12 bg-slate-900 hover:bg-slate-900 text-white shadow-xl shadow-black/20 uppercase tracking-widest text-[10px] font-black">
                             {isEditMode ? 'Commit Changes' : 'Secure Credential'}
                         </Button>
                     </div>
@@ -434,7 +434,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                 {selectedCredential && (
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-white/5">
-                            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-lg shadow-blue-500/10">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-lg shadow-black/20">
                                 <Shield className="h-8 w-8" />
                             </div>
                             <div className="text-center">
@@ -450,7 +450,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 space-y-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <User className="h-3.5 w-3.5 text-blue-500" />
+                                        <User className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Administrative Owner</span>
                                     </div>
                                     <p className="text-sm font-black text-slate-700 dark:text-slate-200 uppercase tracking-tight">{selectedCredential.owner || 'System Default'}</p>
@@ -467,14 +467,14 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                             <div className="p-4 rounded-xl bg-slate-900 dark:bg-black border border-white/10 shadow-inner group/pw">
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2">
-                                        <Fingerprint className="h-3.5 w-3.5 text-blue-400" />
+                                        <Fingerprint className="h-3.5 w-3.5 text-slate-300" />
                                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Encrypted Secret</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 opacity-0 group-hover/pw:opacity-100 transition-opacity">
-                                        <button onClick={(e) => toggleReveal(selectedCredential.id, e)} className="p-1 px-2 rounded-lg bg-white/5 text-slate-400 hover:text-blue-400 transition-colors text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
+                                        <button onClick={(e) => toggleReveal(selectedCredential.id, e)} className="p-1 px-2 rounded-lg bg-white/5 text-slate-400 hover:text-slate-300 transition-colors text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
                                             {revealedPasswords[selectedCredential.id] ? <><EyeOff className="h-2.5 w-2.5" /> Mask</> : <><Eye className="h-2.5 w-2.5" /> Reveal</>}
                                         </button>
-                                        <button onClick={(e) => copyToClipboard(selectedCredential.password, e)} className="p-1 px-2 rounded-lg bg-white/5 text-slate-400 hover:text-blue-400 transition-colors text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
+                                        <button onClick={(e) => copyToClipboard(selectedCredential.password, e)} className="p-1 px-2 rounded-lg bg-white/5 text-slate-400 hover:text-slate-300 transition-colors text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
                                             <Copy className="h-2.5 w-2.5" /> Copy
                                         </button>
                                     </div>

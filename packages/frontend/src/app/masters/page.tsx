@@ -42,7 +42,7 @@ const MastersPage: React.FC = () => {
             title: 'Companies',
             description: 'Manage organization and company details',
             icon: Building2,
-            color: 'from-blue-500 to-indigo-600',
+            color: 'from-slate-900 to-slate-900',
             component: CompaniesMasterView
         },
         {
@@ -50,7 +50,7 @@ const MastersPage: React.FC = () => {
             title: 'Departments',
             description: 'Manage departments and organizational structure',
             icon: Users,
-            color: 'from-purple-500 to-indigo-600',
+            color: 'from-purple-500 to-slate-900',
             component: DepartmentsMasterView
         },
         {
@@ -74,7 +74,7 @@ const MastersPage: React.FC = () => {
             title: 'Licenses',
             description: 'Manage software licenses and subscriptions',
             icon: AppWindow,
-            color: 'from-cyan-500 to-blue-600',
+            color: 'from-cyan-500 to-slate-900',
             component: LicensesMasterView
         },
         {
@@ -91,7 +91,7 @@ const MastersPage: React.FC = () => {
             title: 'Vendors',
             description: 'Manage suppliers and vendor information',
             icon: Store,
-            color: 'from-indigo-600 to-violet-700',
+            color: 'from-slate-900 to-violet-700',
             component: VendorsMasterView
         },
         {
@@ -99,7 +99,7 @@ const MastersPage: React.FC = () => {
             title: 'Document Vault',
             description: 'Manage organizational documents and templates',
             icon: FileText,
-            color: 'from-blue-600 to-indigo-700',
+            color: 'from-slate-900 to-slate-900',
             component: DocumentsMasterView
         },
     ];
@@ -147,11 +147,11 @@ const MastersPage: React.FC = () => {
                 >
                     <div className="flex items-center gap-3 ml-auto">
                         <div className="relative max-w-xs group">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search masters..."
-                                className="pl-9 pr-3 py-1.5 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm h-9"
+                                className="pl-9 pr-3 py-1.5 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all shadow-sm h-9"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -179,10 +179,10 @@ const MastersPage: React.FC = () => {
                                     <button
                                         key={master.id}
                                         onClick={() => handleSelectMaster(master)}
-                                        className="group p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm hover:border-indigo-500 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition-all text-left relative overflow-hidden flex flex-col h-full"
+                                        className="group p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm hover:border-slate-700 dark:hover:border-slate-700 hover:shadow-md hover:-translate-y-0.5 transition-all text-left relative overflow-hidden flex flex-col h-full"
                                     >
                                         <div className="absolute bottom-2 right-2 opacity-[0.04] group-hover:opacity-[0.1] transition-all duration-300 pointer-events-none z-0 border border-transparent">
-                                            <Icon className="h-10 w-10 text-indigo-500" />
+                                            <Icon className="h-10 w-10 text-slate-900 dark:text-white" />
                                         </div>
 
                                         <div className="flex items-center gap-3 mb-2.5 relative z-10">
@@ -190,7 +190,7 @@ const MastersPage: React.FC = () => {
                                                 <Icon className="h-4 w-4" />
                                             </div>
                                             <div className="min-w-0">
-                                                <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                                                <h3 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:text-white dark:group-hover:text-slate-300 transition-colors truncate">
                                                     {master.title}
                                                 </h3>
                                             </div>
@@ -203,7 +203,7 @@ const MastersPage: React.FC = () => {
                                         </div>
 
                                         <div className="mt-auto pt-2 flex items-center justify-start relative z-10">
-                                            <span className="text-[9px] font-bold text-slate-400 group-hover:text-indigo-500 uppercase tracking-wider transition-colors">
+                                            <span className="text-[9px] font-bold text-slate-400 group-hover:text-slate-900 dark:text-white uppercase tracking-wider transition-colors">
                                                 Access &rarr;
                                             </span>
                                         </div>

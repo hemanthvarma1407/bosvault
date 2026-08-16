@@ -2,10 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ChevronDown, LogOut, Moon, Sun, Bell, Globe, Terminal, Monitor } from 'lucide-react';
+import { ChevronDown, LogOut, Moon, Sun, Bell, Globe, Terminal, Monitor, Building2 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { getSocket } from '@/lib/socket';
-import { notificationsService } from '@/lib/api/services';
+import { notificationsService, companyService } from '@/lib/api/services';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { setCompanies, setSelectedCompanyId } from '@/store/companySlice';
 
 import { NotificationPayload } from '@bosvault/shared-models';
 
@@ -15,6 +17,8 @@ interface TopBarProps {
 
 const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
 
+    const dispatch = useAppDispatch();
+    const { companies, selectedCompanyId } = useAppSelector((state) => state.company);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
@@ -26,6 +30,24 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const notificationRef = useRef<HTMLDivElement>(null);
 
     const unreadCount = notifications.filter(n => !n.read).length;
+
+    // Fetch companies for Redux company store
+    useEffect(() => {
+        if (!user) return;
+        const fetchCompanies = async () => {
+            try {
+                const res = await companyService.getAllCompaniesDropdown();
+                const list = (res as { data?: Array<{ id: number | string; companyName?: string; name?: string }>; companies?: Array<{ id: number | string; companyName?: string; name?: string }> }).data || (res as { companies?: Array<{ id: number | string; companyName?: string; name?: string }> }).companies || (Array.isArray(res) ? res : []);
+                dispatch(setCompanies(list));
+                const savedCompanyId = localStorage.getItem('selected_company_id');
+                const defaultId = savedCompanyId !== null ? savedCompanyId : '0';
+                dispatch(setSelectedCompanyId(String(defaultId)));
+            } catch (error) {
+                console.error('Failed to fetch companies for TopBar dropdown:', error);
+            }
+        };
+        fetchCompanies();
+    }, [user, dispatch]);
 
     // Fetch initial notifications and listen to socket
     useEffect(() => {
@@ -113,7 +135,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     return (
         <header className="h-16 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30 transition-all duration-300">
             {/* Left: Section Title / Global Context */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
                 {/* Mobile Menu Toggle */}
                 <button
                     onClick={onMenuClick}
@@ -124,8 +146,33 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                     </svg>
                 </button>
 
+                {/* Company Dropdown */}
+                <div className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+                    <Building2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <select
+                        value={selectedCompanyId || '0'}
+                        onChange={(e) => {
+                            const newId = e.target.value;
+                            dispatch(setSelectedCompanyId(newId));
+                            localStorage.setItem('selected_company_id', newId);
+                            window.dispatchEvent(new Event('companyChanged'));
+                        }}
+                        className="bg-transparent text-xs font-bold text-slate-900 dark:text-white focus:outline-none cursor-pointer pr-1"
+                    >
+                        <option value="0" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+                            All Companies
+                        </option>
+                        {companies.map((c) => (
+                            <option key={c.id} value={String(c.id)} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                                {c.companyName || c.name || `Company ${c.id}`}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Date & Time Widget */}
                 <div className="hidden md:flex items-center gap-4 px-4 lg:px-6 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md min-w-[200px] lg:min-w-[280px]">
-                    <Globe className="h-4 w-4 text-blue-500 animate-pulse shrink-0" />
+                    <Globe className="h-4 w-4 text-slate-400 animate-pulse shrink-0" />
                     <div className="flex items-center gap-3 whitespace-nowrap">
                         {mounted ? (
                             <>
@@ -133,7 +180,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                                     {currentTime.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
                                 </span>
                                 <div className="hidden lg:block w-px h-3 bg-slate-200 dark:bg-slate-800" />
-                                <span className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 tabular-nums tracking-widest uppercase">
+                                <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 tabular-nums tracking-widest uppercase">
                                     {currentTime.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                 </span>
                             </>
@@ -206,8 +253,8 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 >
                     {theme === 'light' ? (
                         <>
-                            <Moon className="h-4 w-4 text-indigo-400" />
-                            <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-500 transition-colors">
+                            <Moon className="h-4 w-4 text-slate-700" />
+                            <span className="hidden lg:block text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-slate-700 transition-colors">
                                 Dark
                             </span>
                         </>
@@ -229,7 +276,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                         onClick={() => setShowUserMenu(!showUserMenu)}
                         className={`flex items-center gap-3 pl-2 pr-1 py-1 rounded-lg transition-all ${showUserMenu ? 'bg-slate-100 dark:bg-slate-900' : 'hover:bg-slate-50 dark:hover:bg-slate-900'}`}
                     >
-                        <div className="h-8 w-8 rounded bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-[12px] font-black shadow-lg shadow-blue-600/10">
+                        <div className="h-8 w-8 rounded bg-gradient-to-br from-slate-800 to-black flex items-center justify-center text-white text-[12px] font-black shadow-lg shadow-black/20 border border-slate-700">
                             {user?.fullName?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         <div className="hidden sm:block text-left">

@@ -184,7 +184,7 @@ const KnowledgeBasePage: React.FC = () => {
                     title="Help Center"
                     description="Centralized repository for IT documentation, guides, and policies."
                     icon={<Book />}
-                    gradient="from-cyan-500 to-blue-600"
+                    gradient="from-cyan-500 to-slate-900"
                     actions={canManage ? [
                         {
                             label: 'Write Article',

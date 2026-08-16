@@ -180,7 +180,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                                         {used}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-indigo-600 dark:text-indigo-400">${unitPrice.toLocaleString()}</td>
+                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white dark:text-slate-300">${unitPrice.toLocaleString()}</td>
                                                 <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-amber-600 dark:text-amber-400">${(unitPrice * used).toLocaleString()}</td>
                                                 <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                     {isExceeded ? (
@@ -198,7 +198,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                                 </td>
                                                 <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                     <div className="flex justify-center gap-2">
-                                                        <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                        <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                             <Eye className="h-4 w-4" />
                                                         </button>
                                                         <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -244,7 +244,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            className="w-4 h-4 text-slate-900 dark:text-white border-gray-300 rounded focus:ring-indigo-500"
                         />
                         <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Active
@@ -290,7 +290,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Calendar className="h-3.5 w-3.5 text-blue-500" />
+                                        <Calendar className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Purchase Date</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{formatDate(selectedLicense.purchaseDate)}</p>
@@ -310,9 +310,9 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                 const selUsed = Number(selObj.usedCount ?? selObj.usedQuantity ?? 0);
                                 return (
                                     <div className="grid grid-cols-3 gap-4">
-                                        <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
-                                            <span className="text-[9px] font-bold text-blue-400 uppercase tracking-wider block mb-1">Total</span>
-                                            <p className="text-lg font-black text-blue-600 dark:text-blue-400">{selTotal}</p>
+                                        <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
+                                            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider block mb-1">Total</span>
+                                            <p className="text-lg font-black text-slate-900 dark:text-white dark:text-slate-300">{selTotal}</p>
                                         </div>
                                         <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50">
                                             <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block mb-1">Used</span>
@@ -334,9 +334,9 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             </div>
 
                             <div className="pt-2">
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
-                                    <Info className="h-4 w-4 text-indigo-500 flex-shrink-0" />
-                                    <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
+                                    <Info className="h-4 w-4 text-slate-900 dark:text-white flex-shrink-0" />
+                                    <p className="text-[10px] text-slate-900 dark:text-white dark:text-slate-300 font-medium">
                                         Ensure to renew the license before the expiry date to avoid service interruption.
                                     </p>
                                 </div>

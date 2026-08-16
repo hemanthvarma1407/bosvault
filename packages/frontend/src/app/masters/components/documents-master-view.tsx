@@ -112,7 +112,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
         if (mimeType.includes('pdf')) return <FileText className={`${size} text-rose-500`} />;
         if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || mimeType.includes('csv'))
             return <FileSpreadsheet className={`${size} text-emerald-500`} />;
-        if (mimeType.includes('image')) return <ImageIcon className={`${size} text-blue-500`} />;
+        if (mimeType.includes('image')) return <ImageIcon className={`${size} text-slate-900 dark:text-white`} />;
         if (mimeType.includes('code') || mimeType.includes('javascript') || mimeType.includes('html'))
             return <FileCode className={`${size} text-amber-500`} />;
         if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('archive'))
@@ -238,7 +238,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                             <input
                                 type="text"
                                 placeholder="Search documents..."
-                                className="w-full pl-10 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -298,7 +298,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                                                 <div className="flex justify-center gap-2">
                                                     <button
                                                         onClick={() => handleView(doc.id)}
-                                                        className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm"
+                                                        className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm"
                                                         title="View"
                                                     >
                                                         <Eye className="h-4 w-4" />
@@ -345,7 +345,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                     <div
                         className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-900/30 ${selectedFile
                             ? 'border-emerald-500/50 bg-emerald-50/10'
-                            : 'border-slate-300 dark:border-slate-700 hover:border-indigo-500'
+                            : 'border-slate-300 dark:border-slate-700 hover:border-slate-700'
                             }`}
                         onClick={() => document.getElementById('file-upload-modal')?.click()}
                     >
@@ -393,7 +393,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             rows={3}
-                            className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                            className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-1 focus:ring-indigo-500 focus:border-slate-700 text-sm"
                         />
                     </div>
 

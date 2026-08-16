@@ -189,7 +189,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                 <div className="flex gap-2 w-full">
                     <div className="flex-1 flex items-center px-4">
                         <span className="text-sm font-bold text-slate-500 mr-2">Total Amount:</span>
-                        <span className="text-lg font-black text-indigo-600 dark:text-indigo-400">
+                        <span className="text-lg font-black text-slate-900 dark:text-white dark:text-slate-300">
                             {formData.currency === 'INR' ? '₹' : '$'}
                             {calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
@@ -317,7 +317,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                 <div className="space-y-4">
                     <div className="flex items-center justify-between border-b pb-2 dark:border-slate-800">
                         <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                            <ShoppingCart size={16} className="text-indigo-500" />
+                            <ShoppingCart size={16} className="text-slate-900 dark:text-white" />
                             Order Items
                         </h4>
                         <Button type="button" variant="outline" size="sm" onClick={addItem} className="h-8 py-0 px-3 font-bold text-xs uppercase tracking-widest">

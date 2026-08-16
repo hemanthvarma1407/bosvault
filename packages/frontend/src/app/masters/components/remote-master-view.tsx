@@ -205,7 +205,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                                             </td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <div className="flex justify-center gap-2">
-                                                    <button onClick={() => { setSelectedTool(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                    <button onClick={() => { setSelectedTool(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -240,7 +240,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            className="w-4 h-4 text-slate-900 dark:text-white border-gray-300 rounded focus:ring-indigo-500"
                         />
                         <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Active
@@ -270,7 +270,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                 {selectedTool && (
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
-                            <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
                                 <Globe className="h-8 w-8" />
                             </div>
                             <div className="text-center">
@@ -311,9 +311,9 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                             </div>
 
                             <div className="pt-2">
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
-                                    <Shield className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
+                                    <Shield className="h-4 w-4 text-slate-900 dark:text-white flex-shrink-0" />
+                                    <p className="text-[10px] text-slate-900 dark:text-white dark:text-slate-300 font-medium">
                                         Credentials for this tool are stored securely. Contact your administrator if password reset is required.
                                     </p>
                                 </div>

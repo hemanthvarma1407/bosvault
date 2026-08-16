@@ -74,7 +74,7 @@ export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({ assets, isLoading, s
                     <button
                         onClick={() => handleViewTypeChange('table')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${viewType === 'table'
-                            ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/30 dark:border-slate-800/30'
+                            ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:text-slate-300 shadow-sm border border-slate-200/30 dark:border-slate-800/30'
                             : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                             }`}
                     >
@@ -84,7 +84,7 @@ export const AllAssetsTab: React.FC<AllAssetsTabProps> = ({ assets, isLoading, s
                     <button
                         onClick={() => handleViewTypeChange('card')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${viewType === 'card'
-                            ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/30 dark:border-slate-800/30'
+                            ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:text-slate-300 shadow-sm border border-slate-200/30 dark:border-slate-800/30'
                             : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                             }`}
                     >

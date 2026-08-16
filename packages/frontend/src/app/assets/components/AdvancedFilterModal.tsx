@@ -133,7 +133,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
                                 className={`
                                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
                                     ${localFilters.statusFilter?.includes(status)
-                                        ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300'
+                                        ? 'bg-slate-100 dark:bg-slate-800/60 border-indigo-200 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-slate-300'
                                         : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}
                                 `}
                             >
@@ -177,7 +177,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
                                 className={`
                                     flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
                                     ${localFilters.deviceConfigIds?.includes(config.id)
-                                        ? 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300'
+                                        ? 'bg-slate-100 dark:bg-slate-800/60 border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-slate-300'
                                         : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-700'}
                                 `}
                             >
@@ -225,7 +225,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
                     <Button variant="outline" onClick={onClose} className="px-6">
                         Cancel
                     </Button>
-                    <Button onClick={handleApply} className="px-6 bg-indigo-600 hover:bg-indigo-700 text-white">
+                    <Button onClick={handleApply} className="px-6 bg-slate-900 hover:bg-slate-900 text-white">
                         Apply Filters
                     </Button>
                 </div>

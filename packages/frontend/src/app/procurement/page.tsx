@@ -292,7 +292,7 @@ const ProcurementPage: React.FC = () => {
             case POStatusEnum.REJECTED:
                 return 'bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800';
             case POStatusEnum.ORDERED:
-                return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800';
+                return 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-slate-300 dark:border-blue-800';
             case POStatusEnum.RECEIVED:
                 return 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
             default:
@@ -356,8 +356,8 @@ const ProcurementPage: React.FC = () => {
                 {/* Metrics Dashboard Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Card className="p-5 flex items-center gap-4 border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
-                            <FileText className="text-blue-600 dark:text-blue-400" size={24} />
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
+                            <FileText className="text-slate-900 dark:text-white dark:text-slate-300" size={24} />
                         </div>
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total POs</p>
@@ -365,8 +365,8 @@ const ProcurementPage: React.FC = () => {
                         </div>
                     </Card>
                     <Card className="p-5 flex items-center gap-4 border-l-4 border-l-indigo-500 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center shrink-0">
-                            <DollarSign className="text-indigo-600 dark:text-indigo-400" size={24} />
+                        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 flex items-center justify-center shrink-0">
+                            <DollarSign className="text-slate-900 dark:text-white dark:text-slate-300" size={24} />
                         </div>
                         <div>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Spend</p>
@@ -403,7 +403,7 @@ const ProcurementPage: React.FC = () => {
                 <div className="flex p-1 bg-slate-200/50 dark:bg-slate-900/50 rounded-xl w-fit border border-slate-200 dark:border-slate-800">
                     <button
                         onClick={() => setActiveTab('OPEN')}
-                        className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'OPEN' ? 'bg-white dark:bg-slate-800 text-indigo-600 shadow-sm border border-slate-200 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                        className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'OPEN' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
                         <FileText size={14} />
                         Open POs
@@ -436,7 +436,7 @@ const ProcurementPage: React.FC = () => {
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-500 border-t-transparent" />
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-700 border-t-transparent" />
                     </div>
                 ) : filteredPOs.length === 0 ? (
                     <Card className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-slate-200 dark:border-slate-800">
@@ -467,8 +467,8 @@ const ProcurementPage: React.FC = () => {
                                         <tr key={po.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap border border-slate-200 dark:border-slate-800 text-center">
                                                 <div className="flex items-center justify-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 transition-colors">
-                                                        <FileText className="text-indigo-600 dark:text-indigo-400" size={18} />
+                                                    <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 flex items-center justify-center shrink-0 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/40 transition-colors">
+                                                        <FileText className="text-slate-900 dark:text-white dark:text-slate-300" size={18} />
                                                     </div>
                                                     <span className="font-bold text-sm text-slate-900 dark:text-white">{po.poNumber}</span>
                                                 </div>
@@ -507,7 +507,7 @@ const ProcurementPage: React.FC = () => {
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => setSelectedPO(po)}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/20 transition-colors"
                                                         title="View PO Details"
                                                     >
                                                         <Eye size={18} />
@@ -515,7 +515,7 @@ const ProcurementPage: React.FC = () => {
                                                     <button
                                                         onClick={() => setEditPO(po)}
                                                         disabled={po.status === POStatusEnum.APPROVED}
-                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-transparent"
+                                                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-blue-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400 disabled:hover:bg-transparent"
                                                         title={po.status === POStatusEnum.APPROVED ? "Approved PO cannot be edited" : "Edit PO"}
                                                     >
                                                         <Pen size={18} />
@@ -628,7 +628,7 @@ const ProcurementPage: React.FC = () => {
                             {/* Items */}
                             <div>
                                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 mb-3">
-                                    <ShoppingCart size={16} className="text-indigo-500" />
+                                    <ShoppingCart size={16} className="text-slate-900 dark:text-white" />
                                     Order Items
                                 </h4>
                                 <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
@@ -660,7 +660,7 @@ const ProcurementPage: React.FC = () => {
                                         <tfoot className="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
                                             <tr>
                                                 <td colSpan={4} className="px-4 py-3 text-xs font-black text-slate-500 uppercase tracking-wider text-right border border-slate-200 dark:border-slate-800">Total Amount:</td>
-                                                <td className="px-4 py-3 text-lg font-black text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-800 text-center">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(selectedPO.totalAmount) || 0).toFixed(2)}</td>
+                                                <td className="px-4 py-3 text-lg font-black text-slate-900 dark:text-white dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-center">{selectedPO.currency === 'INR' ? '₹' : '$'}{(Number(selectedPO.totalAmount) || 0).toFixed(2)}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -687,7 +687,7 @@ const ProcurementPage: React.FC = () => {
                             {/* Invoice Section */}
                             <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
                                 <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 mb-4">
-                                    <FileText size={16} className="text-blue-500" />
+                                    <FileText size={16} className="text-slate-900 dark:text-white" />
                                     Procurement Documents
                                 </h4>
                                 <input
@@ -710,7 +710,7 @@ const ProcurementPage: React.FC = () => {
                                             </div>
                                             <div className="flex gap-2">
                                                 <Button
-                                                    className="flex-1 gap-2 bg-indigo-600 hover:bg-indigo-700"
+                                                    className="flex-1 gap-2 bg-slate-900 hover:bg-slate-900"
                                                     onClick={() => window.open(selectedPO.invoiceUrl, '_blank')}
                                                 >
                                                     <ExternalLink size={16} />
@@ -727,7 +727,7 @@ const ProcurementPage: React.FC = () => {
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
-                                            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2 text-blue-500 group-hover:scale-110 transition-transform">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20 flex items-center justify-center mx-auto mb-2 text-slate-900 dark:text-white group-hover:scale-110 transition-transform">
                                                 <FileUp size={32} />
                                             </div>
                                             <div>
@@ -736,13 +736,13 @@ const ProcurementPage: React.FC = () => {
                                             </div>
                                             <Button
                                                 variant="outline"
-                                                className="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                                                className="gap-2 border-blue-200 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-blue-900/20"
                                                 onClick={() => fileInputRef.current?.click()}
                                                 disabled={isUploading}
                                             >
                                                 {isUploading ? (
                                                     <>
-                                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
+                                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-slate-700 border-t-transparent" />
                                                         Uploading...
                                                     </>
                                                 ) : (

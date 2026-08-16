@@ -201,14 +201,14 @@ export default function UserInsightsPage() {
                     icon={<UserCircle />}
                     title={canSwitchUser ? "User-Wise Insights" : "My Helpdesk Space"}
                     description={canSwitchUser ? "Select any employee to view their ticket history, issues density, and satisfaction log." : "Personal statistics and history of all support tickets you have created."}
-                    gradient="from-blue-600 to-cyan-500"
+                    gradient="from-slate-900 to-cyan-500"
                 />
 
                 {/* Dropdown Selector for Admin/Manager */}
                 {canSwitchUser && (
                     <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <div className="flex items-center gap-2">
-                            <Search className="h-5 w-5 text-indigo-500" />
+                            <Search className="h-5 w-5 text-slate-900 dark:text-white" />
                             <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider">Search & Select Employee</h3>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4">
@@ -249,7 +249,7 @@ export default function UserInsightsPage() {
 
                 {/* Profile Footprint Card */}
                 {selectedEmployeeMeta && (
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="bg-gradient-to-r from-slate-900 to-slate-900 p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-2">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center font-black text-lg">
@@ -276,7 +276,7 @@ export default function UserInsightsPage() {
 
                 {isLoading ? (
                     <div className="flex flex-col justify-center items-center py-24 space-y-4">
-                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-slate-700"></div>
                         <p className="text-slate-400 text-sm font-semibold">Gathering user support logs...</p>
                     </div>
                 ) : tickets.length === 0 ? (
@@ -295,9 +295,9 @@ export default function UserInsightsPage() {
                                 title="Tickets Raised"
                                 value={stats.total}
                                 icon={FileText}
-                                gradient="from-blue-500 to-indigo-600"
-                                iconBg="bg-blue-50 dark:bg-blue-950/20"
-                                iconColor="text-blue-600 dark:text-blue-400"
+                                gradient="from-slate-900 to-slate-900"
+                                iconBg="bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-950/20"
+                                iconColor="text-slate-900 dark:text-white dark:text-slate-300"
                                 isLoading={false}
                             />
                             
@@ -350,7 +350,7 @@ export default function UserInsightsPage() {
                             {/* Ticket Status Pie */}
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                                 <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <AlertCircle className="h-5 w-5 text-blue-500" />
+                                    <AlertCircle className="h-5 w-5 text-slate-900 dark:text-white" />
                                     Support Status Breakdown
                                 </h3>
                                 <div className="h-52 relative flex items-center justify-center">
@@ -387,7 +387,7 @@ export default function UserInsightsPage() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 mt-4 text-xs font-semibold">
                                     <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                                        <div className="w-2.5 h-2.5 rounded-full bg-slate-900" />
                                         <span>Open: {tickets.filter(t => t.ticketStatus === TicketStatusEnum.OPEN).length}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
@@ -408,7 +408,7 @@ export default function UserInsightsPage() {
                             {/* Category Distribution */}
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
                                 <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <FileText className="h-5 w-5 text-indigo-500" />
+                                    <FileText className="h-5 w-5 text-slate-900 dark:text-white" />
                                     Ticket Density by Category
                                 </h3>
                                 <div className="h-64 flex-1">
@@ -466,7 +466,7 @@ export default function UserInsightsPage() {
                                 <h3 className="text-base font-black text-slate-800 dark:text-white">
                                     Complete Support Logs
                                 </h3>
-                                <span className="text-xs bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-extrabold px-3 py-1 rounded-full">
+                                <span className="text-xs bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-950 text-slate-900 dark:text-white dark:text-slate-300 font-extrabold px-3 py-1 rounded-full">
                                     {tickets.length} Registered Logs
                                 </span>
                             </div>
@@ -501,7 +501,7 @@ export default function UserInsightsPage() {
 
                                             // Status and Priority Badges
                                             const statusClass = 
-                                                t.ticketStatus === TicketStatusEnum.OPEN ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                                                t.ticketStatus === TicketStatusEnum.OPEN ? 'bg-slate-900/10 text-slate-900 dark:text-white dark:text-slate-300' :
                                                 t.ticketStatus === TicketStatusEnum.IN_PROGRESS ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' :
                                                 t.ticketStatus === TicketStatusEnum.RESOLVED ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
                                                 'bg-gray-500/10 text-gray-600 dark:text-gray-400';
@@ -509,7 +509,7 @@ export default function UserInsightsPage() {
                                             const priorityClass = 
                                                 t.priorityEnum === TicketPriorityEnum.HIGH ? 'text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/30 bg-rose-500/5' :
                                                 t.priorityEnum === TicketPriorityEnum.MEDIUM ? 'text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30 bg-amber-500/5' :
-                                                'text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/30 bg-blue-500/5';
+                                                'text-slate-900 dark:text-white dark:text-slate-300 border border-blue-200 dark:border-blue-900/30 bg-slate-900/5';
 
                                             return (
                                                 <tr key={t.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/10 transition-colors">

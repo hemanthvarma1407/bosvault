@@ -23,14 +23,14 @@ export const ProcurementWidget: React.FC<ProcurementWidgetProps> = ({ stats }) =
         <Card className="p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-none shadow-lg h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-                    <div className="p-2 px-2.5 rounded-lg bg-indigo-500/10 text-indigo-600 shadow-inner border border-indigo-500/10">
+                    <div className="p-2 px-2.5 rounded-lg bg-slate-900/10 text-slate-900 dark:text-white shadow-inner border border-slate-700/10">
                         <ShoppingCart className="h-4 w-4" />
                     </div>
                     Procurement Pulse
                 </h3>
                 <Link href="/procurement">
                     <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
-                        <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-indigo-500" />
+                        <ArrowUpRight className="h-4 w-4 text-slate-400 group-hover:text-slate-900 dark:text-white" />
                     </button>
                 </Link>
             </div>
@@ -45,7 +45,7 @@ export const ProcurementWidget: React.FC<ProcurementWidgetProps> = ({ stats }) =
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
                     <div className="flex items-center gap-2 mb-1">
-                        <Package className="h-3 w-3 text-indigo-500" />
+                        <Package className="h-3 w-3 text-slate-900 dark:text-white" />
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Orders</span>
                     </div>
                     <p className="text-lg font-black text-slate-900 dark:text-white">{procurement.totalPOs}</p>
@@ -63,7 +63,7 @@ export const ProcurementWidget: React.FC<ProcurementWidgetProps> = ({ stats }) =
                     procurement.recent.slice(0, 3).map((po: any, idx: number) => (
                         <div key={idx} className="flex items-center justify-between p-2 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-bold text-indigo-600 shadow-sm">
+                                <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white shadow-sm">
                                     PO
                                 </div>
                                 <div className="min-w-0">

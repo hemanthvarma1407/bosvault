@@ -17,17 +17,22 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { UserRoleEnum, TicketStatusEnum, TicketPriorityEnum, IdRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 
 // Lazy load chart components
 const AssetDistributionChart = dynamic(() => import('./components/AssetDistributionChart').then(mod => mod.AssetDistributionChart), {
     ssr: false,
     loading: () => <div className="h-48 animate-pulse bg-white/50 dark:bg-slate-800/50 rounded-lg"></div>
 });
-const TicketPriorityChart = dynamic(() => import('./components/TicketPriorityChart'), {
+const EmployeeDeptChart = dynamic(() => import('./components/EmployeeDeptChart').then(mod => mod.EmployeeDeptChart), {
     ssr: false,
     loading: () => <div className="h-48 animate-pulse bg-white/50 dark:bg-slate-800/50 rounded-lg"></div>
 });
-const EmployeeDeptChart = dynamic(() => import('./components/EmployeeDeptChart').then(mod => mod.EmployeeDeptChart), {
+const SecurityVaultWidget = dynamic(() => import('./components/SecurityVaultWidget').then(mod => mod.SecurityVaultWidget), {
+    ssr: false,
+    loading: () => <div className="h-full animate-pulse bg-slate-900 rounded-2xl p-4"></div>
+});
+const SoftwareComplianceChart = dynamic(() => import('./components/SoftwareComplianceChart').then(mod => mod.SoftwareComplianceChart), {
     ssr: false,
     loading: () => <div className="h-48 animate-pulse bg-white/50 dark:bg-slate-800/50 rounded-lg"></div>
 });
@@ -66,22 +71,21 @@ export interface DashboardStats {
 
 const DashboardPage: React.FC = () => {
     const { isAuthenticated, user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(0);
+    const [isInitialLoading, setIsInitialLoading] = useState(false);
     const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
     const [widgetSettings, setWidgetSettings] = useState<WidgetSettings>({});
-    const hasFetched = useRef(false);
 
-    // Widget Definitions
     const AVAILABLE_WIDGETS: WidgetConfig[] = [
         { id: 'kpi_it_assets', label: 'KPI: IT Assets', category: 'KPI', description: 'Total assets count' },
         { id: 'kpi_employees', label: 'KPI: Employees', category: 'KPI', description: 'Global registry count' },
         { id: 'kpi_licenses', label: 'KPI: Licenses', category: 'KPI', description: 'Software subscriptions count' },
+        { id: 'security_vault', label: 'Security & Vault', category: 'Security', description: 'Encryption health & secrets' },
         { id: 'license_expiry_tracker', label: 'License Tracker', category: 'Analytics', description: 'Expiring subscriptions' },
+        { id: 'software_compliance', label: 'License Compliance', category: 'Analytics', description: 'Active vs expiring seats' },
         { id: 'procurement_pulse', label: 'Procurement Pulse', category: 'Operations', description: 'Real-time spend and orders' },
         { id: 'asset_lifecycle', label: 'Asset Lifecycle', category: 'Analytics', description: 'Asset status distribution' },
         { id: 'workforce_architecture', label: 'Workforce Depts', category: 'Analytics', description: 'Department distribution' }
@@ -111,13 +115,8 @@ const DashboardPage: React.FC = () => {
     const fetchStats = async (companyId?: number) => {
         try {
             setIsLoading(true);
-            const id = (companyId !== undefined) ? companyId : (selectedCompanyId !== null ? selectedCompanyId : user?.companyId);
-
-            if (id === undefined || id === null) {
-                AlertMessages.getErrorMessage('No company selected');
-                return;
-            }
-            const req = new IdRequestModel(id);
+            const targetId = (companyId !== undefined) ? companyId : (reduxCompanyId ? Number(reduxCompanyId) : 0);
+            const req = new IdRequestModel(targetId);
             const response = await dashboardService.getDashboardStats(req);
             if (response && response.status && response.data) {
                 setStats(response.data as any);
@@ -132,40 +131,12 @@ const DashboardPage: React.FC = () => {
         }
     };
 
-    // Consolidated initialization
     useEffect(() => {
-        const initializeDashboard = async () => {
-            if (!isAuthenticated) return;
-
-            try {
-                // 1. Load companies first
-                const response = await companyService.getAllCompaniesDropdown();
-                let companiesList: any[] = [];
-                if (response && response.status && response.data) {
-                    companiesList = response.data;
-                    setCompanies(companiesList);
-                }
-
-                // 2. Resolve which company to select: Default to All Companies (0)
-                let targetCompanyId = 0;
-
-                setSelectedCompanyId(targetCompanyId);
-                // 3. Fetch stats for the resolved company
-                if (!hasFetched.current) {
-                    hasFetched.current = true;
-                    fetchStats(targetCompanyId);
-                }
-            } catch (error) {
-                console.error('Dashboard initialization failed:', error);
-            } finally {
-                setIsInitialLoading(false);
-            }
-        };
-
-        if (isAuthenticated && isInitialLoading) {
-            initializeDashboard();
+        if (isAuthenticated) {
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            fetchStats(compId);
         }
-    }, [isAuthenticated, user, isInitialLoading]);
+    }, [isAuthenticated, reduxCompanyId]);
 
     const assetData = useMemo(() =>
         stats?.assets.byStatus.map(item => ({
@@ -173,13 +144,6 @@ const DashboardPage: React.FC = () => {
             value: parseInt(item.count)
         })) || []
         , [stats?.assets.byStatus]);
-
-    const ticketPriorityData = useMemo(() =>
-        stats?.tickets.byPriority.map(item => ({
-            name: item.priority,
-            value: parseInt(item.count)
-        })) || []
-        , [stats?.tickets.byPriority]);
 
     const employeeDeptData = useMemo(() =>
         stats?.employees.byDepartment.map(item => ({
@@ -209,7 +173,7 @@ const DashboardPage: React.FC = () => {
             title: 'Licenses',
             value: stats?.licenses.total || 0,
             icon: Lock,
-            gradient: 'from-blue-500 to-cyan-600',
+            gradient: 'from-slate-900 to-cyan-600',
             link: '/licenses',
             subtitle: 'Software Subscriptions'
         }
@@ -261,7 +225,7 @@ const DashboardPage: React.FC = () => {
                 <motion.div variants={itemVariants} className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center shadow-xl shadow-indigo-500/10 border border-slate-200 dark:border-slate-800">
-                            <LayoutGrid className="h-5 w-5 text-indigo-600" />
+                            <LayoutGrid className="h-5 w-5 text-slate-900 dark:text-white" />
                         </div>
                         <div>
                             <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none mb-0.5">
@@ -275,26 +239,6 @@ const DashboardPage: React.FC = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                        <div className="w-48">
-                            <Select
-                                value={selectedCompanyId?.toString() || ''}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    const newCompanyId = parseInt(value);
-                                    setSelectedCompanyId(newCompanyId);
-                                    hasFetched.current = false;
-                                    fetchStats(newCompanyId);
-                                }}
-                                options={[
-                                    { value: '0', label: 'All Companies' },
-                                    ...companies.map((company) => ({
-                                        value: company.id.toString(),
-                                        label: company.name
-                                    }))
-                                ]}
-                                className="h-8 text-[10px] font-bold rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
-                            />
-                        </div>
                         <Button
                             variant="outline"
                             onClick={() => fetchStats()}
@@ -316,7 +260,7 @@ const DashboardPage: React.FC = () => {
                             <Button
                                 variant="primary"
                                 leftIcon={<BarChart2 className="h-3 w-3" />}
-                                className="rounded-lg h-8 px-3 text-[10px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white border-none shadow-lg shadow-indigo-500/25"
+                                className="rounded-lg h-8 px-3 text-[10px] font-bold bg-slate-900 hover:bg-slate-900 text-white border-none shadow-lg shadow-indigo-500/25"
                             >
                                 Generate Report
                             </Button>
@@ -325,14 +269,14 @@ const DashboardPage: React.FC = () => {
                 </motion.div>
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {kpiCards.map((card, idx) => {
                         const widgetId = `kpi_${card.title.toLowerCase().replace(/\s+/g, '_')}`;
                         if (widgetSettings[widgetId]?.isVisible === false) return null;
                         return (
                             <motion.div key={idx} variants={itemVariants}>
                                 <Link href={card.link}>
-                                    <Card className="p-2.5 overflow-hidden relative group bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 hover:border-indigo-500/30 transition-all duration-500 shadow-lg shadow-slate-200/50 dark:shadow-none">
+                                    <Card className="p-2.5 overflow-hidden relative group bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 hover:border-slate-700/30 transition-all duration-500 shadow-lg shadow-slate-200/50 dark:shadow-none">
                                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 -skew-x-12 translate-x-full group-hover:-translate-x-full pointer-events-none" />
 
                                         <div className="relative z-10 flex items-start justify-between">
@@ -358,7 +302,7 @@ const DashboardPage: React.FC = () => {
                     })}
                 </div>
 
-                {/* Analytics & Priority Section */}
+                {/* Analytics & Operations Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     {/* License Expiration Tracker */}
                     {widgetSettings['license_expiry_tracker']?.isVisible !== false && (
@@ -411,7 +355,7 @@ const DashboardPage: React.FC = () => {
                                                         : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/10';
 
                                                 return (
-                                                    <div key={lic.id} className="flex items-center justify-between p-2 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/30 hover:border-indigo-500/20 transition-all duration-300">
+                                                    <div key={lic.id} className="flex items-center justify-between p-2 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/30 hover:border-slate-700/20 transition-all duration-300">
                                                         <div className="flex items-center gap-2">
                                                             <div className={`w-2 h-2 rounded-full ${isCritical ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse`} />
                                                             <div>
@@ -449,7 +393,7 @@ const DashboardPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     {/* Asset Distribution */}
                     {widgetSettings['asset_lifecycle']?.isVisible !== false && (
-                        <motion.div variants={itemVariants} className="lg:col-span-5">
+                        <motion.div variants={itemVariants} className="lg:col-span-4">
                             <Card className="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="text-[11px] font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -475,9 +419,40 @@ const DashboardPage: React.FC = () => {
                         </motion.div>
                     )}
 
+                    {/* Software License Compliance Gauge */}
+                    {widgetSettings['software_compliance']?.isVisible !== false && (
+                        <motion.div variants={itemVariants} className="lg:col-span-4">
+                            <Card className="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-[11px] font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                        <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 shadow-inner border border-cyan-500/10">
+                                            <Lock className="h-3.5 w-3.5" />
+                                        </div>
+                                        Software Seat Compliance
+                                    </h3>
+                                    <Link href="/licenses">
+                                        <Button variant="outline" className="rounded-lg px-2.5 h-6 text-[8px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800">
+                                            Licenses <ArrowUpRight className="h-2.5 w-2.5 ml-1" />
+                                        </Button>
+                                    </Link>
+                                </div>
+                                {isLoading ? (
+                                    <div className="flex-1 animate-pulse bg-slate-100 dark:bg-slate-800/50 rounded-xl"></div>
+                                ) : (
+                                    <div className="flex-1 min-h-[220px]">
+                                        <SoftwareComplianceChart 
+                                            totalLicenses={stats?.licenses?.total || 0}
+                                            expiringCount={stats?.licenses?.expiringSoon?.length || 0}
+                                        />
+                                    </div>
+                                )}
+                            </Card>
+                        </motion.div>
+                    )}
+
                     {/* Employee Distribution */}
                     {widgetSettings['workforce_architecture']?.isVisible !== false && (
-                        <motion.div variants={itemVariants} className="lg:col-span-7">
+                        <motion.div variants={itemVariants} className="lg:col-span-4">
                             <Card className="p-3 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-lg shadow-slate-200/50 dark:shadow-none h-full flex flex-col">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="text-[11px] font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -495,7 +470,7 @@ const DashboardPage: React.FC = () => {
                                 {isLoading ? (
                                     <div className="flex-1 animate-pulse bg-slate-100 dark:bg-slate-800/50 rounded-xl"></div>
                                 ) : (
-                                    <div className="flex-1 min-h-[300px]">
+                                    <div className="flex-1 min-h-[220px]">
                                         <EmployeeDeptChart data={employeeDeptData} />
                                     </div>
                                 )}
@@ -503,6 +478,13 @@ const DashboardPage: React.FC = () => {
                         </motion.div>
                     )}
                 </div>
+
+                {/* Security Vault Section */}
+                {widgetSettings['security_vault']?.isVisible !== false && (
+                    <motion.div variants={itemVariants} className="w-full">
+                        <SecurityVaultWidget stats={stats} />
+                    </motion.div>
+                )}
 
 
                 <DashboardCustomizer

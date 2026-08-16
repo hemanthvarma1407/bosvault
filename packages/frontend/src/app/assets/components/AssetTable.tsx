@@ -37,15 +37,15 @@ const getStatusConfig = (status?: string) => {
         },
         'IN_USE': {
             text: 'In Use',
-            color: 'text-blue-700 dark:text-blue-400',
-            bg: 'bg-blue-50 dark:bg-blue-950/30',
+            color: 'text-blue-700 dark:text-slate-300',
+            bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-950/30',
             border: 'border-blue-200 dark:border-blue-900/30',
             icon: User
         },
         'INUSE': {
             text: 'In Use',
-            color: 'text-blue-700 dark:text-blue-400',
-            bg: 'bg-blue-50 dark:bg-blue-950/30',
+            color: 'text-blue-700 dark:text-slate-300',
+            bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-950/30',
             border: 'border-blue-200 dark:border-blue-900/30',
             icon: User
         },
@@ -140,7 +140,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                     <td className="p-4 border border-slate-200 dark:border-slate-800 text-center">
                                         {['IN_USE', 'INUSE'].includes((asset.status || '').toUpperCase()) ? (
                                             <div className="flex items-center justify-center gap-2">
-                                                <div className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400">
+                                                <div className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded-full text-slate-900 dark:text-white dark:text-slate-300">
                                                     <User className="h-3 w-3" />
                                                 </div>
                                                 <div className="min-w-0">
@@ -170,7 +170,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                                     onClick={() => onAssign(asset)}
                                                     className={`p-2 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
                                                         isAvailable
-                                                            ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50'
+                                                            ? 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/40 text-slate-900 dark:text-white dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50'
                                                             : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                                                     }`}
                                                     title={isAvailable ? "Assign" : "Reassign"}
@@ -183,7 +183,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                             {/* History */}
                                             <button
                                                 onClick={() => onHistory(asset)}
-                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                 title="History"
                                             >
                                                 <History className="h-3.5 w-3.5" />
@@ -192,7 +192,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                             {/* QR Code */}
                                             <button
                                                 onClick={() => onQRCode(asset)}
-                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-500 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                                                 title="QR Code"
                                             >
                                                 <QrCode className="h-3.5 w-3.5" />
@@ -204,7 +204,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                             {/* View */}
                                             <button
                                                 onClick={() => onView(asset)}
-                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-colors"
+                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
                                                 title="View Details"
                                             >
                                                 <Eye className="h-3.5 w-3.5" />
@@ -213,7 +213,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
                                             {/* Edit */}
                                             <button
                                                 onClick={() => onEdit(asset)}
-                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors"
+                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors"
                                                 title="Edit"
                                             >
                                                 <Pencil className="h-3.5 w-3.5" />

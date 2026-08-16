@@ -38,6 +38,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ReduxProvider } from '@/components/providers/ReduxProvider';
+
 export default function RootLayout({
   children,
 }: {
@@ -62,17 +64,19 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 selection:bg-blue-500 selection:text-white`}>
-        <ThemeProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <MainLayout>
-                {children}
-              </MainLayout>
-              <CommandPalette />
-            </AuthProvider>
-          </ToastProvider>
-        </ThemeProvider>
+      <body className={`font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 selection:bg-slate-900 selection:text-white`}>
+        <ReduxProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <MainLayout>
+                  {children}
+                </MainLayout>
+                <CommandPalette />
+              </AuthProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

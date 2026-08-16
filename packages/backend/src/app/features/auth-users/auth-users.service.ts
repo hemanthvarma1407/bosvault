@@ -29,7 +29,7 @@ const DEFAULT_MENUS = [
             { key: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
             { key: 'masters', label: 'Masters', icon: 'Settings2', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
             { key: 'reports', label: 'Reports', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
-            { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
+            // { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
         ]
     },
     {
@@ -75,27 +75,18 @@ const DEFAULT_MENUS = [
             { key: 'procurement', label: 'Procurement', icon: 'ShoppingCart', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     },
-    // {
-    //     key: 'support',
-    //     label: 'Helpdesk',
-    //     icon: 'HelpCircle',
-    //     roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
-    //     children: [
-    //         { key: 'tickets', label: 'Support Tickets', icon: 'Ticket', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-    //         { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-    //         { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
-    //         { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
-    //     ]
-    // },
-    // {
-    //     key: 'profiles',
-    //     label: 'My Profiles',
-    //     icon: 'UserSquare2',
-    //     roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
-    //     children: [
-    //         { key: 'profile', label: 'Personal Info', icon: 'User', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] }
-    //     ]
-    // }
+    {
+        key: 'support',
+        label: 'Helpdesk',
+        icon: 'HelpCircle',
+        roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
+        children: [
+            { key: 'tickets', label: 'Support Tickets', icon: 'Ticket', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER] },
+            { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
+            { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
+            { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
+        ]
+    }
 ];
 
 @Injectable()

@@ -156,7 +156,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400">{item.description || '-'}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <div className="flex justify-center gap-2">
-                                                    <button onClick={() => { setSelectedAssetType(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                    <button onClick={() => { setSelectedAssetType(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -209,7 +209,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            className="w-4 h-4 text-slate-900 dark:text-white border-gray-300 rounded focus:ring-indigo-500"
                         />
                         <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Active
@@ -239,7 +239,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                 {selectedAssetType && (
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
-                            <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-3 border border-indigo-100 dark:border-indigo-800 shadow-sm">
                                 <Monitor className="h-8 w-8" />
                             </div>
                             <h4 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{selectedAssetType.name}</h4>
@@ -257,7 +257,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type ID</label>
                                     <p className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                        <Hash className="h-4 w-4 text-indigo-500" /> #{selectedAssetType.id}
+                                        <Hash className="h-4 w-4 text-slate-900 dark:text-white" /> #{selectedAssetType.id}
                                     </p>
                                 </div>
                                 <div className="space-y-1">

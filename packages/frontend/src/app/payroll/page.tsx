@@ -1,17 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { employeeService, departmentService, licensesService, emailService } from '@/lib/api/services';
-import { Select } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 import {
     Users, Mail, Phone, DollarSign, Calendar, Info, FileText,
-    Laptop
+    Laptop, ChevronDown, Search, Check
 } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { UserRoleEnum, GetAllEmployeesRequestModel, IdRequestModel } from '@bosvault/shared-models';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { formatPhoneNumberWithCountryCode } from '@/lib/utils';
 
@@ -41,6 +42,7 @@ interface Department {
 
 const PayrollInfoPage: React.FC = () => {
     const { user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const isSuperAdmin = !!(user?.roles?.includes('super_admin') || user?.role === 'super_admin');
 
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -51,12 +53,26 @@ const PayrollInfoPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSummaryOpen, setIsSummaryOpen] = useState(false);
 
+    // Custom Searchable Combobox State
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [dropdownSearch, setDropdownSearch] = useState('');
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const fetchEmployees = useCallback(async () => {
         if (!user) return;
         setIsLoading(true);
         try {
-            const companyId = !isSuperAdmin ? Number(user.companyId) : 0;
-            const req = new GetAllEmployeesRequestModel(companyId, true);
+            const req = new GetAllEmployeesRequestModel(0, true);
             const response = await employeeService.getAllEmployees(req);
 
             if (response.status) {
@@ -87,7 +103,7 @@ const PayrollInfoPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [user, isSuperAdmin]);
+    }, [user]);
 
     const fetchDepartments = useCallback(async () => {
         try {
@@ -103,8 +119,7 @@ const PayrollInfoPage: React.FC = () => {
     const fetchLicensesAndEmails = useCallback(async () => {
         if (!user) return;
         try {
-            const companyId = !isSuperAdmin ? Number(user.companyId) : 0;
-            const req = new IdRequestModel(companyId);
+            const req = new IdRequestModel(0);
             
             const [licRes, emailRes] = await Promise.all([
                 licensesService.getAllLicenses(req),
@@ -116,7 +131,7 @@ const PayrollInfoPage: React.FC = () => {
         } catch (err) {
             console.error('Failed to fetch licenses or emails:', err);
         }
-    }, [user, isSuperAdmin]);
+    }, [user]);
 
     useEffect(() => {
         fetchEmployees();
@@ -129,10 +144,37 @@ const PayrollInfoPage: React.FC = () => {
         setIsSummaryOpen(false);
     }, [selectedEmployeeId]);
 
+    const filteredEmployees = useMemo(() => {
+        const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+        if (compId === 0) return employees;
+        const matching = employees.filter(e => Number(e.companyId) === compId || !e.companyId);
+        return matching.length > 0 ? matching : employees;
+    }, [employees, reduxCompanyId]);
+
+    const comboboxEmployees = useMemo(() => {
+        if (!dropdownSearch.trim()) return filteredEmployees;
+        const q = dropdownSearch.toLowerCase();
+        return filteredEmployees.filter(e =>
+            e.firstName?.toLowerCase().includes(q) ||
+            e.lastName?.toLowerCase().includes(q) ||
+            e.email?.toLowerCase().includes(q)
+        );
+    }, [filteredEmployees, dropdownSearch]);
+
     const selectedEmployee = useMemo(() => {
         if (!selectedEmployeeId) return null;
-        return employees.find(e => e.id === Number(selectedEmployeeId)) || null;
+        return employees.find(e => String(e.id) === String(selectedEmployeeId)) || null;
     }, [selectedEmployeeId, employees]);
+
+    // Auto select first employee if current selection invalid or empty
+    useEffect(() => {
+        if (filteredEmployees.length > 0) {
+            const exists = filteredEmployees.some(e => String(e.id) === String(selectedEmployeeId));
+            if (!exists) {
+                setSelectedEmployeeId(String(filteredEmployees[0].id));
+            }
+        }
+    }, [filteredEmployees, selectedEmployeeId]);
 
     const getDepartmentName = (emp: any) => {
         if (emp.departmentId && departments.length > 0) {
@@ -179,28 +221,21 @@ const PayrollInfoPage: React.FC = () => {
     const calculateCosts = (emp: any) => {
         const months = calculateActiveMonths(emp);
         const baseMonthly = Number(emp.billingAmount || 0);
-        
-        // Calculate Email Costs
-        const empEmails = emails.filter(e => e.employeeId === emp.id || String(e.employeeId) === String(emp.id));
-        const emailMonthly = empEmails.reduce((sum, e) => sum + Number(e.billing || 0), 0);
 
         // Calculate License Costs
         const empLicenses = licenses.filter(l => l.assignedEmployeeId === emp.id || String(l.assignedEmployeeId) === String(emp.id));
         const licenseMonthly = empLicenses.reduce((sum, l) => sum + Number(l.costPerSeat || 0), 0);
 
-        const totalMonthly = baseMonthly + emailMonthly + licenseMonthly;
+        const totalMonthly = baseMonthly + licenseMonthly;
 
         return {
             months,
             baseMonthly,
-            emailMonthly,
             licenseMonthly,
             totalMonthly,
             baseTotal: Math.round(months * baseMonthly),
-            emailTotal: Math.round(months * emailMonthly),
             licenseTotal: Math.round(months * licenseMonthly),
             grandTotal: Math.round(months * totalMonthly),
-            empEmails,
             empLicenses
         };
     };
@@ -224,10 +259,6 @@ const PayrollInfoPage: React.FC = () => {
                         <span>${costs.baseMonthly.toLocaleString()}/mo</span>
                     </div>
                     <div className="flex justify-between">
-                        <span>Email Costs:</span>
-                        <span>${costs.emailMonthly.toLocaleString()}/mo</span>
-                    </div>
-                    <div className="flex justify-between">
                         <span>License Costs:</span>
                         <span>${costs.licenseMonthly.toLocaleString()}/mo</span>
                     </div>
@@ -246,32 +277,87 @@ const PayrollInfoPage: React.FC = () => {
                 
                 <PageHeader
                     title="Payroll Info"
-                    description="Select an employee to view their detailed payroll breakdown, software licenses, and email costs"
+                    description="Select an employee to view their detailed payroll breakdown and software licenses"
                     icon={<DollarSign />}
                     gradient="from-emerald-600 to-emerald-700"
                 >
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <label className="hidden md:block text-sm font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
-                            Select Employee:
-                        </label>
-                        <div className="w-64 md:w-80">
-                            {isLoading ? (
-                                <div className="animate-pulse h-9 bg-slate-200 dark:bg-slate-700 rounded-lg"></div>
-                            ) : (
-                                <Select
-                                    className="!h-9 !py-1 text-sm"
-                                    value={selectedEmployeeId}
-                                    onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                                    options={[
-                                        { value: '', label: 'Search employee...' },
-                                        ...employees.map(emp => ({
-                                            value: String(emp.id),
-                                            label: `${emp.firstName} ${emp.lastName} (${emp.email})`
-                                        }))
-                                    ]}
-                                />
-                            )}
-                        </div>
+                    <div className="w-64 sm:w-80 md:w-96 relative z-50" ref={dropdownRef}>
+                        {isLoading ? (
+                            <div className="animate-pulse h-9 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+                        ) : (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    className="w-full h-9 px-3 bg-white/10 dark:bg-slate-800/80 border border-white/20 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-white flex items-center justify-between shadow-sm hover:bg-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                >
+                                    <span className="truncate pr-2">
+                                        {selectedEmployee 
+                                            ? `${selectedEmployee.firstName} ${selectedEmployee.lastName} (${selectedEmployee.email})`
+                                            : '-- Select Employee --'}
+                                    </span>
+                                    <ChevronDown className={cn("h-4 w-4 text-slate-400 transition-transform duration-200 shrink-0", isDropdownOpen && "rotate-180")} />
+                                </button>
+
+                                <AnimatePresence>
+                                    {isDropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 5 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 5 }}
+                                            className="absolute right-0 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-xl z-50 overflow-hidden"
+                                        >
+                                            <div className="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 relative">
+                                                <Search className="h-3.5 w-3.5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search employee name or email..."
+                                                    value={dropdownSearch}
+                                                    onChange={(e) => setDropdownSearch(e.target.value)}
+                                                    className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white"
+                                                    autoFocus
+                                                />
+                                            </div>
+
+                                            <div className="max-h-60 overflow-y-auto p-1 divide-y divide-slate-100 dark:divide-slate-800/50">
+                                                {comboboxEmployees.length === 0 ? (
+                                                    <div className="p-4 text-center text-xs text-slate-400 font-medium">
+                                                        No employees match "{dropdownSearch}"
+                                                    </div>
+                                                ) : (
+                                                    comboboxEmployees.map((emp) => {
+                                                        const isSelected = String(emp.id) === String(selectedEmployeeId);
+                                                        return (
+                                                            <button
+                                                                key={emp.id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setSelectedEmployeeId(String(emp.id));
+                                                                    setIsDropdownOpen(false);
+                                                                    setDropdownSearch('');
+                                                                }}
+                                                                className={cn(
+                                                                    "w-full text-left p-2.5 rounded-lg flex items-center justify-between text-xs transition-colors",
+                                                                    isSelected 
+                                                                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold" 
+                                                                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                                                                )}
+                                                            >
+                                                                <div className="truncate mr-2">
+                                                                    <p className="font-bold truncate">{emp.firstName} {emp.lastName}</p>
+                                                                    <p className="text-[10px] text-slate-400 font-normal truncate">{emp.email}</p>
+                                                                </div>
+                                                                {isSelected && <Check className="h-4 w-4 text-emerald-500 shrink-0" />}
+                                                            </button>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </>
+                        )}
                     </div>
                 </PageHeader>
 
@@ -289,7 +375,7 @@ const PayrollInfoPage: React.FC = () => {
                                 {/* Header Employee Profile Card */}
                                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-md">
+                                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 bg-gradient-to-br from-slate-900 to-slate-900 shadow-md">
                                             {getInitials(selectedEmployee.firstName, selectedEmployee.lastName)}
                                         </div>
                                         <div>
@@ -330,7 +416,7 @@ const PayrollInfoPage: React.FC = () => {
                                     return (
                                         <>
                                             {/* KPI Metric Summary Cards */}
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                                 {/* Base Payroll */}
                                                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                                                     <div className="flex items-center justify-between">
@@ -347,24 +433,12 @@ const PayrollInfoPage: React.FC = () => {
                                                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                                                     <div className="flex items-center justify-between">
                                                         <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Software Licenses</span>
-                                                        <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 rounded-lg">
+                                                        <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white rounded-lg">
                                                             <Laptop className="h-4 w-4" />
                                                         </div>
                                                     </div>
                                                     <p className="text-2xl font-black text-slate-900 dark:text-white">${costs.licenseMonthly.toLocaleString()}<span className="text-xs text-slate-400 font-normal">/mo</span></p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400">{costs.empLicenses.length} Assigned ({costs.licenseTotal.toLocaleString()} total)</p>
-                                                </div>
-
-                                                {/* Emails */}
-                                                <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Accounts</span>
-                                                        <div className="p-2 bg-sky-50 dark:bg-sky-900/20 text-sky-600 rounded-lg">
-                                                            <Mail className="h-4 w-4" />
-                                                        </div>
-                                                    </div>
-                                                    <p className="text-2xl font-black text-slate-900 dark:text-white">${costs.emailMonthly.toLocaleString()}<span className="text-xs text-slate-400 font-normal">/mo</span></p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{costs.empEmails.length} Accounts ({costs.emailTotal.toLocaleString()} total)</p>
                                                 </div>
 
                                                 {/* Grand Total */}
@@ -396,18 +470,18 @@ const PayrollInfoPage: React.FC = () => {
                                             </div>
 
                                             {/* Details Columns */}
-                                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                                                 {/* Left Column: User Profile Info */}
                                                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                                                     <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-700 pb-3 flex items-center gap-2">
-                                                        <Users className="h-4 w-4 text-indigo-500" />
+                                                        <Users className="h-4 w-4 text-slate-900 dark:text-white" />
                                                         User Information
                                                     </h5>
                                                     <div className="space-y-3 text-sm">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                                                                <Mail className="h-4 w-4 text-indigo-500" />
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-lg">
+                                                                <Mail className="h-4 w-4 text-slate-900 dark:text-white" />
                                                             </div>
                                                             <div>
                                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Email</p>
@@ -416,8 +490,8 @@ const PayrollInfoPage: React.FC = () => {
                                                         </div>
 
                                                         <div className="flex items-center gap-3">
-                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                                                                <Phone className="h-4 w-4 text-indigo-500" />
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-lg">
+                                                                <Phone className="h-4 w-4 text-slate-900 dark:text-white" />
                                                             </div>
                                                             <div>
                                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Phone</p>
@@ -426,8 +500,8 @@ const PayrollInfoPage: React.FC = () => {
                                                         </div>
 
                                                         <div className="flex items-center gap-3">
-                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                                                                <Users className="h-4 w-4 text-indigo-500" />
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-lg">
+                                                                <Users className="h-4 w-4 text-slate-900 dark:text-white" />
                                                             </div>
                                                             <div>
                                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Manager</p>
@@ -436,8 +510,8 @@ const PayrollInfoPage: React.FC = () => {
                                                         </div>
 
                                                         <div className="flex items-center gap-3">
-                                                            <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                                                                <Calendar className="h-4 w-4 text-indigo-500" />
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-lg">
+                                                                <Calendar className="h-4 w-4 text-slate-900 dark:text-white" />
                                                             </div>
                                                             <div>
                                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Joining Date</p>
@@ -471,14 +545,14 @@ const PayrollInfoPage: React.FC = () => {
                                                     </div>
                                                 </div>
 
-                                                {/* Center Column: Software Licenses List */}
+                                                {/* Right Column: Software Licenses List */}
                                                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                                                     <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
                                                         <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                                            <Laptop className="h-4 w-4 text-indigo-500" />
+                                                            <Laptop className="h-4 w-4 text-slate-900 dark:text-white" />
                                                             Assigned Software Licenses
                                                         </h5>
-                                                        <span className="text-xs font-bold px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full">
+                                                        <span className="text-xs font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/30 text-slate-900 dark:text-white dark:text-slate-300 rounded-full">
                                                             {costs.empLicenses.length}
                                                         </span>
                                                     </div>
@@ -500,53 +574,11 @@ const PayrollInfoPage: React.FC = () => {
                                                                         </p>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="font-bold text-indigo-600 dark:text-indigo-400">
+                                                                        <p className="font-bold text-slate-900 dark:text-white dark:text-slate-300">
                                                                             ${Number(lic.costPerSeat || 0).toLocaleString()}/mo
                                                                         </p>
                                                                         {lic.assignedDate && (
                                                                             <p className="text-[10px] text-slate-400">Assigned: {formatDate(lic.assignedDate)}</p>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Right Column: Email Accounts List */}
-                                                <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                                                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-                                                        <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                                            <Mail className="h-4 w-4 text-sky-500" />
-                                                            Email Subscriptions
-                                                        </h5>
-                                                        <span className="text-xs font-bold px-2 py-0.5 bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-full">
-                                                            {costs.empEmails.length}
-                                                        </span>
-                                                    </div>
-
-                                                    {costs.empEmails.length === 0 ? (
-                                                        <div className="py-8 text-center text-slate-400 text-xs">
-                                                            No email accounts registered for this employee.
-                                                        </div>
-                                                    ) : (
-                                                        <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
-                                                            {costs.empEmails.map((em: any, idx: number) => (
-                                                                <div key={em.id || idx} className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
-                                                                    <div className="truncate mr-2">
-                                                                        <p className="font-bold text-slate-800 dark:text-slate-200 truncate">
-                                                                            {em.email}
-                                                                        </p>
-                                                                        <p className="text-[10px] text-slate-400 uppercase">
-                                                                            {em.emailType || 'Standard'}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div className="text-right shrink-0">
-                                                                        <p className="font-bold text-sky-600 dark:text-sky-400">
-                                                                            ${Number(em.billing || 0).toLocaleString()}/mo
-                                                                        </p>
-                                                                        {em.createdDate && (
-                                                                            <p className="text-[10px] text-slate-400">{formatDate(em.createdDate)}</p>
                                                                         )}
                                                                     </div>
                                                                 </div>
@@ -559,6 +591,16 @@ const PayrollInfoPage: React.FC = () => {
                                     );
                                 })()}
                             </motion.div>
+                        )}
+
+                        {!selectedEmployee && !isLoading && (
+                            <div className="flex flex-col items-center justify-center p-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
+                                <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 flex items-center justify-center mb-4">
+                                    <Users className="h-8 w-8" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Select an Employee</h3>
+                                <p className="text-xs text-slate-500 max-w-sm">Choose an employee from the dropdown above to view their detailed payroll breakdown, software licenses, and email costs.</p>
+                            </div>
                         )}
                     </AnimatePresence>
                 </div>

@@ -15,6 +15,7 @@ import {
 import { AddEmailModal } from './AddEmailModal';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
+import { useAppSelector } from '@/store';
 
 
 // Category Definitions
@@ -37,7 +38,7 @@ const CategoryConfig: Record<EmailCategory, { label: string, icon: any, color: s
 
 // Department Visual Configuration
 const DeptConfig: Record<string, { icon: any, color: string, bg: string, border: string, label: string }> = {
-    [DepartmentEnum.IT]: { icon: Settings, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-950/40', border: 'border-indigo-100 dark:border-indigo-900/30', label: 'IT & Infrastructure' },
+    [DepartmentEnum.IT]: { icon: Settings, color: 'text-slate-900 dark:text-white', bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/40', border: 'border-indigo-100 dark:border-indigo-900/30', label: 'IT & Infrastructure' },
     [DepartmentEnum.HR]: { icon: Users2, color: 'text-fuchsia-600', bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/40', border: 'border-fuchsia-100 dark:border-fuchsia-900/30', label: 'Human Resources' },
     [DepartmentEnum.FINANCE]: { icon: Landmark, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/40', border: 'border-emerald-100 dark:border-emerald-900/30', label: 'Accounts & Finance' },
     [DepartmentEnum.SUPPORT]: { icon: Headphones, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950/40', border: 'border-rose-100 dark:border-rose-900/30', label: 'Customer Support' },
@@ -45,7 +46,7 @@ const DeptConfig: Record<string, { icon: any, color: string, bg: string, border:
     [DepartmentEnum.SALES]: { icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/40', border: 'border-violet-100 dark:border-violet-900/30', label: 'Sales & Partnerships' },
     [DepartmentEnum.OPERATIONS]: { icon: ShieldCheck, color: 'text-cyan-600', bg: 'bg-cyan-50 dark:bg-cyan-950/40', border: 'border-cyan-100 dark:border-cyan-900/30', label: 'Operations & Logistics' },
     'Unassigned': { icon: Globe, color: 'text-slate-600', bg: 'bg-slate-50 dark:bg-slate-950/40', border: 'border-slate-200 dark:border-slate-900/30', label: 'General' },
-    'Default': { icon: Building2, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-950/40', border: 'border-indigo-100 dark:border-indigo-900/30', label: 'Department' },
+    'Default': { icon: Building2, color: 'text-slate-900 dark:text-white', bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/40', border: 'border-indigo-100 dark:border-indigo-900/30', label: 'Department' },
 };
 
 const EmailRow: React.FC<{
@@ -71,16 +72,16 @@ const EmailRow: React.FC<{
 
     return (
         <>
-            <tr className={`group/row border-b last:border-0 border-slate-200 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
+            <tr className={`group/row border-b last:border-0 border-slate-200 dark:border-white/[0.02] hover:bg-slate-50/50 dark:hover:bg-slate-900/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
                 <td className="p-4 border border-slate-200 dark:border-white/10">
                     <div className="flex items-center justify-center gap-2">
                         {(isCompany || isGroup) && acc.name && (
-                            <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight truncate max-w-[120px]">
+                            <span className="text-[9px] font-black text-slate-900 dark:text-white dark:text-slate-300 uppercase tracking-tight truncate max-w-[120px]">
                                 {acc.name}
                             </span>
                         )}
                         {!isCompany && !isGroup && acc.employeeName && (
-                            <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight truncate max-w-[100px]">
+                            <span className="text-[9px] font-black text-slate-900 dark:text-white dark:text-slate-300 uppercase tracking-tight truncate max-w-[100px]">
                                 {acc.employeeName}
                             </span>
                         )}
@@ -88,13 +89,13 @@ const EmailRow: React.FC<{
                 </td>
                 <td className="p-4 border border-slate-200 dark:border-white/10 text-center">
                     <div className="flex flex-col items-center justify-center">
-                        <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover/row:text-indigo-600 dark:group-hover/row:text-indigo-400 transition-colors uppercase tracking-tight">
+                        <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover/row:text-slate-900 dark:text-white dark:group-hover/row:text-slate-300 transition-colors uppercase tracking-tight">
                             {acc.email}
                         </span>
                         {isGroup && memberNames.length > 0 && (
                             <button
                                 onClick={() => setIsMembersOpen(!isMembersOpen)}
-                                className="flex items-center justify-center gap-1 mt-1 text-[9px] font-bold text-slate-400 hover:text-indigo-500 uppercase tracking-widest transition-colors"
+                                className="flex items-center justify-center gap-1 mt-1 text-[9px] font-bold text-slate-400 hover:text-slate-900 dark:text-white uppercase tracking-widest transition-colors"
                             >
                                 {isMembersOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
                                 {memberNames.length} Members
@@ -121,7 +122,7 @@ const EmailRow: React.FC<{
                         <button
                             onClick={() => onEdit(acc)}
                             title="Edit Email"
-                            className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/20 transition-colors"
                         >
                             <Pencil className="h-3.5 w-3.5" />
                         </button>
@@ -155,7 +156,7 @@ const EmailRow: React.FC<{
                                 <div className="p-4 pl-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                     {memberNames.map((name, i) => (
                                         <div key={i} className="flex items-center gap-2 p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-white/5">
-                                            <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-[10px] font-bold text-indigo-600">
+                                            <div className="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">
                                                 {name.charAt(0)}
                                             </div>
                                             <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-tight truncate">
@@ -174,11 +175,11 @@ const EmailRow: React.FC<{
 };
 
 const InfoEmailsPage: React.FC = () => {
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [companies, setCompanies] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
     const [employees, setEmployees] = useState<any[]>([]);
     const [emailInfoList, setEmailInfoList] = useState<EmailInfoResponseModel[]>([]);
-    const [selectedOrg, setSelectedOrg] = useState<string>('');
     const [activeTab, setActiveTab] = useState<EmailCategory>('USER');
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -188,7 +189,8 @@ const InfoEmailsPage: React.FC = () => {
 
     const fetchEmployeesForLookup = useCallback(async () => {
         try {
-            const req = new GetAllEmployeesRequestModel(Number(selectedOrg) || 0);
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            const req = new GetAllEmployeesRequestModel(compId);
             const response = await employeeService.getAllEmployees(req);
             if (response.status) {
                 setEmployees(response.data || []);
@@ -196,7 +198,7 @@ const InfoEmailsPage: React.FC = () => {
         } catch (err) {
             console.error('Failed to fetch employees for lookup:', err);
         }
-    }, [selectedOrg]);
+    }, [reduxCompanyId]);
 
     const fetchCompanies = useCallback(async () => {
         try {
@@ -222,7 +224,8 @@ const InfoEmailsPage: React.FC = () => {
 
     const fetchEmailInfo = useCallback(async () => {
         try {
-            const req = new IdRequestModel(Number(selectedOrg) || 0);
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            const req = new IdRequestModel(compId);
             const response = await emailService.getAllEmailInfo(req);
             if (response.status) {
                 setEmailInfoList(response.data || []);
@@ -232,7 +235,7 @@ const InfoEmailsPage: React.FC = () => {
         } catch (err: any) {
             AlertMessages.getErrorMessage(err.message || 'An error occurred while fetching email info');
         }
-    }, [selectedOrg]);
+    }, [reduxCompanyId]);
 
     useEffect(() => {
         fetchCompanies();
@@ -242,7 +245,7 @@ const InfoEmailsPage: React.FC = () => {
         fetchEmailInfo();
         fetchDepartments();
         fetchEmployeesForLookup();
-    }, [selectedOrg, fetchEmailInfo, fetchDepartments, fetchEmployeesForLookup]);
+    }, [reduxCompanyId, fetchEmailInfo, fetchDepartments, fetchEmployeesForLookup]);
 
 
     const handleUpsertEmailInfo = async (data: any) => {
@@ -339,7 +342,7 @@ const InfoEmailsPage: React.FC = () => {
             const deptName = email.department || 'Unassigned';
 
             // Create a unique key that includes company name if in "All Companies" view
-            const groupKey = selectedOrg === '' ? `${companyName} | ${deptName}` : deptName;
+            const groupKey = (!reduxCompanyId || reduxCompanyId === '0') ? `${companyName} | ${deptName}` : deptName;
 
             if (!groups[groupKey]) groups[groupKey] = [];
             groups[groupKey].push(email);
@@ -347,7 +350,7 @@ const InfoEmailsPage: React.FC = () => {
 
         // If not searching, ensure all departments from the selected company (or all) are shown
         if (searchQuery === '') {
-            if (selectedOrg === '') {
+            if (!reduxCompanyId || reduxCompanyId === '0') {
                 companies.forEach(company => {
                     const companyName = company.companyName || company.name;
                     departments.forEach(dept => {
@@ -363,7 +366,7 @@ const InfoEmailsPage: React.FC = () => {
         }
 
         return groups;
-    }, [filteredEmails, departments, searchQuery, activeTab, selectedOrg, companies]);
+    }, [filteredEmails, departments, searchQuery, activeTab, reduxCompanyId, companies]);
 
     // Collapse all groups by default whenever the tab or grouped data changes
     useEffect(() => {
@@ -382,7 +385,7 @@ const InfoEmailsPage: React.FC = () => {
                     icon={<Mail className="h-4 w-4" />}
                     title="Email Management"
                     description="Manage company and employee email addresses"
-                    gradient="from-indigo-600 via-indigo-700 to-violet-800"
+                    gradient="from-slate-900 via-slate-900 to-violet-800"
                     actions={[
                         {
                             label: 'Add Email',
@@ -395,31 +398,14 @@ const InfoEmailsPage: React.FC = () => {
                     <div className="flex flex-col lg:flex-row items-center gap-4 w-full justify-end">
                         <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                             <div className="relative w-full sm:w-64 group">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                 <input
                                     type="text"
                                     placeholder="Search..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-9 pr-4 h-8 bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-[11px] outline-none"
+                                    className="w-full pl-9 pr-4 h-8 bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-medium text-[11px] outline-none"
                                 />
-                            </div>
-
-                            <div className="relative w-full sm:w-48 group">
-                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-indigo-500 group-focus-within:scale-110 transition-transform" />
-                                <select
-                                    value={selectedOrg}
-                                    onChange={(e) => setSelectedOrg(e.target.value)}
-                                    className="w-full pl-9 pr-8 h-8 bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none cursor-pointer uppercase tracking-widest"
-                                >
-                                    <option value="" className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800">All Companies</option>
-                                    {companies.map(c => (
-                                        <option key={c.id} value={c.id} className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800">{c.companyName || c.name}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                    <ChevronDown className="h-3.5 w-3.5" />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -441,13 +427,13 @@ const InfoEmailsPage: React.FC = () => {
                                         className={`
                                             w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 group
                                             ${isActive
-                                                ? `bg-indigo-600 text-white shadow-xl shadow-indigo-600/20 translate-x-1`
+                                                ? `bg-slate-900 text-white shadow-xl shadow-indigo-600/20 translate-x-1`
                                                 : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                                             }
                                         `}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className={`p-1.5 rounded-lg ${isActive ? 'bg-white/20' : 'bg-slate-100 dark:bg-white/5 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/20'} transition-colors`}>
+                                            <div className={`p-1.5 rounded-lg ${isActive ? 'bg-white/20' : 'bg-slate-100 dark:bg-white/5 group-hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:group-hover:bg-indigo-900/20'} transition-colors`}>
                                                 <Icon className="w-4 h-4" />
                                             </div>
                                             <div className="text-left">
@@ -463,8 +449,8 @@ const InfoEmailsPage: React.FC = () => {
                         </div>
 
                         <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm">
-                            <div className="text-[10px] font-black uppercase tracking-widest text-indigo-500 mb-1">Active Records</div>
-                            <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{filteredEmails.length}</div>
+                            <div className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white mb-1">Active Records</div>
+                            <div className="text-2xl font-black text-slate-900 dark:text-white dark:text-slate-300">{filteredEmails.length}</div>
                         </div>
 
                         {/* {activeTab === 'COMPANY' && (
@@ -501,7 +487,7 @@ const InfoEmailsPage: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <div className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
+                                            <div className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
                                                 {emails.length} Records
                                             </div>
                                             {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
@@ -557,7 +543,7 @@ const InfoEmailsPage: React.FC = () => {
                         setIsModalOpen(false);
                         setEditData(null);
                     }}
-                    companyId={Number(selectedOrg) || 0}
+                    companyId={Number(reduxCompanyId) || 0}
                     onSuccess={handleUpsertEmailInfo}
                     initialTab={activeTab}
                     editData={editData}

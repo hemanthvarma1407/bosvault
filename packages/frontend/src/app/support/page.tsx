@@ -148,7 +148,7 @@ const SupportChatPage: React.FC = () => {
 
     const getStatusColor = (status: TicketStatusEnum) => {
         switch (status) {
-            case TicketStatusEnum.OPEN: return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
+            case TicketStatusEnum.OPEN: return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-slate-300';
             case TicketStatusEnum.IN_PROGRESS: return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
             case TicketStatusEnum.RESOLVED: return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
             case TicketStatusEnum.CLOSED: return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
@@ -171,7 +171,7 @@ const SupportChatPage: React.FC = () => {
                                             {ticket.subject}
                                         </h1>
                                         <div className="flex items-center gap-1.5 mt-0.5">
-                                            <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 tracking-wider">
+                                            <span className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 tracking-wider">
                                                 {ticket.ticketCode}
                                             </span>
                                             <span className="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
@@ -197,7 +197,7 @@ const SupportChatPage: React.FC = () => {
                                 );
                                 router.push(isAdmin ? '/tickets' : '/create-ticket');
                             }}
-                            className="group flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm"
+                            className="group flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm"
                         >
                             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
                             <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Back to Tickets</span>
@@ -236,7 +236,7 @@ const SupportChatPage: React.FC = () => {
                                                 <span className="text-sm font-bold text-slate-900 dark:text-white">
                                                     {ticket?.employeeName || 'Reporter'}
                                                 </span>
-                                                <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[9px] font-black uppercase tracking-widest rounded flex items-center">
+                                                <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-slate-900 dark:text-white dark:text-slate-300 text-[9px] font-black uppercase tracking-widest rounded flex items-center">
                                                     Original Request
                                                 </span>
                                                 <span className="text-xs text-slate-400">
@@ -260,7 +260,7 @@ const SupportChatPage: React.FC = () => {
                                         >
                                             {/* Avatar/Icon Column */}
                                             <div className="flex-shrink-0 pt-1">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isMe ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-600'
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isMe ? 'bg-blue-100 text-slate-900 dark:text-white' : 'bg-slate-100 text-slate-600'
                                                     }`}>
                                                     <span className="text-xs font-bold uppercase">
                                                         {(message.sender?.firstName?.[0] || message.senderType?.[0] || 'U')}
@@ -326,16 +326,16 @@ const SupportChatPage: React.FC = () => {
                                                                     href={attachmentUrl}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="flex items-center gap-3 p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/10 transition-all cursor-pointer group/file"
+                                                                    className="flex items-center gap-3 p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-slate-700 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/60/10 transition-all cursor-pointer group/file"
                                                                 >
-                                                                    <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-blue-500">
+                                                                    <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover/file:text-slate-900 dark:text-white">
                                                                         <FileText size={20} />
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
-                                                                        <p className="text-[11px] font-bold truncate text-slate-700 dark:text-slate-200 group-hover/file:text-blue-600">{file.name || file.fileName}</p>
+                                                                        <p className="text-[11px] font-bold truncate text-slate-700 dark:text-slate-200 group-hover/file:text-slate-900 dark:text-white">{file.name || file.fileName}</p>
                                                                         <p className="text-[9px] opacity-60">{file.size ? `${(file.size / 1024).toFixed(0)}kb` : ''}</p>
                                                                     </div>
-                                                                    <Eye size={14} className="text-slate-300 group-hover/file:text-blue-500 mr-1" />
+                                                                    <Eye size={14} className="text-slate-300 group-hover/file:text-slate-900 dark:text-white mr-1" />
                                                                 </a>
                                                             );
                                                         })}
@@ -363,7 +363,7 @@ const SupportChatPage: React.FC = () => {
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
                                         disabled={isUploading}
-                                        className="p-1 text-slate-400 hover:text-blue-600 transition-colors mb-1"
+                                        className="p-1 text-slate-400 hover:text-slate-900 dark:text-white transition-colors mb-1"
                                     >
                                         <PlusCircle size={20} />
                                     </button>
@@ -455,7 +455,7 @@ const SupportChatPage: React.FC = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                     <span className="text-[11px] font-bold text-slate-500">Reporter</span>
                                     <div className="flex items-center gap-1.5">
-                                        <div className="w-5 h-5 rounded bg-indigo-100 flex items-center justify-center text-[9px] font-bold text-indigo-600">
+                                        <div className="w-5 h-5 rounded bg-indigo-100 flex items-center justify-center text-[9px] font-bold text-slate-900 dark:text-white">
                                             {ticket?.employeeName?.split(' ').map((n: any) => n[0]).join('') || 'RP'}
                                         </div>
                                         <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate" title={ticket?.employeeEmail}>
@@ -482,7 +482,7 @@ const SupportChatPage: React.FC = () => {
                                 {!isClosed && (
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline"
+                                        className="text-[10px] font-black uppercase tracking-wider text-slate-900 dark:text-white dark:text-slate-300 hover:text-blue-700 hover:underline"
                                     >
                                         + Add
                                     </button>

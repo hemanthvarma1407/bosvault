@@ -22,9 +22,9 @@ import { getSocket } from '@/lib/socket';
 const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gradient: string }> = {
     [TicketCategoryEnum.HARDWARE]: {
         icon: Monitor,
-        color: 'text-blue-600 dark:text-blue-400',
-        bg: 'bg-blue-50 dark:bg-blue-900/20',
-        gradient: 'from-blue-500 to-cyan-500'
+        color: 'text-slate-900 dark:text-white dark:text-slate-300',
+        bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20',
+        gradient: 'from-slate-900 to-cyan-500'
     },
     [TicketCategoryEnum.SOFTWARE]: {
         icon: Cpu,
@@ -40,9 +40,9 @@ const CategoryConfig: Record<string, { icon: any, color: string, bg: string, gra
     },
     [TicketCategoryEnum.EMAIL]: {
         icon: Mail,
-        color: 'text-indigo-600 dark:text-indigo-400',
-        bg: 'bg-indigo-50 dark:bg-indigo-900/20',
-        gradient: 'from-indigo-500 to-blue-500'
+        color: 'text-slate-900 dark:text-white dark:text-slate-300',
+        bg: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20',
+        gradient: 'from-slate-900 to-slate-900'
     },
     [TicketCategoryEnum.ACCESS]: {
         icon: Lock,
@@ -498,7 +498,7 @@ const TicketsPage: React.FC = () => {
 
         if (diffMs < 0) return { label: 'OVERDUE', color: 'text-rose-600 bg-rose-50 border-rose-200 animate-pulse dark:bg-rose-900/30 dark:border-rose-800 dark:text-rose-400' };
         if (diffHours < 4) return { label: 'DUE SOON', color: 'text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:border-orange-800 dark:text-orange-400' };
-        return { label: `Due in ${Math.round(diffHours)}h`, color: 'text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400' };
+        return { label: `Due in ${Math.round(diffHours)}h`, color: 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800/60 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800 dark:text-slate-300' };
     };
 
     return (
@@ -508,14 +508,14 @@ const TicketsPage: React.FC = () => {
                     icon={<Ticket />}
                     title="Support Tickets"
                     description="Manage all support requests"
-                    gradient="from-indigo-500 to-purple-600"
+                    gradient="from-slate-900 to-purple-600"
                 >
                     <div className="flex items-center gap-3 w-full">
                         <div className="relative flex-1 max-w-md">
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
                                 type="text"
-                                className="w-full pl-10 pr-4 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium shadow-inner"
+                                className="w-full pl-10 pr-4 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all font-medium shadow-inner"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -536,7 +536,7 @@ const TicketsPage: React.FC = () => {
                                 <button
                                     onClick={() => setViewMode('all')}
                                     className={`flex items-center gap-1.5 px-4 py-1 rounded-lg font-bold text-xs transition-all ${viewMode === 'all'
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                        ? 'bg-slate-900 text-white shadow-lg shadow-indigo-600/20'
                                         : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                                         }`}
                                 >
@@ -546,7 +546,7 @@ const TicketsPage: React.FC = () => {
                                 <button
                                     onClick={() => setViewMode('my')}
                                     className={`flex items-center gap-1.5 px-4 py-1 rounded-lg font-bold text-xs transition-all ${viewMode === 'my'
-                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                                        ? 'bg-slate-900 text-white shadow-lg shadow-indigo-600/20'
                                         : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                                         }`}
                                 >
@@ -559,7 +559,7 @@ const TicketsPage: React.FC = () => {
                         <button
                             onClick={() => setShowFilters(!showFilters)}
                             className={`flex items-center justify-center gap-2 px-4 py-1.5 rounded-xl text-sm font-bold transition-all shadow-sm border ${showFilters
-                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20'
+                                ? 'bg-slate-900 text-white border-slate-700 shadow-lg shadow-indigo-600/20'
                                 : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
                                 }`}
                         >
@@ -630,18 +630,18 @@ const TicketsPage: React.FC = () => {
                         title="All Tickets"
                         value={statusCounts.all}
                         icon={Ticket}
-                        gradient="from-indigo-500 to-violet-600"
-                        iconBg="bg-indigo-50 dark:bg-indigo-900/20"
-                        iconColor="text-indigo-600 dark:text-indigo-400"
+                        gradient="from-slate-900 to-violet-600"
+                        iconBg="bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20"
+                        iconColor="text-slate-900 dark:text-white dark:text-slate-300"
                         isLoading={false}
                     />
                     <StatCard
                         title="Open"
                         value={statusCounts.open}
                         icon={AlertTriangle}
-                        gradient="from-blue-500 to-cyan-600"
-                        iconBg="bg-blue-50 dark:bg-blue-900/20"
-                        iconColor="text-blue-600 dark:text-blue-400"
+                        gradient="from-slate-900 to-cyan-600"
+                        iconBg="bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20"
+                        iconColor="text-slate-900 dark:text-white dark:text-slate-300"
                         isLoading={false}
                     />
                     <StatCard
@@ -729,7 +729,7 @@ const TicketsPage: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="py-4 px-6 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wide border ${ticket.ticketStatus === TicketStatusEnum.OPEN ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800' :
+                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wide border ${ticket.ticketStatus === TicketStatusEnum.OPEN ? 'bg-slate-100 dark:bg-slate-800/60 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-slate-300 dark:border-blue-800' :
                                                         ticket.ticketStatus === TicketStatusEnum.IN_PROGRESS ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800' :
                                                             ticket.ticketStatus === TicketStatusEnum.RESOLVED ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800' :
                                                                 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
@@ -780,7 +780,7 @@ const TicketsPage: React.FC = () => {
                                                     <div className="flex items-center justify-center gap-1 opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => router.push(`/support?ticketId=${ticket.id}&ticketTitle=${encodeURIComponent(ticket.subject)}`)}
-                                                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                                                            className="p-2 text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                                             title="Chat & Details"
                                                         >
                                                             <MessageSquare className="h-4 w-4" />
@@ -790,7 +790,7 @@ const TicketsPage: React.FC = () => {
                                                             <>
                                                                 <button
                                                                     onClick={() => handleEdit(ticket)}
-                                                                    className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+                                                                    className="p-2 text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                                                     title="Edit Ticket"
                                                                 >
                                                                     <Edit className="h-4 w-4" />
@@ -846,7 +846,7 @@ const TicketsPage: React.FC = () => {
                                             value={formData.subject}
                                             onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                             required
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold text-lg disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold text-lg disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                             placeholder="Brief summary of the issue"
                                         />
@@ -857,7 +857,7 @@ const TicketsPage: React.FC = () => {
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium min-h-[120px] resize-y disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-medium min-h-[120px] resize-y disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                             placeholder="Provide as much detail as possible..."
                                         />
@@ -865,7 +865,7 @@ const TicketsPage: React.FC = () => {
 
                                     {/* Classification Section */}
                                     <div className="md:col-span-2 border-t border-slate-200 dark:border-slate-800 pt-4">
-                                        <h4 className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-4">Classification & Priority</h4>
+                                        <h4 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest mb-4">Classification & Priority</h4>
                                     </div>
 
                                     <div>
@@ -873,7 +873,7 @@ const TicketsPage: React.FC = () => {
                                         <select
                                             value={formData.categoryEnum}
                                             onChange={(e) => setFormData({ ...formData, categoryEnum: e.target.value as TicketCategoryEnum })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                         >
                                             {Object.values(TicketCategoryEnum).map((cat) => (
@@ -888,7 +888,7 @@ const TicketsPage: React.FC = () => {
                                             type="text"
                                             value={formData.subCategory}
                                             onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!!editingTicket}
                                             placeholder="e.g. Printer, Software"
                                         />
@@ -899,7 +899,7 @@ const TicketsPage: React.FC = () => {
                                         <select
                                             value={formData.priorityEnum}
                                             onChange={(e) => setFormData({ ...formData, priorityEnum: e.target.value as TicketPriorityEnum })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                         >
                                             {Object.values(TicketPriorityEnum).map((prio) => (
                                                 <option key={prio} value={prio}>{prio.toUpperCase()}</option>
@@ -912,7 +912,7 @@ const TicketsPage: React.FC = () => {
                                         <select
                                             value={formData.ticketStatus}
                                             onChange={(e) => setFormData({ ...formData, ticketStatus: e.target.value as TicketStatusEnum })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold"
                                         >
                                             {Object.values(TicketStatusEnum).map((status) => (
                                                 <option key={status} value={status}>{status.replace('_', ' ')}</option>
@@ -925,7 +925,7 @@ const TicketsPage: React.FC = () => {
                                         <select
                                             value={formData.assignAdminId}
                                             onChange={(e) => setFormData({ ...formData, assignAdminId: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold"
                                         >
                                             <option value="">Select Admin</option>
                                             {admins.map((admin) => (
@@ -940,7 +940,7 @@ const TicketsPage: React.FC = () => {
                                             type="text"
                                             value={formData.originalEstimate}
                                             onChange={(e) => setFormData({ ...formData, originalEstimate: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             placeholder="e.g., 2h, 1d, 45m"
                                             disabled={!isAdmin}
                                         />
@@ -951,7 +951,7 @@ const TicketsPage: React.FC = () => {
                                         <select
                                             value={formData.timeSpent}
                                             onChange={(e) => setFormData({ ...formData, timeSpent: e.target.value })}
-                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
+                                            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-bold disabled:bg-slate-50 dark:disabled:bg-slate-900/50"
                                             disabled={!isAdmin}
                                         >
                                             <option value="">Select Time Spent</option>
@@ -981,7 +981,7 @@ const TicketsPage: React.FC = () => {
                                         <textarea
                                             value={formData.adminComments}
                                             onChange={(e) => setFormData({ ...formData, adminComments: e.target.value })}
-                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium min-h-[100px] resize-y"
+                                            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-medium min-h-[100px] resize-y"
                                             placeholder="Internal notes for support team..."
                                         />
                                     </div>

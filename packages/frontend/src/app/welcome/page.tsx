@@ -19,7 +19,7 @@ const WelcomePage: React.FC = () => {
                 { icon: <Rocket className="w-4 h-4" />, text: "Automated CI/CD" },
                 { icon: <Shield className="w-4 h-4" />, text: "Security Compliance" }
             ],
-            gradient: "from-purple-600/10 to-indigo-600/10 dark:from-purple-600/20 dark:to-indigo-600/20",
+            gradient: "from-purple-600/10 to-slate-900/10 dark:from-purple-600/20 dark:to-slate-900/20",
             border: "border-slate-200 dark:border-purple-500/20",
             shadow: "hover:shadow-purple-500/10"
         },
@@ -32,9 +32,9 @@ const WelcomePage: React.FC = () => {
                 { icon: <Cloud className="w-4 h-4" />, text: "Cloud Engineering" },
                 { icon: <Shield className="w-4 h-4" />, text: "DevSecOps" }
             ],
-            gradient: "from-blue-600/10 to-indigo-600/10 dark:from-blue-600/20 dark:to-indigo-600/20",
-            border: "border-slate-200 dark:border-blue-500/20",
-            shadow: "hover:shadow-blue-500/10"
+            gradient: "from-slate-900/10 to-slate-900/10 dark:from-slate-900/20 dark:to-slate-900/20",
+            border: "border-slate-200 dark:border-slate-700/20",
+            shadow: "hover:shadow-black/20"
         }
     ];
 
@@ -42,7 +42,7 @@ const WelcomePage: React.FC = () => {
         <div className="flex flex-col items-center justify-center min-h-[85vh] p-8 -mt-12 animate-slide-up space-y-10">
             <div className="max-w-2xl text-center space-y-3">
                 <h1 className="text-xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                    Welcome to <span className="bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient">BOS Vault</span>
+                    Welcome to <span className="bg-gradient-to-r from-slate-900 via-slate-900 to-purple-600 bg-clip-text text-transparent animate-gradient">BOS Vault</span>
                     {user?.fullName && (
                         <span className="text-lg md:text-xl font-bold text-slate-500 dark:text-slate-400 opacity-80 ml-2">
                             / {user.fullName}
@@ -90,7 +90,7 @@ const WelcomePage: React.FC = () => {
                                     <div className="flex flex-wrap gap-1">
                                         {company.features.map((feature, fIdx) => (
                                             <div key={fIdx} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/50 text-[7px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white group-hover:border-slate-300 dark:group-hover:border-slate-700 transition-all">
-                                                <span className="text-blue-600 dark:text-blue-500 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">{feature.icon}</span>
+                                                <span className="text-slate-900 dark:text-white dark:text-slate-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-slate-300 transition-colors">{feature.icon}</span>
                                                 {feature.text}
                                             </div>
                                         ))}

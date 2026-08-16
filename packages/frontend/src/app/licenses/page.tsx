@@ -15,6 +15,7 @@ import { RouteGuard } from '@/components/auth/RouteGuard';
 import { AddLicenseModal } from './AddLicenseModal';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { Select } from '@/components/ui/Select';
 
@@ -73,11 +74,11 @@ interface Application {
 
 export default function LicensesPage() {
     const { user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [licenses, setLicenses] = useState<License[]>([]);
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
     const [applications, setApplications] = useState<Application[]>([]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<string>('0');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editLicense, setEditLicense] = useState<License | null>(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -85,16 +86,9 @@ export default function LicensesPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedApps, setExpandedApps] = useState<Record<string, boolean>>({});
 
-
     const toggleApp = (appName: string) => {
         setExpandedApps(prev => ({ ...prev, [appName]: !prev[appName] }));
     };
-
-
-
-
-
-
 
     const fetchCompanies = useCallback(async () => {
         try {
@@ -108,9 +102,9 @@ export default function LicensesPage() {
     }, []);
 
     const fetchLicenses = useCallback(async () => {
-        if (selectedCompanyId === undefined || selectedCompanyId === null || selectedCompanyId === '') return;
+        const targetId = reduxCompanyId ? Number(reduxCompanyId) : 0;
         try {
-            const req = new IdRequestModel(Number(selectedCompanyId));
+            const req = new IdRequestModel(targetId);
             const response: any = await licensesService.getAllLicenses(req);
             if (response.status) {
                 const data = response.data || [];
@@ -121,7 +115,7 @@ export default function LicensesPage() {
         } catch (error: any) {
             AlertMessages.getErrorMessage(error.message || 'Failed to fetch licenses');
         }
-    }, [selectedCompanyId]);
+    }, [reduxCompanyId]);
 
     const fetchEmployees = useCallback(async () => {
         const isAdmin = [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN].includes(user?.role as UserRoleEnum);
@@ -234,29 +228,14 @@ export default function LicensesPage() {
                     ]}
                 >
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-end max-w-2xl ml-auto">
-                        <div className="w-full sm:w-48">
-                            <Select
-                                value={selectedCompanyId}
-                                onChange={(e) => setSelectedCompanyId(e.target.value)}
-                                options={[
-                                    { value: '0', label: 'All Companies' },
-                                    ...companies.map((c) => ({
-                                        value: c.id.toString(),
-                                        label: c.companyName
-                                    }))
-                                ]}
-                                className="h-8 font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
-                            />
-                        </div>
-
                         <div className="relative w-full sm:w-72 group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                             <input
                                 type="text"
                                 placeholder="Search licences..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-xs outline-none shadow-sm"
+                                className="w-full pl-11 pr-4 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-medium text-xs outline-none shadow-sm"
                             />
                         </div>
                     </div>
@@ -285,8 +264,8 @@ export default function LicensesPage() {
                         <>
                             {licenses.length === 0 ? (
                                 <div className="h-[450px] flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-white/5 shadow-inner">
-                                    <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/20 rounded-3xl flex items-center justify-center mb-8 shadow-inner animate-pulse">
-                                        <Key className="h-8 w-8 text-indigo-400" />
+                                    <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/20 rounded-3xl flex items-center justify-center mb-8 shadow-inner animate-pulse">
+                                        <Key className="h-8 w-8 text-slate-300" />
                                     </div>
                                     <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">No Licences Found</h3>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 max-w-xs font-medium leading-relaxed uppercase tracking-[0.1em]">
@@ -309,7 +288,7 @@ export default function LicensesPage() {
                                                         {firstLicense.application?.logo ? (
                                                             <img src={firstLicense.application.logo} alt="" className="w-6 h-6 object-contain" />
                                                         ) : (
-                                                            <Shield className="w-5 h-5 text-indigo-500" />
+                                                            <Shield className="w-5 h-5 text-slate-900 dark:text-white" />
                                                         )}
                                                     </div>
                                                     <div className="text-left">
@@ -338,7 +317,7 @@ export default function LicensesPage() {
                                                      </div>
                                                     <div className="hidden sm:flex items-center -space-x-2">
                                                         {appLicenses.filter(l => l.assignedEmployeeId).slice(0, 3).map((l, i) => (
-                                                            <div key={i} className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white">
+                                                            <div key={i} className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-900 flex items-center justify-center text-[8px] font-black text-white">
                                                                 {l.assignedEmployee
                                                                     ? (l.assignedEmployee.firstName?.[0] || '') + (l.assignedEmployee.lastName?.[0] || '')
                                                                     : 'U'}
@@ -350,7 +329,7 @@ export default function LicensesPage() {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <div className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
+                                                    <div className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
                                                         {appLicenses.length}
                                                     </div>
                                                     {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
@@ -375,11 +354,11 @@ export default function LicensesPage() {
                                                                 {appLicenses.map((license: License, idx: number) => {
 
                                                                     return (
-                                                                        <tr key={license.id} className={`group/row hover:bg-slate-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
+                                                                        <tr key={license.id} className={`group/row hover:bg-slate-50/50 dark:hover:bg-slate-900/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
 
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 <div className="flex items-center justify-center gap-2">
-                                                                                    <Building2 className="w-3.5 h-3.5 text-indigo-500/50" />
+                                                                                    <Building2 className="w-3.5 h-3.5 text-slate-900 dark:text-white/50" />
                                                                                     <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-tight">
                                                                                         {license.company?.companyName || 'N/A'}
                                                                                     </span>
@@ -388,7 +367,7 @@ export default function LicensesPage() {
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 {license.assignedEmployeeId ? (
                                                                                     <div className="flex items-center justify-center gap-3">
-                                                                                        <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-600/20">
+                                                                                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-600/20">
                                                                                             {license.assignedEmployee
                                                                                                 ? `${license.assignedEmployee.firstName[0]}${license.assignedEmployee.lastName[0]}`
                                                                                                 : 'U'}
@@ -413,14 +392,14 @@ export default function LicensesPage() {
                                                                             </td>
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 <div className="flex items-center justify-center gap-2">
-                                                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${license.role === 'Owner' ? 'bg-amber-50 text-amber-600 border-amber-200' : (license.role === 'Member' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'bg-slate-50 text-slate-600 border-slate-200')}`}>
+                                                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${license.role === 'Owner' ? 'bg-amber-50 text-amber-600 border-amber-200' : (license.role === 'Member' ? 'bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white border-indigo-200' : 'bg-slate-50 text-slate-600 border-slate-200')}`}>
                                                                                         {license.role || 'Member'}
                                                                                     </span>
                                                                                 </div>
                                                                             </td>
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 <div className="flex items-center justify-center gap-2">
-                                                                                    <Clock className="w-3.5 h-3.5 text-indigo-500/50" />
+                                                                                    <Clock className="w-3.5 h-3.5 text-slate-900 dark:text-white/50" />
                                                                                     <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-tight">
                                                                                         {license.assignedDate ? new Date(license.assignedDate).toLocaleDateString() : 'N/A'}
                                                                                     </span>
@@ -429,7 +408,7 @@ export default function LicensesPage() {
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 <div className="flex flex-col items-center justify-center">
                                                                                     {license.costPerSeat && license.costPerSeat > 0 ? (
-                                                                                        <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/10 w-fit">
+                                                                                        <span className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-2 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/10 w-fit">
                                                                                             ${Number(license.costPerSeat).toLocaleString()} / {license.billingCycle?.toLowerCase() || 'monthly'}
                                                                                         </span>
                                                                                     ) : (
@@ -441,7 +420,7 @@ export default function LicensesPage() {
                                                                                 <div className="flex items-center justify-center gap-1">
                                                                                     <button
                                                                                         onClick={() => { setEditLicense(license); setIsModalOpen(true); }}
-                                                                                        className="h-8 w-8 inline-flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all"
+                                                                                        className="h-8 w-8 inline-flex items-center justify-center text-slate-400 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-950/30 rounded-xl transition-all"
                                                                                     >
                                                                                         <Pencil className="h-3.5 w-3.5" />
                                                                                     </button>

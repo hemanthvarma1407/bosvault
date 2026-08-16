@@ -68,13 +68,13 @@ function ResetPasswordContent() {
     return (
         <div className="min-h-screen w-full flex bg-[#020617] font-sans items-center justify-center p-4 relative overflow-hidden">
             {/* Background Decorative Elements */}
-            <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--tw-gradient-stops))] from-blue-700/20 via-slate-950/0 to-slate-950/0" />
-            <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-indigo-600/20 via-slate-950/0 to-slate-950/0" />
+            <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--tw-gradient-stops))] from-slate-900/20 via-slate-950/0 to-slate-950/0" />
+            <div className="absolute inset-0 bg-[radial-gradient(at_bottom_left,_var(--tw-gradient-stops))] from-slate-900/20 via-slate-950/0 to-slate-950/0" />
 
             <div className="w-full max-w-md relative z-10">
                 <div className="bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] border border-slate-800 p-8 sm:p-12 shadow-2xl">
                     <div className="text-center mb-10">
-                        <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-blue-500/20">
+                        <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-black/20">
                             <ShieldCheck className="w-10 h-10" />
                         </div>
                         <h2 className="text-3xl font-black text-white mb-2 tracking-tight">New Password</h2>
@@ -92,7 +92,7 @@ function ResetPasswordContent() {
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         required
                                         placeholder="••••••••"
-                                        className="h-14 pl-4 pr-12 text-base bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all rounded-2xl text-white"
+                                        className="h-14 pl-4 pr-12 text-base bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-slate-700 transition-all rounded-2xl text-white"
                                     />
                                     <button
                                         type="button"
@@ -113,7 +113,7 @@ function ResetPasswordContent() {
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
                                         placeholder="••••••••"
-                                        className="h-14 pl-4 text-base bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all rounded-2xl text-white"
+                                        className="h-14 pl-4 text-base bg-slate-800/50 border-slate-700 focus:bg-slate-800 focus:ring-2 focus:ring-blue-500/20 focus:border-slate-700 transition-all rounded-2xl text-white"
                                     />
                                 </div>
                             </div>
@@ -121,7 +121,7 @@ function ResetPasswordContent() {
 
                         <Button
                             type="submit"
-                            className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 group"
+                            className="w-full h-14 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-900 hover:to-slate-900 text-white text-base font-bold rounded-2xl shadow-xl shadow-black/20 hover:shadow-black/20 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 group"
                             isLoading={isResetting}
                         >
                             Reset Password

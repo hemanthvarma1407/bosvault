@@ -16,6 +16,7 @@ import { UserRoleEnum, CreateEmployeeModel, UpdateEmployeeModel, EmployeeStatusE
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAppSelector } from '@/store';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { formatPhoneNumberWithCountryCode } from '@/lib/utils';
 import { EmployeeBulkImportModal } from './bulk-import';
@@ -56,6 +57,7 @@ interface Department {
 
 const EmployeesPage: React.FC = () => {
     const { user } = useAuth();
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const isSuperAdmin = !!(user?.roles?.includes('super_admin') || user?.role === 'super_admin');
 
     // Stable refs so fetchEmployees callback doesn't need user/isSuperAdmin as deps
@@ -67,7 +69,6 @@ const EmployeesPage: React.FC = () => {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
-    const [selectedOrg, setSelectedOrg] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('active');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -112,11 +113,9 @@ const EmployeesPage: React.FC = () => {
 
         setIsLoading(true);
         try {
-            const currentIsSuperAdmin = isSuperAdminRef.current;
-            // Always fetch ALL employees — company filtering is done client-side
-            const companyId = !currentIsSuperAdmin ? Number(currentUser.companyId) : 0;
             const includeDeactivated = true;
-            const req = new GetAllEmployeesRequestModel(companyId, includeDeactivated);
+            // Fetch all authorized employees — company filtering is handled in UI
+            const req = new GetAllEmployeesRequestModel(0, includeDeactivated);
             const response = await employeeService.getAllEmployees(req);
 
             // Discard result if a newer fetch was triggered while we awaited
@@ -160,7 +159,6 @@ const EmployeesPage: React.FC = () => {
                 setIsLoading(false);
             }
         }
-    // No selectedOrg dep — company filter is applied client-side, not via re-fetch
     }, []);
 
     const fetchCompanies = useCallback(async () => {
@@ -198,18 +196,9 @@ const EmployeesPage: React.FC = () => {
         fetchDepartments();
     }, []);
 
-    // For non-super-admins, lock selectedOrg to their own company (only once on mount)
-    const orgInitialisedRef = React.useRef(false);
-    useEffect(() => {
-        if (!orgInitialisedRef.current && user && !isSuperAdmin && user.companyId) {
-            orgInitialisedRef.current = true;
-            setSelectedOrg(String(user.companyId));
-        }
-    }, [user, isSuperAdmin]);
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const companyId = Number(formData.companyId || selectedOrg);
+        const companyId = Number(formData.companyId || reduxCompanyId || user?.companyId);
         if (!companyId) {
             AlertMessages.getErrorMessage('Please select a company');
             return;
@@ -412,12 +401,12 @@ const EmployeesPage: React.FC = () => {
 
         // const deptLower = deptName.toLowerCase();
         // Simple keyword matching for colors
-        // if (deptLower.includes('it') || deptLower.includes('tech') || deptLower.includes('dev')) return 'from-blue-500 to-indigo-600';
+        // if (deptLower.includes('it') || deptLower.includes('tech') || deptLower.includes('dev')) return 'from-slate-900 to-slate-900';
         // if (deptLower.includes('hr') || deptLower.includes('human')) return 'from-pink-500 to-rose-500';
         // if (deptLower.includes('finance') || deptLower.includes('account')) return 'from-emerald-500 to-teal-600';
         // if (deptLower.includes('admin')) return 'from-orange-400 to-amber-500';
         // if (deptLower.includes('sale')) return 'from-violet-500 to-purple-600';
-        // if (deptLower.includes('operation')) return 'from-cyan-500 to-blue-600';
+        // if (deptLower.includes('operation')) return 'from-cyan-500 to-slate-900';
         // if (deptLower.includes('market')) return 'from-fuchsia-500 to-pink-600';
         // if (deptLower.includes('support')) return 'from-amber-500 to-orange-600';
 
@@ -425,8 +414,8 @@ const EmployeesPage: React.FC = () => {
     };
 
     const filteredEmployees = employees.filter(emp => {
-        // Company filter — client-side, no re-fetch
-        const matchesCompany = !selectedOrg || emp.companyId === Number(selectedOrg);
+        const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+        const matchesCompany = targetCompanyId === 0 || emp.companyId === targetCompanyId;
 
         const searchLower = searchQuery.toLowerCase();
         const deptName = getDepartmentName(emp).toLowerCase();
@@ -448,10 +437,10 @@ const EmployeesPage: React.FC = () => {
         return nameA.localeCompare(nameB);
     });
 
-    // Stats reflect current company filter (same pool as filteredEmployees before status/search)
-    const companyFilteredEmployees = !selectedOrg
+    const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+    const companyFilteredEmployees = targetCompanyId === 0
         ? employees
-        : employees.filter(e => e.companyId === Number(selectedOrg));
+        : employees.filter(e => e.companyId === targetCompanyId);
 
     const stats = {
         total: companyFilteredEmployees.length,
@@ -480,7 +469,7 @@ const EmployeesPage: React.FC = () => {
                     title="Employee Directory"
                     description="Manage organization members and roles"
                     icon={<Users />}
-                    gradient="from-indigo-600 to-indigo-700"
+                    gradient="from-slate-900 to-slate-900"
                     actions={[
                         {
                             label: 'Bulk Import',
@@ -503,7 +492,7 @@ const EmployeesPage: React.FC = () => {
                             { label: 'Active', value: stats.active, color: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' },
                             { label: 'Inactive', value: stats.inactive, color: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' },
                             { label: 'Deactivated', value: stats.deactivated, color: 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400' },
-                            { label: 'Total Billing', value: `$${stats.totalBilling.toLocaleString()}`, color: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400' },
+                            { label: 'Total Billing', value: `$${stats.totalBilling.toLocaleString()}`, color: 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/30 text-indigo-700 dark:text-slate-300' },
                         ].map(s => (
                             <span key={s.label} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold ${s.color}`}>
                                 <span className="text-[10px] font-medium opacity-70">{s.label}</span> {s.value}
@@ -518,34 +507,16 @@ const EmployeesPage: React.FC = () => {
                         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                         <input
                             type="text"
-                            className="w-full pl-8 pr-3 h-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full pl-8 pr-3 h-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:ring-1 focus:ring-indigo-500 focus:border-slate-700 transition-colors"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                     <div className="flex flex-wrap sm:flex-nowrap gap-2 shrink-0">
-                        {isSuperAdmin && (
-                            <div className="relative w-full sm:w-48 group shrink-0">
-                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-500 group-focus-within:scale-110 transition-transform" />
-                                <select
-                                    value={selectedOrg}
-                                    onChange={(e) => setSelectedOrg(e.target.value)}
-                                    className="w-full pl-9 pr-8 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none shadow-sm cursor-pointer uppercase tracking-widest"
-                                >
-                                    <option value="">All Companies</option>
-                                    {companies.map((c) => (
-                                        <option key={c.id} value={c.id}>{c.companyName || (c as any).name}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                    <Search className="h-3 w-3" />
-                                </div>
-                            </div>
-                        )}
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="h-8 pl-2.5 pr-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 flex-1 sm:flex-none uppercase font-bold"
+                            className="h-8 pl-2.5 pr-7 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-slate-700 flex-1 sm:flex-none uppercase font-bold"
                         >
                             <option value="all">All</option>
                             <option value="active">Active</option>
@@ -555,13 +526,13 @@ const EmployeesPage: React.FC = () => {
                         <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-0.5">
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-indigo-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             >
                                 <LayoutGrid className="h-3.5 w-3.5" />
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-indigo-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             >
                                 <List className="h-3.5 w-3.5" />
                             </button>
@@ -573,7 +544,7 @@ const EmployeesPage: React.FC = () => {
                 <AnimatePresence mode="wait">
                     {isLoading ? (
                         <div className="flex items-center justify-center py-20">
-                            <div className="animate-spin rounded-full h-8 w-8 border-2 border-indigo-500 border-t-transparent" />
+                            <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-700 border-t-transparent" />
                         </div>
                     ) : filteredEmployees.length === 0 ? (
                         <motion.div
@@ -640,7 +611,7 @@ const EmployeesPage: React.FC = () => {
                                                     <Phone className="h-2.5 w-2.5 shrink-0 opacity-60" />
                                                     <span>{formatPhoneNumberWithCountryCode(emp.phNumber)}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-indigo-500 dark:text-indigo-400">
+                                                <div className="flex items-center gap-1.5 text-slate-900 dark:text-white dark:text-slate-300">
                                                     <Users className="h-2.5 w-2.5 shrink-0 opacity-70" />
                                                     <span className="truncate">{emp.managerName || '-'}</span>
                                                 </div>
@@ -648,7 +619,7 @@ const EmployeesPage: React.FC = () => {
                                                     <DollarSign className="h-2.5 w-2.5 shrink-0 opacity-70" />
                                                     <span>${Number(emp.billingAmount || 0).toLocaleString()} /mo</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-bold">
+                                                <div className="flex items-center gap-1.5 text-slate-900 dark:text-white dark:text-slate-300 font-bold">
                                                     <DollarSign className="h-2.5 w-2.5 shrink-0 opacity-70" />
                                                     <span>${calculateTotalPaid(emp).toLocaleString()} total</span>
                                                 </div>
@@ -663,7 +634,7 @@ const EmployeesPage: React.FC = () => {
                                                 <button onClick={() => { setSelectedEmployee(emp); setIsDetailModalOpen(true); }} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" title="View details">
                                                     <Eye className="h-3 w-3" />
                                                 </button>
-                                                <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors" title="Edit">
+                                                <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-slate-900 dark:text-white transition-colors" title="Edit">
                                                     <Edit className="h-3 w-3" />
                                                 </button>
                                                 {emp.empStatus?.toLowerCase() === 'deactivated' && (
@@ -739,7 +710,7 @@ const EmployeesPage: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="px-3 py-2 text-right hidden lg:table-cell">
-                                                <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                                                <span className="text-xs font-semibold text-slate-900 dark:text-white dark:text-slate-300">
                                                     ${calculateTotalPaid(emp).toLocaleString('en-US')}
                                                 </span>
                                             </td>
@@ -748,7 +719,7 @@ const EmployeesPage: React.FC = () => {
                                                     <button onClick={() => { setSelectedEmployee(emp); setIsDetailModalOpen(true); }} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" title="View details">
                                                         <Eye className="h-3 w-3" />
                                                     </button>
-                                                    <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-indigo-600 transition-colors" title="Edit">
+                                                    <button onClick={() => handleEdit(emp)} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800/60 dark:hover:bg-indigo-900/30 rounded text-slate-400 hover:text-slate-900 dark:text-white transition-colors" title="Edit">
                                                         <Edit className="h-3 w-3" />
                                                     </button>
                                                     {emp.empStatus?.toLowerCase() === 'deactivated' && (
@@ -880,7 +851,7 @@ const EmployeesPage: React.FC = () => {
                                 value={formData.remarks}
                                 onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                                 rows={2}
-                                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none text-sm resize-none"
+                                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all outline-none text-sm resize-none"
                                 placeholder="Any additional notes about the employee..."
                             />
                         </div>
@@ -929,14 +900,14 @@ const EmployeesPage: React.FC = () => {
                                     <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Information</h5>
                                     <div className="space-y-2 text-xs">
                                         <div className="flex items-center gap-2">
-                                            <Mail className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <Mail className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Email Address</p>
                                                 <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedEmployee.email}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <Phone className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <Phone className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Phone Number</p>
                                                 <p className="font-semibold text-slate-800 dark:text-slate-200">{formatPhoneNumberWithCountryCode(selectedEmployee.phNumber) || '—'}</p>
@@ -950,24 +921,24 @@ const EmployeesPage: React.FC = () => {
                                     <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Organization Details</h5>
                                     <div className="space-y-2 text-xs">
                                         <div className="flex items-center gap-2">
-                                            <Users className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <Users className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Reporting Manager</p>
                                                 <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedEmployee.managerName || '—'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <DollarSign className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <DollarSign className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Monthly Billing</p>
                                                 <p className="font-semibold text-emerald-600 dark:text-emerald-400">${Number(selectedEmployee.billingAmount || 0).toLocaleString()}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <DollarSign className="h-4 w-4 text-indigo-500 shrink-0" />
+                                            <DollarSign className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                             <div>
                                                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Total Paid</p>
-                                                <p className="font-semibold text-indigo-600 dark:text-indigo-400">${calculateTotalPaid(selectedEmployee).toLocaleString()}</p>
+                                                <p className="font-semibold text-slate-900 dark:text-white dark:text-slate-300">${calculateTotalPaid(selectedEmployee).toLocaleString()}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -979,14 +950,14 @@ const EmployeesPage: React.FC = () => {
                                 <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lifecycle & Timeline</h5>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <Calendar className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                         <div>
                                             <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Joining Date</p>
                                             <p className="font-semibold text-slate-800 dark:text-slate-200">{formatDate(selectedEmployee.joiningDate)}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <Calendar className="h-4 w-4 text-slate-900 dark:text-white shrink-0" />
                                         <div>
                                             <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Email Created Date</p>
                                             <p className="font-semibold text-slate-800 dark:text-slate-200">{formatDate(selectedEmployee.emailCreatedDate)}</p>
@@ -1052,7 +1023,7 @@ const EmployeesPage: React.FC = () => {
                 <EmployeeBulkImportModal
                     isOpen={isBulkImportModalOpen}
                     onClose={() => setIsBulkImportModalOpen(false)}
-                    companyId={isSuperAdmin ? (Number(selectedOrg) || 0) : (user?.companyId || 0)}
+                    companyId={Number(reduxCompanyId) || 0}
                     onSuccess={fetchEmployees}
                 />
 

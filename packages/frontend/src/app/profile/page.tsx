@@ -214,7 +214,7 @@ const ProfilePage: React.FC = () => {
         if (password.length === 0) return { strength: 0, label: 'None', color: 'bg-slate-200' };
         if (password.length < 6) return { strength: 25, label: 'Weak', color: 'bg-rose-500' };
         if (password.length < 10) return { strength: 50, label: 'Fair', color: 'bg-amber-500' };
-        if (password.length < 14) return { strength: 75, label: 'Good', color: 'bg-blue-500' };
+        if (password.length < 14) return { strength: 75, label: 'Good', color: 'bg-slate-900' };
         return { strength: 100, label: 'Strong', color: 'bg-emerald-500' };
     };
     const passwordStrength = getPasswordStrength(passwordData.new);
@@ -262,13 +262,13 @@ const ProfilePage: React.FC = () => {
                     
                     <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-black text-2xl shadow-lg border border-indigo-400/30">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-slate-900 to-purple-500 flex items-center justify-center font-black text-2xl shadow-lg border border-slate-700/30">
                                 {editedData.fullName?.charAt(0).toUpperCase() || user?.fullName?.charAt(0).toUpperCase() || 'U'}
                             </div>
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 flex-wrap">
                                     <h1 className="text-xl lg:text-2xl font-black tracking-tight">{editedData.fullName || user?.fullName || 'Active Member'}</h1>
-                                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
+                                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-900/20 text-slate-300 border border-slate-700/30 uppercase tracking-wider">
                                         {user?.role || 'User'}
                                     </span>
                                 </div>
@@ -277,7 +277,7 @@ const ProfilePage: React.FC = () => {
                         </div>
                         
                         <div className="flex items-center gap-3 shrink-0">
-                            <span className="text-[10px] text-indigo-300 font-extrabold uppercase tracking-wider block bg-indigo-950/50 border border-indigo-900/60 px-3.5 py-2 rounded-xl">
+                            <span className="text-[10px] text-slate-300 font-extrabold uppercase tracking-wider block bg-indigo-950/50 border border-indigo-900/60 px-3.5 py-2 rounded-xl">
                                 Status: <span className="text-emerald-400">Active ✓</span>
                             </span>
                         </div>
@@ -330,13 +330,13 @@ const ProfilePage: React.FC = () => {
                             <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
                                 <div className="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <User className="w-4 h-4 text-indigo-500" />
+                                        <User className="w-4 h-4 text-slate-900 dark:text-white" />
                                         <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Account Credentials details</h3>
                                     </div>
                                     {!isEditing && (
                                         <button
                                             onClick={() => setIsEditing(true)}
-                                            className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-xs font-extrabold flex items-center gap-1"
+                                            className="p-1.5 text-slate-400 hover:text-slate-900 dark:text-white dark:hover:text-slate-300 transition-colors text-xs font-extrabold flex items-center gap-1"
                                         >
                                             <Edit className="w-3.5 h-3.5" />
                                             Modify
@@ -355,7 +355,7 @@ const ProfilePage: React.FC = () => {
                                                     type="text"
                                                     value={editedData.fullName}
                                                     onChange={(e) => setEditedData({ ...editedData, fullName: e.target.value })}
-                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-slate-700 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
                                                 />
                                             ) : (
                                                 <div className="text-sm font-black text-slate-850 dark:text-slate-200">{editedData.fullName || user?.fullName}</div>
@@ -371,7 +371,7 @@ const ProfilePage: React.FC = () => {
                                                     type="email"
                                                     value={editedData.email}
                                                     onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
-                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-slate-700 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
                                                 />
                                             ) : (
                                                 <div className="text-sm font-black text-slate-850 dark:text-slate-200">{editedData.email || user?.email}</div>
@@ -387,7 +387,7 @@ const ProfilePage: React.FC = () => {
                                                     type="text"
                                                     value={editedData.phone}
                                                     onChange={(e) => setEditedData({ ...editedData, phone: e.target.value })}
-                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-slate-700 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
                                                 />
                                             ) : (
                                                 <div className="text-sm font-black text-slate-800 dark:text-slate-200">{editedData.phone}</div>
@@ -403,7 +403,7 @@ const ProfilePage: React.FC = () => {
                                                     type="text"
                                                     value={editedData.department}
                                                     onChange={(e) => setEditedData({ ...editedData, department: e.target.value })}
-                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 focus:ring-2 focus:ring-indigo-500 focus:border-slate-700 outline-none transition-all text-xs font-semibold text-slate-800 dark:text-slate-200"
                                                 />
                                             ) : (
                                                 <div className="text-sm font-black text-slate-800 dark:text-slate-200">{editedData.department}</div>
@@ -444,25 +444,25 @@ const ProfilePage: React.FC = () => {
                                 </p>
                                 <button 
                                     onClick={() => setIsPasswordModalOpen(true)}
-                                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 hover:border-indigo-500/50 group transition-all"
+                                    className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 hover:border-slate-700/50 group transition-all"
                                 >
                                     <div className="flex items-center gap-2.5">
-                                        <Key className="w-4 h-4 text-indigo-500" />
+                                        <Key className="w-4 h-4 text-slate-900 dark:text-white" />
                                         <span className="text-xs font-extrabold text-slate-700 dark:text-slate-350">Update Password</span>
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+                                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 dark:text-white group-hover:translate-x-0.5 transition-all" />
                                 </button>
                             </Card>
 
                             {/* Session Audit */}
                             <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 p-5 space-y-4">
                                 <div className="flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-indigo-500" />
+                                    <Activity className="w-4 h-4 text-slate-900 dark:text-white" />
                                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Active Device Footprint</h3>
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/20 text-xs">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
+                                        <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/50 text-slate-900 dark:text-white dark:text-slate-300 rounded-lg">
                                             <Laptop className="h-4 w-4" />
                                         </div>
                                         <div>
@@ -484,7 +484,7 @@ const ProfilePage: React.FC = () => {
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         {isTicketsLoading ? (
                             <div className="flex flex-col justify-center items-center py-20 space-y-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-slate-700"></div>
                                 <p className="text-slate-455 text-xs font-semibold">Retrieving personal support footprint...</p>
                             </div>
                         ) : tickets.length === 0 ? (
@@ -504,7 +504,7 @@ const ProfilePage: React.FC = () => {
                                             <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Tickets Raised</span>
                                             <span className="text-xl font-black text-slate-850 dark:text-white">{supportStats.total}</span>
                                         </div>
-                                        <div className="p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400">
+                                        <div className="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-950/20 text-slate-900 dark:text-white dark:text-slate-300">
                                             <FileText className="h-5 w-5" />
                                         </div>
                                     </div>
@@ -544,7 +544,7 @@ const ProfilePage: React.FC = () => {
                                 <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
                                     <div className="p-4 border-b border-slate-200 dark:border-slate-850 flex items-center justify-between">
                                         <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Helpdesk History Logs</h4>
-                                        <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-black px-2.5 py-0.5 rounded-full border border-indigo-500/10">
+                                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/50 text-slate-900 dark:text-white dark:text-slate-300 font-black px-2.5 py-0.5 rounded-full border border-slate-700/10">
                                             {tickets.length} Active Records
                                         </span>
                                     </div>
@@ -577,7 +577,7 @@ const ProfilePage: React.FC = () => {
                                                     }
 
                                                     const statusClass = 
-                                                        t.ticketStatus === TicketStatusEnum.OPEN ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400' :
+                                                        t.ticketStatus === TicketStatusEnum.OPEN ? 'bg-slate-900/10 text-slate-900 dark:text-white dark:text-slate-300' :
                                                         t.ticketStatus === TicketStatusEnum.IN_PROGRESS ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' :
                                                         t.ticketStatus === TicketStatusEnum.RESOLVED ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
                                                         'bg-gray-500/10 text-gray-650 dark:text-gray-400';
@@ -585,7 +585,7 @@ const ProfilePage: React.FC = () => {
                                                     const priorityClass = 
                                                         t.priorityEnum === TicketPriorityEnum.HIGH ? 'text-rose-600 dark:text-rose-455 border border-rose-200 dark:border-rose-900/30 bg-rose-500/5' :
                                                         t.priorityEnum === TicketPriorityEnum.MEDIUM ? 'text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/30 bg-amber-500/5' :
-                                                        'text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/30 bg-blue-500/5';
+                                                        'text-slate-900 dark:text-white dark:text-slate-300 border border-blue-200 dark:border-blue-900/30 bg-slate-900/5';
 
                                                     return (
                                                         <tr key={t.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-950/10 transition-colors">
@@ -631,7 +631,7 @@ const ProfilePage: React.FC = () => {
                         <Card className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
                             <div className="p-4 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <Sliders className="w-4 h-4 text-indigo-500" />
+                                    <Sliders className="w-4 h-4 text-slate-900 dark:text-white" />
                                     <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Application & Theme Settings</h3>
                                 </div>
                                 <Button 
@@ -658,7 +658,7 @@ const ProfilePage: React.FC = () => {
                                                     onClick={() => setTheme(mode as Theme)}
                                                     className={`py-1.5 text-xs font-extrabold capitalize rounded-lg transition-all ${
                                                         theme === mode 
-                                                            ? 'bg-white dark:bg-slate-850 shadow-sm text-indigo-600 dark:text-indigo-400' 
+                                                            ? 'bg-white dark:bg-slate-850 shadow-sm text-slate-900 dark:text-white dark:text-slate-300' 
                                                             : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                                                     }`}
                                                 >
@@ -721,7 +721,7 @@ const ProfilePage: React.FC = () => {
                     size="sm"
                 >
                     <form onSubmit={handlePasswordChange} className="space-y-6 pt-2">
-                        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex gap-3 text-indigo-800 dark:text-indigo-300">
+                        <div className="p-4 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex gap-3 text-indigo-800 dark:text-slate-300">
                             <Shield className="w-5 h-5 shrink-0" />
                             <p className="text-xs leading-relaxed font-semibold">
                                 Choose a strong password containing numbers and symbols to safeguard your account.
@@ -736,7 +736,7 @@ const ProfilePage: React.FC = () => {
                                     required
                                     value={passwordData.new}
                                     onChange={(e) => setPasswordData({ ...passwordData, new: e.target.value })}
-                                    className="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all font-semibold text-xs"
+                                    className="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-slate-700 transition-all font-semibold text-xs"
                                     placeholder="Enter new password"
                                 />
                                 <button
@@ -772,7 +772,7 @@ const ProfilePage: React.FC = () => {
                                 required
                                 value={passwordData.confirm}
                                 onChange={(e) => setPasswordData({ ...passwordData, confirm: e.target.value })}
-                                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all font-semibold text-xs"
+                                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:border-slate-700 transition-all font-semibold text-xs"
                                 placeholder="Confirm new password"
                             />
                             {passwordData.confirm && passwordData.new !== passwordData.confirm && (

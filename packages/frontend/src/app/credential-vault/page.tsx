@@ -211,20 +211,20 @@ const CredentialVaultPage: React.FC = () => {
                         title="Credential Vault"
                         description="Securely manage and protect organizational secrets"
                         icon={<Lock />}
-                        gradient="from-blue-600 to-indigo-700"
+                        gradient="from-slate-900 to-slate-900"
                         actions={isUnlocked ? (
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg p-0.5">
                                     <button
                                         onClick={() => setViewMode('grid')}
-                                        className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                        className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                         title="Grid View"
                                     >
                                         <LayoutGrid className="h-3.5 w-3.5" />
                                     </button>
                                     <button
                                         onClick={() => setViewMode('list')}
-                                        className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                        className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                         title="List View"
                                     >
                                         <List className="h-3.5 w-3.5" />
@@ -240,18 +240,18 @@ const CredentialVaultPage: React.FC = () => {
                                     Lock Vault
                                 </Button>
                                 <div className="relative group">
-                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                     <input
                                         type="text"
                                         placeholder="Search..."
-                                        className="pl-8 pr-3 py-1.5 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg text-[11px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all w-32 md:w-48 placeholder:text-slate-400"
+                                        className="pl-8 pr-3 py-1.5 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-lg text-[11px] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all w-32 md:w-48 placeholder:text-slate-400"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
                                 <Button
                                     onClick={() => viewRef.current?.showAddModal()}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-8 px-3 font-black uppercase tracking-widest text-[9px] shadow-sm flex items-center gap-2"
+                                    className="bg-slate-900 hover:bg-slate-900 text-white rounded-lg h-8 px-3 font-black uppercase tracking-widest text-[9px] shadow-sm flex items-center gap-2"
                                     size="sm"
                                 >
                                     <Plus className="h-3.5 w-3.5" />
@@ -264,13 +264,13 @@ const CredentialVaultPage: React.FC = () => {
 
                 {!isUnlocked && (
                     <div className="w-full max-w-xs animate-in fade-in zoom-in duration-500">
-                        <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-2xl shadow-blue-500/10 p-6 space-y-5 relative overflow-hidden">
+                        <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-2xl shadow-black/20 p-6 space-y-5 relative overflow-hidden">
                             {/* Decorative Background */}
-                            <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
-                            <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
+                            <div className="absolute -top-20 -right-20 w-48 h-48 bg-slate-900/5 rounded-full blur-3xl animate-pulse" />
+                            <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-slate-900/5 rounded-full blur-3xl animate-pulse" />
 
                             <div className="relative z-10 flex flex-col items-center text-center space-y-5">
-                                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/30 rotate-3 transition-transform hover:rotate-0 duration-500 group">
+                                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-900 flex items-center justify-center shadow-lg shadow-black/20 rotate-3 transition-transform hover:rotate-0 duration-500 group">
                                     <Lock className="h-7 w-7 text-white group-hover:scale-110 transition-transform" />
                                 </div>
 
@@ -282,9 +282,9 @@ const CredentialVaultPage: React.FC = () => {
 
                                 {isResetting ? (
                                     <div className="w-full space-y-6 animate-in slide-in-from-right-4 duration-300">
-                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-500/20 rounded-2xl flex items-center gap-3">
-                                            <ShieldCheck className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                                            <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 text-left leading-relaxed">
+                                        <div className="p-4 bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/10 border border-blue-200/50 dark:border-slate-700/20 rounded-2xl flex items-center gap-3">
+                                            <ShieldCheck className="h-5 w-5 text-slate-900 dark:text-white flex-shrink-0" />
+                                            <p className="text-[10px] font-bold text-blue-700 dark:text-slate-300 text-left leading-relaxed">
                                                 {resetStep === 'request'
                                                     ? `We'll send a 6-digit OTP to ${resetEmail.replace(/(.{3}).*(@.*)/, '$1***$2')} for identity verification.`
                                                     : 'Enter the verification code sent to your email to define a new security key.'}
@@ -295,30 +295,30 @@ const CredentialVaultPage: React.FC = () => {
                                             <Button
                                                 onClick={handleRequestOtp}
                                                 disabled={isProcessingReset}
-                                                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+                                                className="w-full h-12 bg-slate-900 hover:bg-slate-900 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-black/20 transition-all active:scale-95"
                                             >
                                                 {isProcessingReset ? 'Processing...' : 'Send Recovery Code'}
                                             </Button>
                                         ) : (
                                             <form onSubmit={handleResetWithOtp} className="space-y-4">
                                                 <div className="relative group">
-                                                    <ShieldAlert className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                    <ShieldAlert className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                                     <input
                                                         type="text"
                                                         placeholder="6-Digit OTP"
                                                         maxLength={6}
-                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all placeholder:text-slate-400"
                                                         value={otp}
                                                         onChange={(e) => setOtp(e.target.value)}
                                                         autoFocus
                                                     />
                                                 </div>
                                                 <div className="relative group">
-                                                    <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                    <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                                     <input
                                                         type="password"
                                                         placeholder="New Security Key"
-                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all placeholder:text-slate-400"
                                                         value={newVaultPassword}
                                                         onChange={(e) => setNewVaultPassword(e.target.value)}
                                                     />
@@ -336,7 +336,7 @@ const CredentialVaultPage: React.FC = () => {
                                                 <Button
                                                     type="submit"
                                                     disabled={isProcessingReset || !otp || !newVaultPassword}
-                                                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+                                                    className="w-full h-12 bg-gradient-to-r from-slate-900 to-slate-900 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-black/20 transition-all"
                                                 >
                                                     {isProcessingReset ? 'Verifying...' : 'Reset & Authenticate'}
                                                 </Button>
@@ -355,19 +355,19 @@ const CredentialVaultPage: React.FC = () => {
                                             {isFirstTime ? (
                                                 setupStep === 'verify' ? (
                                                     <>
-                                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-500/20 rounded-2xl flex items-center gap-3">
-                                                            <ShieldCheck className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                                                            <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 text-left leading-relaxed">
+                                                        <div className="p-4 bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/10 border border-blue-200/50 dark:border-slate-700/20 rounded-2xl flex items-center gap-3">
+                                                            <ShieldCheck className="h-5 w-5 text-slate-900 dark:text-white flex-shrink-0" />
+                                                            <p className="text-[10px] font-bold text-blue-700 dark:text-slate-300 text-left leading-relaxed">
                                                                 Enter the 6-Digit OTP sent to {resetEmail.replace(/(.{3}).*(@.*)/, '$1***$2')} to confirm setup.
                                                             </p>
                                                         </div>
                                                         <div className="relative group">
-                                                            <ShieldAlert className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                            <ShieldAlert className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                                             <input
                                                                 type="text"
                                                                 placeholder="6-Digit OTP"
                                                                 maxLength={6}
-                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all placeholder:text-slate-400"
                                                                 value={setupOtp}
                                                                 onChange={(e) => setSetupOtp(e.target.value)}
                                                                 autoFocus
@@ -377,11 +377,11 @@ const CredentialVaultPage: React.FC = () => {
                                                 ) : (
                                                     <>
                                                         <div className="relative group">
-                                                            <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                            <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                                             <input
                                                                 type="password"
                                                                 placeholder="Create Master Key"
-                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                                className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all placeholder:text-slate-400"
                                                                 value={password}
                                                                 onChange={(e) => setPassword(e.target.value)}
                                                                 autoFocus
@@ -401,11 +401,11 @@ const CredentialVaultPage: React.FC = () => {
                                                 )
                                             ) : (
                                                 <div className="relative group">
-                                                    <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                                                    <Key className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                                                     <input
                                                         type="password"
                                                         placeholder="Enter Security Key"
-                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                                                        className="w-full h-12 pl-10 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-slate-700 transition-all placeholder:text-slate-400"
                                                         value={password}
                                                         onChange={(e) => setPassword(e.target.value)}
                                                         autoFocus
@@ -417,7 +417,7 @@ const CredentialVaultPage: React.FC = () => {
                                                 <Button
                                                     type="submit"
                                                     disabled={isVerifying || !password || (isFirstTime && setupStep === 'input' && !confirmPassword) || (isFirstTime && setupStep === 'verify' && !setupOtp)}
-                                                    className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                                                    className="w-full h-12 bg-gradient-to-r from-slate-900 to-slate-900 hover:from-slate-900 hover:to-slate-900 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-xl shadow-lg shadow-black/20 transition-all active:scale-[0.98] disabled:opacity-50"
                                                 >
                                                     {isVerifying ? 'Verifying...' : isFirstTime ? (setupStep === 'input' ? 'Send OTP & Continue' : 'Confirm OTP & Setup') : 'Authenticate Vault'}
                                                 </Button>
@@ -436,7 +436,7 @@ const CredentialVaultPage: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => setIsResetting(true)}
-                                                        className="text-[10px] font-black text-slate-400 hover:text-blue-600 uppercase tracking-widest transition-colors py-2"
+                                                        className="text-[10px] font-black text-slate-400 hover:text-slate-900 dark:text-white uppercase tracking-widest transition-colors py-2"
                                                     >
                                                         Forgot Security Key?
                                                     </button>

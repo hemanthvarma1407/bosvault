@@ -329,14 +329,14 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-0.5 mr-2">
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-indigo-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                 title="Grid View"
                             >
                                 <LayoutGrid className="h-4 w-4" />
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-indigo-500 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`p-1.5 rounded-md transition-all ${viewMode === 'list' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                                 title="List View"
                             >
                                 <List className="h-4 w-4" />
@@ -345,7 +345,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         <select
                             value={filterCompanyId}
                             onChange={(e) => setFilterCompanyId(e.target.value)}
-                            className="hidden md:block px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                            className="hidden md:block px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all shadow-sm"
                         >
                             <option value="all">All Companies</option>
                             {companies.map((comp) => (
@@ -359,7 +359,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             <input
                                 type="text"
                                 placeholder="Search users..."
-                                className="w-full pl-10 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all text-sm"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -372,7 +372,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         <Button
                             size="xs"
                             variant="outline"
-                            className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                            className="border-indigo-200 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
                             leftIcon={<Settings className="h-4 w-4" />}
                             onClick={() => handleOpenConfig(filterCompanyId)}
                         >
@@ -414,7 +414,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                             <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                                 <td className="px-6 py-4 border border-slate-200 dark:border-slate-700 text-center">
                                                     <div className="flex items-center justify-center gap-3">
-                                                        <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 border border-indigo-100 dark:border-indigo-800 overflow-hidden shadow-sm">
+                                                        <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 flex items-center justify-center text-slate-900 dark:text-white dark:text-slate-300 shrink-0 border border-indigo-100 dark:border-indigo-800 overflow-hidden shadow-sm">
                                                             <ImageWithFallback
                                                                 src={item.avatarUrl}
                                                                 alt={item.name}
@@ -426,7 +426,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                             <div className="flex items-center gap-2">
                                                                 <div className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-tight">{item.name}</div>
                                                                 {item.isAdmin && (
-                                                                    <Shield className="h-3 w-3 text-indigo-500" />
+                                                                    <Shield className="h-3 w-3 text-slate-900 dark:text-white" />
                                                                 )}
                                                             </div>
                                                             <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate max-w-[150px]">{item.email}</div>
@@ -439,7 +439,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                 <td className="px-6 py-4 border border-slate-200 dark:border-slate-700 text-center">
                                                     {item.slackUserId ? (
                                                         <div className="flex flex-col items-center">
-                                                            <span className="text-[10px] font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-800">{item.slackUserId}</span>
+                                                            <span className="text-[10px] font-mono font-bold text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-1.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-800">{item.slackUserId}</span>
                                                         </div>
                                                     ) : '-'}
                                                 </td>
@@ -453,7 +453,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                 </td>
                                                 <td className="px-6 py-4 text-center border border-slate-200 dark:border-slate-700">
                                                     <div className="flex justify-center gap-2">
-                                                        <button onClick={() => { setSelectedSlackUser(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                        <button onClick={() => { setSelectedSlackUser(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                             <Eye className="h-4 w-4" />
                                                         </button>
                                                         <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -482,7 +482,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                         <div className="p-4">
                                             <div className="flex items-start justify-between mb-3">
                                                 <div className="relative group/avatar">
-                                                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center overflow-hidden shadow-md group-hover:scale-110 transition-transform">
+                                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center overflow-hidden shadow-md group-hover:scale-110 transition-transform">
                                                         <ImageWithFallback
                                                             src={item.avatarUrl}
                                                             alt={item.name}
@@ -492,12 +492,12 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                     </div>
                                                     {item.isAdmin && (
                                                         <div className="absolute -top-1 -right-1 p-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm z-10">
-                                                            <Shield className="h-3 w-3 text-indigo-500" />
+                                                            <Shield className="h-3 w-3 text-slate-900 dark:text-white" />
                                                         </div>
                                                     )}
                                                 </div>
                                                 <div className="flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                                    <button onClick={() => { setSelectedSlackUser(item); setIsDetailModalOpen(true); }} className="p-1.5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-sm"><Eye className="h-3.5 w-3.5" /></button>
+                                                    <button onClick={() => { setSelectedSlackUser(item); setIsDetailModalOpen(true); }} className="p-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-900 transition-colors shadow-sm"><Eye className="h-3.5 w-3.5" /></button>
                                                     <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors shadow-sm"><Pencil className="h-3.5 w-3.5" /></button>
                                                     <button onClick={() => handleDeleteClick(item.id)} className="p-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors shadow-sm"><Trash2 className="h-3.5 w-3.5" /></button>
                                                 </div>
@@ -517,13 +517,13 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                                             {item.isActive ? 'Active' : 'Inactive'}
                                                         </span>
                                                         {item.isAdmin && (
-                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800">
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-slate-100 dark:bg-slate-800/60 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-slate-300 dark:border-indigo-800">
                                                                 Admin
                                                             </span>
                                                         )}
                                                     </div>
                                                     {item.slackUserId && (
-                                                        <span className="flex items-center gap-1 text-[9px] text-indigo-500 font-bold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900/20 px-1.5 py-0.5 rounded">
+                                                        <span className="flex items-center gap-1 text-[9px] text-slate-900 dark:text-white font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-1.5 py-0.5 rounded">
                                                             <Hash className="h-3 w-3" /> {item.slackUserId}
                                                         </span>
                                                     )}
@@ -549,7 +549,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                         <select
                             value={formData.employeeId}
                             onChange={(e) => handleEmployeeSelect(e.target.value)}
-                            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 focus:border-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                         >
                             <option value="">Select Employee</option>
                             {employees.map(emp => (
@@ -571,7 +571,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             <select
                                 value={formData.companyId}
                                 onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
-                                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 focus:border-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                             >
                                 <option value="">Select Company</option>
                                 {companies.map((comp) => (
@@ -620,7 +620,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
                             <div className="relative">
-                                <div className="w-24 h-24 rounded-3xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
+                                <div className="w-24 h-24 rounded-3xl bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-4 border border-indigo-100 dark:border-indigo-800 shadow-md relative z-10 overflow-hidden">
                                     <ImageWithFallback
                                         src={selectedSlackUser.avatarUrl}
                                         alt={selectedSlackUser.name}
@@ -640,7 +640,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                                         <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{selectedSlackUser.displayName || 'no-display-name'}</span>
                                     </div>
                                     {selectedSlackUser.isAdmin && (
-                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/50 mt-1">
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white dark:bg-indigo-900/30 dark:text-slate-300 border border-indigo-100 dark:border-indigo-800/50 mt-1">
                                             <Shield className="h-3 w-3" />
                                             <span className="text-[10px] font-black uppercase tracking-widest">Workspace Administrator</span>
                                         </div>
@@ -659,7 +659,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Hash className="h-3.5 w-3.5 text-indigo-500" />
+                                        <Hash className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Slack User ID</span>
                                     </div>
                                     <p className="text-sm font-mono font-bold text-slate-700 dark:text-slate-200">{selectedSlackUser.slackUserId || 'Not synced'}</p>
@@ -676,7 +676,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Mail className="h-3.5 w-3.5 text-blue-500" />
+                                        <Mail className="h-3.5 w-3.5 text-slate-900 dark:text-white" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Email Address</span>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{selectedSlackUser.email}</p>
@@ -726,9 +726,9 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                             </div>
 
                             <div className="pt-2">
-                                <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
-                                    <Shield className="h-4 w-4 text-indigo-500 flex-shrink-0" />
-                                    <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
+                                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
+                                    <Shield className="h-4 w-4 text-slate-900 dark:text-white flex-shrink-0" />
+                                    <p className="text-[10px] text-slate-900 dark:text-white dark:text-slate-300 font-medium">
                                         Profile synchronization is enabled. Changes made here may be overwritten by Slack API sync.
                                     </p>
                                 </div>
@@ -744,10 +744,10 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
 
             <Modal isOpen={isConfigModalOpen} onClose={() => setIsConfigModalOpen(false)} title="Slack Integration Settings" size="md">
                 <form onSubmit={handleSaveSlackConfig} className="space-y-6">
-                    <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl mb-6">
+                    <div className="p-4 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl mb-6">
                         <div className="flex gap-3">
-                            <Slack className="h-5 w-5 text-indigo-600 shrink-0" />
-                            <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed font-medium">
+                            <Slack className="h-5 w-5 text-slate-900 dark:text-white shrink-0" />
+                            <p className="text-xs text-indigo-700 dark:text-slate-300 leading-relaxed font-medium">
                                 Configure your Slack Bot Token and Workspace ID here. These credentials are required to sync members and profile data.
                             </p>
                         </div>

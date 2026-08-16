@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const COLORS = [
     { bg: 'bg-emerald-500', text: 'text-emerald-500', bar: 'bg-emerald-500', shadow: 'shadow-emerald-500/20' },
-    { bg: 'bg-blue-500', text: 'text-blue-500', bar: 'bg-blue-500', shadow: 'shadow-blue-500/20' },
+    { bg: 'bg-slate-900', text: 'text-slate-900 dark:text-white', bar: 'bg-slate-900', shadow: 'shadow-black/20' },
     { bg: 'bg-amber-500', text: 'text-amber-500', bar: 'bg-amber-500', shadow: 'shadow-amber-500/20' },
     { bg: 'bg-rose-500', text: 'text-rose-500', bar: 'bg-rose-500', shadow: 'shadow-rose-500/20' },
     { bg: 'bg-violet-500', text: 'text-violet-500', bar: 'bg-violet-500', shadow: 'shadow-violet-500/20' },

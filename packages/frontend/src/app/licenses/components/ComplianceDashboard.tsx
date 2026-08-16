@@ -54,14 +54,14 @@ export default function ComplianceDashboard({ data }: ComplianceDashboardProps) 
     return (
         <div className="space-y-8">
             {/* AI Insights Section */}
-            <div className="p-6 bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-transparent rounded-[2.5rem] border border-indigo-500/20 relative overflow-hidden group">
+            <div className="p-6 bg-gradient-to-br from-slate-900/10 via-violet-500/10 to-transparent rounded-[2.5rem] border border-slate-700/20 relative overflow-hidden group">
                 <div className="absolute right-0 top-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <Sparkles className="w-32 h-32 text-indigo-500 rotate-12" />
+                    <Sparkles className="w-32 h-32 text-slate-900 dark:text-white rotate-12" />
                 </div>
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-indigo-500 rounded-xl shadow-lg shadow-indigo-500/20">
+                        <div className="p-2 bg-slate-900 rounded-xl shadow-lg shadow-indigo-500/20">
                             <Sparkles className="w-4 h-4 text-white" />
                         </div>
                         <div>
@@ -125,7 +125,7 @@ export default function ComplianceDashboard({ data }: ComplianceDashboardProps) 
                             <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/5">
                                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
                                     <div
-                                        className={`h-1.5 rounded-full ${item.assigned > item.purchased ? 'bg-rose-500' : 'bg-indigo-500'}`}
+                                        className={`h-1.5 rounded-full ${item.assigned > item.purchased ? 'bg-rose-500' : 'bg-slate-900'}`}
                                         style={{ width: `${Math.min(100, (item.assigned / item.purchased) * 100)}%` }}
                                     />
                                 </div>

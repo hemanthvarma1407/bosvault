@@ -251,10 +251,10 @@ export class EmployeesService {
 
     async getAllEmployees(reqModel: GetAllEmployeesRequestModel, user?: IUserPayload): Promise<GetAllEmployeesResponseModel> {
         let employees: EmployeesEntity[];
-        let companyId = Number(reqModel.companyId);
+        let companyId = Number(reqModel.companyId || 0);
         if (user) {
-            const isSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin';
-            if (!isSuperAdmin) {
+            const isAdminOrSuperAdmin = user.roles?.includes('super_admin') || user.role === 'super_admin' || user.roles?.includes('admin') || user.role === 'admin';
+            if (!isAdminOrSuperAdmin && user.companyId) {
                 companyId = Number(user.companyId);
             }
         }

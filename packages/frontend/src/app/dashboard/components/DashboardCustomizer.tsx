@@ -9,7 +9,7 @@ export interface WidgetConfig {
     id: string;
     label: string;
     description: string;
-    category: 'KPI' | 'Analytics' | 'Operations';
+    category: 'KPI' | 'Analytics' | 'Operations' | 'Security';
 }
 
 export interface WidgetSettings {
@@ -60,7 +60,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={onReset}
-                        className="text-indigo-600 hover:text-indigo-700 h-8 gap-2 text-[10px] font-black uppercase tracking-widest"
+                        className="text-slate-900 dark:text-white hover:text-indigo-700 h-8 gap-2 text-[10px] font-black uppercase tracking-widest"
                     >
                         <RotateCcw className="h-3 w-3" />
                         Reset Defaults
@@ -91,7 +91,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                                 <button
                                     onClick={() => handleToggle(widget.id)}
                                     className={`p-2 rounded-xl transition-all ${isVisible
-                                        ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30'
+                                        ? 'bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white dark:bg-indigo-900/30'
                                         : 'bg-slate-100 text-slate-400 dark:bg-slate-800'
                                         }`}
                                 >

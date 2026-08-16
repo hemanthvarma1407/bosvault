@@ -38,7 +38,7 @@ export default function AuthCallbackPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-950">
             <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-700 border-t-transparent shadow-[0_0_20px_rgba(59,130,246,0.5)]"></div>
                 <p className="text-white font-medium animate-pulse">Completing authentication...</p>
             </div>
         </div>

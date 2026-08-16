@@ -65,8 +65,8 @@ export const AssetTimelineModal: React.FC<AssetTimelineModalProps> = ({ isOpen, 
     const getColor = (type: AssetTimelineEventType) => {
         switch (type) {
             case AssetTimelineEventType.CREATED: return 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20';
-            case AssetTimelineEventType.ASSIGNED: return 'text-blue-500 bg-blue-50 dark:bg-blue-900/20';
-            case AssetTimelineEventType.RETURNED: return 'text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20';
+            case AssetTimelineEventType.ASSIGNED: return 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20';
+            case AssetTimelineEventType.RETURNED: return 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20';
             case AssetTimelineEventType.MAINTENANCE: return 'text-orange-500 bg-orange-50 dark:bg-orange-900/20';
             case AssetTimelineEventType.RETIRED: return 'text-rose-500 bg-rose-50 dark:bg-rose-900/20';
             default: return 'text-slate-500 bg-slate-50 dark:bg-slate-900/20';

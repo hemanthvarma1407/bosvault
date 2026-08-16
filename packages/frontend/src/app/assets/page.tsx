@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button';
 import { assetService, companyService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
+import { useAppSelector } from '@/store';
 
 const AssetQRModal = dynamic(() => import('./components/AssetQRModal').then(mod => mod.AssetQRModal), { ssr: false });
 const AssetTimelineModal = dynamic(() => import('./components/AssetTimelineModal').then(mod => mod.AssetTimelineModal), { ssr: false });
@@ -59,7 +60,7 @@ interface AssetStatistics {
 const AssetsPage: React.FC = () => {
     const { hasRole } = usePermissions();
     const canAssign = hasRole([UserRoleEnum.ASSET_ADMIN]);
-    const [selectedCompanyId, setSelectedCompanyId] = useState<number>(0);
+    const reduxCompanyId = useAppSelector((state) => state.company.selectedCompanyId);
     const [companies, setCompanies] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState('store');
 
@@ -92,7 +93,8 @@ const AssetsPage: React.FC = () => {
     const fetchAssets = React.useCallback(async () => {
         setIsLoading(true);
         try {
-            const req = new IdRequestModel(selectedCompanyId);
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            const req = new IdRequestModel(compId);
             const response = await assetService.getAssetsWithAssignments(req);
             if (response.status) {
                 const data = (response as any).assets || [];
@@ -128,19 +130,20 @@ const AssetsPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [selectedCompanyId]);
+    }, [reduxCompanyId]);
 
     const fetchStatistics = React.useCallback(async () => {
         try {
-            const req = new IdRequestModel(selectedCompanyId);
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+            const req = new IdRequestModel(compId);
             const response = await assetService.getAssetStatistics(req);
             if (response.status) {
                 setStatistics(response.statistics);
             }
         } catch (err: any) {
-            AlertMessages.getErrorMessage(err.message || 'Failed to fetch statistics');
+            console.error('Failed to fetch statistics:', err);
         }
-    }, [selectedCompanyId]);
+    }, [reduxCompanyId]);
 
 
     const refresh = React.useCallback(() => {
@@ -166,8 +169,9 @@ const AssetsPage: React.FC = () => {
     const searchAssets = React.useCallback(async (filters: any) => {
         setIsLoading(true);
         try {
+            const compId = reduxCompanyId ? Number(reduxCompanyId) : 0;
             const request = new AssetSearchRequestModel(
-                selectedCompanyId,
+                compId,
                 filters.searchQuery,
                 filters.statusFilter,
                 filters.deviceConfigIds,
@@ -211,7 +215,7 @@ const AssetsPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [selectedCompanyId]);
+    }, [reduxCompanyId]);
 
 
     const handleTabChange = (tab: string) => {
@@ -220,7 +224,7 @@ const AssetsPage: React.FC = () => {
 
     const tabs = [
         { id: 'store', label: 'Store Assets', icon: Warehouse, gradient: 'from-emerald-500 to-teal-500' },
-        { id: 'assigned', label: 'Assigned Assets', icon: User, gradient: 'from-blue-500 to-indigo-500' },
+        { id: 'assigned', label: 'Assigned Assets', icon: User, gradient: 'from-slate-900 to-slate-900' },
         { id: 'maintenance', label: 'Maintenance Assets', icon: RefreshCw, gradient: 'from-orange-500 to-amber-500' },
         { id: 'not_used', label: 'Not Used Assets', icon: History, gradient: 'from-slate-500 to-gray-500' }
     ];
@@ -267,11 +271,6 @@ const AssetsPage: React.FC = () => {
         }
     };
 
-    const handleCompanyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const newCompanyId = Number(e.target.value);
-        setSelectedCompanyId(newCompanyId);
-    };
-
     const handlePrint = (asset: any) => {
         setSelectedAsset(asset);
         setIsQRModalOpen(true);
@@ -315,7 +314,7 @@ const AssetsPage: React.FC = () => {
                     title="Asset Inventory"
                     description="Track and manage company hardware"
                     icon={<Package />}
-                    gradient="from-blue-600 to-indigo-700"
+                    gradient="from-slate-900 to-slate-900"
                     actions={[
                         {
                             label: 'Bulk Import',
@@ -336,24 +335,7 @@ const AssetsPage: React.FC = () => {
                             variant: 'primary'
                         }
                     ]}
-                >
-                    <div className="relative w-full sm:w-48 group">
-                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-500 group-focus-within:scale-110 transition-transform" />
-                        <select
-                            value={selectedCompanyId}
-                            onChange={handleCompanyChange}
-                            className="w-full pl-9 pr-8 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-bold text-[10px] appearance-none outline-none shadow-sm cursor-pointer uppercase tracking-widest"
-                        >
-                            <option value={0}>All Companies</option>
-                            {companies.map(c => (
-                                <option key={c.id} value={c.id}>{c.companyName}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                            <Search className="h-3 w-3" />
-                        </div>
-                    </div>
-                </PageHeader>
+                />
 
                 {/* Statistics */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
@@ -361,7 +343,7 @@ const AssetsPage: React.FC = () => {
                         label="Total Inventory"
                         value={statistics?.total}
                         icon={<Package className="h-6 w-6" />}
-                        gradient="from-indigo-500 to-blue-600"
+                        gradient="from-slate-900 to-slate-900"
                     />
                     <StatCard
                         label="Assigned Assets"
@@ -463,14 +445,14 @@ const AssetsPage: React.FC = () => {
                     <AssetTimelineModal
                         isOpen={isTimelineModalOpen}
                         asset={selectedAsset}
-                        companyId={selectedCompanyId}
+                        companyId={Number(reduxCompanyId) || 0}
                         onClose={() => setIsTimelineModalOpen(false)}
                     />
                 )}
                 {isBulkImportOpen && (
                     <BulkImportModal
                         isOpen={isBulkImportOpen}
-                        companyId={selectedCompanyId}
+                        companyId={Number(reduxCompanyId) || 0}
                         companies={companies}
                         onSuccess={() => { refresh(); }}
                         onClose={() => setIsBulkImportOpen(false)}

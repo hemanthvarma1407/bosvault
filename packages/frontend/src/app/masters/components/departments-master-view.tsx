@@ -168,7 +168,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                                             </td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <div className="flex justify-center gap-2">
-                                                    <button onClick={() => { setSelectedDepartment(d); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm" title="View">
+                                                    <button onClick={() => { setSelectedDepartment(d); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
                                                         <Eye className="h-4 w-4" />
                                                     </button>
                                                     <button onClick={() => handleEdit(d)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -200,7 +200,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            className="w-4 h-4 text-slate-900 dark:text-white border-gray-300 rounded focus:ring-indigo-500"
                         />
                         <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Active
@@ -230,7 +230,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                 {selectedDepartment && (
                     <div className="space-y-6">
                         <div className="flex flex-col items-center justify-center pb-6 border-b border-slate-200 dark:border-slate-800">
-                            <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-sm">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/60 dark:bg-blue-900/20 text-slate-900 dark:text-white dark:text-slate-300 flex items-center justify-center mb-3 border border-blue-100 dark:border-blue-800 shadow-sm">
                                 <Users className="h-8 w-8" />
                             </div>
                             <h4 className="text-xl font-bold text-slate-900 dark:text-white">{selectedDepartment.name}</h4>

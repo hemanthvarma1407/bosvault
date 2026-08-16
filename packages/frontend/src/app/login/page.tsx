@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
-import { Lock, Mail, Eye, EyeOff, ArrowRight, Users, Package, Key } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ArrowRight, Users, Package, Key, ShoppingCart, Ticket } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { LoginUserModel } from '@bosvault/shared-models';
 import Link from 'next/link';
@@ -93,8 +93,8 @@ const LoginPage: React.FC = () => {
             {/* Enhanced Animated Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 {/* Vibrant Gradient Orbs */}
-                <div className={`absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px] animate-float ${isDarkMode ? 'bg-blue-500/20' : 'bg-blue-400/10'}`}></div>
-                <div className={`absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] animate-float-delayed ${isDarkMode ? 'bg-indigo-500/20' : 'bg-indigo-400/10'}`}></div>
+                <div className={`absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px] animate-float ${isDarkMode ? 'bg-slate-800/20' : 'bg-slate-300/10'}`}></div>
+                <div className={`absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] animate-float-delayed ${isDarkMode ? 'bg-zinc-800/30' : 'bg-slate-400/10'}`}></div>
 
                 {/* Animated Grid */}
                 <div className={`absolute inset-0 bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] ${isDarkMode
@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
                             <div>
                                 <h1 className="text-4xl font-black leading-tight mb-3 tracking-tight">
                                     <span className={isDarkMode ? 'text-white' : 'text-slate-900'}>Welcome to </span>
-                                    <span className="bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-500 bg-clip-text text-transparent animate-gradient">
+                                    <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent animate-gradient">
                                         BOS Vault
                                     </span>
                                 </h1>
@@ -133,68 +133,102 @@ const LoginPage: React.FC = () => {
                                     title: 'Asset Inventory',
                                     desc: 'Track & manage company assets',
                                     darkContainer:
-                                        'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/20 hover:border-blue-400/40',
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
                                     lightContainerBorder:
-                                        'hover:shadow-blue-500/10 hover:border-blue-200',
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
                                     darkIcon:
-                                        'bg-gradient-to-br from-blue-500/30 to-cyan-500/30',
+                                        'bg-slate-800 border border-slate-700',
                                     lightIcon:
-                                        'bg-blue-50 text-blue-600',
+                                        'bg-slate-100 text-slate-900',
                                     darkIconColor:
-                                        'text-cyan-300',
+                                        'text-slate-200',
                                     hoverGradient:
-                                        'from-blue-500/0 to-cyan-500/0 group-hover:from-blue-500/10 group-hover:to-cyan-500/10',
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
                                 },
                                 {
                                     icon: Users,
                                     title: 'Employee Info',
                                     desc: 'Centralized employee records',
                                     darkContainer:
-                                        'bg-gradient-to-br from-emerald-500/10 to-green-500/10 border-emerald-500/20 hover:border-emerald-400/40',
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
                                     lightContainerBorder:
-                                        'hover:shadow-emerald-500/10 hover:border-emerald-200',
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
                                     darkIcon:
-                                        'bg-gradient-to-br from-emerald-500/30 to-green-500/30',
+                                        'bg-slate-800 border border-slate-700',
                                     lightIcon:
-                                        'bg-emerald-50 text-emerald-600',
+                                        'bg-slate-100 text-slate-900',
                                     darkIconColor:
-                                        'text-green-300',
+                                        'text-slate-200',
                                     hoverGradient:
-                                        'from-emerald-500/0 to-green-500/0 group-hover:from-emerald-500/10 group-hover:to-green-500/10',
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
                                 },
                                 {
                                     icon: Mail,
                                     title: 'Email Info',
                                     desc: 'Secure client communication',
                                     darkContainer:
-                                        'bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 hover:border-indigo-400/40',
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
                                     lightContainerBorder:
-                                        'hover:shadow-indigo-500/10 hover:border-indigo-200',
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
                                     darkIcon:
-                                        'bg-gradient-to-br from-indigo-500/30 to-purple-500/30',
+                                        'bg-slate-800 border border-slate-700',
                                     lightIcon:
-                                        'bg-indigo-50 text-indigo-600',
+                                        'bg-slate-100 text-slate-900',
                                     darkIconColor:
-                                        'text-purple-300',
+                                        'text-slate-200',
                                     hoverGradient:
-                                        'from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/10 group-hover:to-purple-500/10',
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
                                 },
                                 {
                                     icon: Key,
                                     title: 'Credential Vault',
                                     desc: 'Securely store and manage passwords',
                                     darkContainer:
-                                        'bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/20 hover:border-amber-400/40',
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
                                     lightContainerBorder:
-                                        'hover:shadow-amber-500/10 hover:border-amber-200',
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
                                     darkIcon:
-                                        'bg-gradient-to-br from-amber-500/30 to-orange-500/30',
+                                        'bg-slate-800 border border-slate-700',
                                     lightIcon:
-                                        'bg-amber-50 text-amber-600',
+                                        'bg-slate-100 text-slate-900',
                                     darkIconColor:
-                                        'text-amber-300',
+                                        'text-slate-200',
                                     hoverGradient:
-                                        'from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10',
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
+                                },
+                                {
+                                    icon: ShoppingCart,
+                                    title: 'Procurement & POs',
+                                    desc: 'Purchase orders & vendor management',
+                                    darkContainer:
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
+                                    lightContainerBorder:
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
+                                    darkIcon:
+                                        'bg-slate-800 border border-slate-700',
+                                    lightIcon:
+                                        'bg-slate-100 text-slate-900',
+                                    darkIconColor:
+                                        'text-slate-200',
+                                    hoverGradient:
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
+                                },
+                                {
+                                    icon: Ticket,
+                                    title: 'Helpdesk & Support',
+                                    desc: 'Automated ticket tracking & resolution',
+                                    darkContainer:
+                                        'bg-slate-900/60 border-slate-800 hover:border-slate-700',
+                                    lightContainerBorder:
+                                        'hover:shadow-slate-500/10 hover:border-slate-300',
+                                    darkIcon:
+                                        'bg-slate-800 border border-slate-700',
+                                    lightIcon:
+                                        'bg-slate-100 text-slate-900',
+                                    darkIconColor:
+                                        'text-slate-200',
+                                    hoverGradient:
+                                        'from-slate-800/0 to-zinc-800/0 group-hover:from-slate-800/20 group-hover:to-zinc-800/20',
                                 },
                             ]
                                 .map((feat, i) => (
@@ -228,14 +262,14 @@ const LoginPage: React.FC = () => {
                         <div className="relative group">
                             {/* Glow Effect */}
                             <div className={`absolute -inset-1 rounded-3xl blur-2xl transition-all duration-1000 ${isDarkMode
-                                ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-30 group-hover:opacity-50'
-                                : 'bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 opacity-10 group-hover:opacity-30'
+                                ? 'bg-gradient-to-r from-slate-800 via-zinc-800 to-black opacity-30 group-hover:opacity-50'
+                                : 'bg-gradient-to-r from-slate-400 via-slate-500 to-slate-600 opacity-10 group-hover:opacity-30'
                                 }`}></div>
 
                             {/* Form Container */}
-                            <div className={`relative backdrop-blur-3xl rounded-3xl p-5 lg:p-6 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] ${isDarkMode
-                                ? 'bg-slate-900/95 border-slate-800/50'
-                                : 'bg-white/98 border-white/50 shadow-blue-900/5'
+                            <div className={`relative backdrop-blur-3xl rounded-3xl p-5 lg:p-6 transition-all duration-700 border shadow-[0_0_50px_-12px_rgba(0,0,0,0.8)] ${isDarkMode
+                                ? 'bg-black/95 border-slate-800'
+                                : 'bg-white/98 border-white/50 shadow-slate-900/5'
                                 }`}>
 
                                 {/* Refined Branding - Minimal Height */}
@@ -244,7 +278,7 @@ const LoginPage: React.FC = () => {
                                         <div className="w-8 h-8 flex items-center justify-center overflow-hidden">
                                             <img src="/logo.jpeg" alt="Logo" className="h-8 w-8 object-contain" />
                                         </div>
-                                        <h1 className={`text-lg font-black bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent`}>BOS Vault</h1>
+                                        <h1 className={`text-lg font-black bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent`}>BOS Vault</h1>
                                     </div>
                                     <p className={`text-[10px] font-medium transition-colors duration-700 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Sign in to your account</p>
                                 </div>
@@ -258,7 +292,7 @@ const LoginPage: React.FC = () => {
                                         </label>
                                         <div className="relative group/input">
                                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <Mail className="h-3 w-3 text-gray-500 group-focus-within/input:text-blue-500 transition-colors" />
+                                                <Mail className="h-3 w-3 text-gray-500 group-focus-within/input:text-white transition-colors" />
                                             </div>
                                             <input
                                                 type="email"
@@ -268,8 +302,8 @@ const LoginPage: React.FC = () => {
                                                 placeholder="you@company.com"
                                                 required
                                                 disabled={isLoading}
-                                                className={`w-full pl-8 pr-4 py-2 rounded-lg text-xs focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50 ${isDarkMode
-                                                    ? 'bg-slate-800/50 border border-slate-700 text-white placeholder-gray-500'
+                                                className={`w-full pl-8 pr-4 py-2 rounded-lg text-xs focus:outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20 transition-all disabled:opacity-50 ${isDarkMode
+                                                    ? 'bg-slate-900/80 border border-slate-800 text-white placeholder-gray-500'
                                                     : 'bg-slate-50/50 border border-slate-200 text-slate-900 placeholder-slate-400'
                                                     }`}
                                             />
@@ -283,7 +317,7 @@ const LoginPage: React.FC = () => {
                                         </label>
                                         <div className="relative group/input">
                                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <Lock className="h-3 w-3 text-gray-500 group-focus-within/input:text-blue-500 transition-colors" />
+                                                <Lock className="h-3 w-3 text-gray-500 group-focus-within/input:text-white transition-colors" />
                                             </div>
                                             <input
                                                 type={showPassword ? "text" : "password"}
@@ -293,15 +327,15 @@ const LoginPage: React.FC = () => {
                                                 placeholder="••••••••"
                                                 required
                                                 disabled={isLoading}
-                                                className={`w-full pl-8 pr-9 py-2 rounded-lg text-xs focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50 ${isDarkMode
-                                                    ? 'bg-slate-800/50 border border-slate-700 text-white placeholder-gray-500'
+                                                className={`w-full pl-8 pr-9 py-2 rounded-lg text-xs focus:outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-500/20 transition-all disabled:opacity-50 ${isDarkMode
+                                                    ? 'bg-slate-900/80 border border-slate-800 text-white placeholder-gray-500'
                                                     : 'bg-slate-50/50 border border-slate-200 text-slate-900 placeholder-slate-400'
                                                     }`}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-500 hover:text-blue-500 transition-colors"
+                                                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-gray-500 hover:text-white transition-colors"
                                             >
                                                 {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
                                             </button>
@@ -312,7 +346,7 @@ const LoginPage: React.FC = () => {
                                     <Button
                                         type="submit"
                                         disabled={isLoading || isGoogleLoading}
-                                        className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-black rounded-lg shadow-lg shadow-blue-500/20 transition-all group/btn relative overflow-hidden"
+                                        className="w-full py-2.5 bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-800 hover:to-slate-900 border border-slate-700 text-white text-xs font-black rounded-lg shadow-lg transition-all group/btn relative overflow-hidden"
                                     >
                                         {isLoading ? (
                                             <div className="flex items-center justify-center gap-2">
@@ -380,14 +414,14 @@ const LoginPage: React.FC = () => {
                                     <div className="flex items-center justify-center gap-4 pt-1">
                                         <Link
                                             href="/request-access"
-                                            className={`text-[9px] font-black uppercase tracking-widest transition-all duration-300 hover:text-blue-500 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+                                            className={`text-[9px] font-black uppercase tracking-widest transition-all duration-300 hover:text-slate-900 dark:text-white ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
                                         >
                                             Request Access
                                         </Link>
                                         <div className={`w-0.5 h-0.5 rounded-full ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
                                         <Link
                                             href="/forgot-password"
-                                            className={`text-[9px] font-black uppercase tracking-widest transition-all duration-300 hover:text-blue-500 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+                                            className={`text-[9px] font-black uppercase tracking-widest transition-all duration-300 hover:text-slate-900 dark:text-white ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
                                         >
                                             Forgot?
                                         </Link>

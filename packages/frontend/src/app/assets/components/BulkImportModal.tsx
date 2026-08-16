@@ -173,7 +173,7 @@ export const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClos
                     </div>
                 )}
 
-                <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center transition-colors hover:border-indigo-500 dark:hover:border-indigo-400">
+                <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center transition-colors hover:border-slate-700 dark:hover:border-slate-700">
                     <input
                         type="file"
                         accept=".csv, .xlsx, .xls"
@@ -190,10 +190,10 @@ export const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClos
                             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Excel or CSV files only</p>
                         </label>
                     ) : (
-                        <div className="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg">
+                        <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 p-4 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
-                                    <FileUp className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                                    <FileUp className="h-6 w-6 text-slate-900 dark:text-white dark:text-slate-300" />
                                 </div>
                                 <div className="text-left">
                                     <p className="font-semibold text-slate-900 dark:text-white">{file.name}</p>
