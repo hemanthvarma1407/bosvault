@@ -259,23 +259,8 @@ export class EmployeesService {
             }
         }
         const includeDeactivated = reqModel.includeDeactivated === true;
-
         try {
-            const whereClause: any = {};
-            if (companyId) {
-                whereClause.companyId = companyId;
-            }
-            console.log('getAllEmployees Request Model:', reqModel);
-            console.log('getAllEmployees Where Clause:', whereClause);
-
-            if (!includeDeactivated) {
-                whereClause.empStatus = Not(EmployeeStatusEnum.DEACTIVATED);
-            }
-
-            employees = await this.employeesRepo.find({
-                where: whereClause,
-                order: { firstName: 'ASC', lastName: 'ASC' }
-            });
+            employees = await this.employeesRepo.findAllEmployees(companyId, includeDeactivated);
 
             const deptIds = [...new Set(employees.filter(e => e.departmentId && Number(e.departmentId) > 0).map(e => Number(e.departmentId)))];
             const deptMap = new Map<number, string>();

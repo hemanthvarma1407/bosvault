@@ -8,21 +8,20 @@ import { AssignAssetOpRequestModel, ReturnAssetOpRequestModel, AssetStatusEnum, 
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 
+import { Asset, EmployeeOption } from '../types';
+
 interface AssignAssetModalProps {
     isOpen: boolean;
     onClose: () => void;
-    asset: any;
+    asset: Asset | null;
     onSuccess: () => void;
-}
-
-interface AssignAssetModalProps {
     children?: React.ReactNode;
 }
 
 export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onClose, asset, onSuccess }: AssignAssetModalProps) => {
     const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
-    const [employees, setEmployees] = useState<any[]>([]);
+    const [employees, setEmployees] = useState<EmployeeOption[]>([]);
 
     const [actionType, setActionType] = useState<'reassign' | 'return' | 'maintenance' | 'retired'>('reassign');
     const [formData, setFormData] = useState({
@@ -38,7 +37,7 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
             if (response.status) {
                 setEmployees(response.data || []);
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message || 'Failed to fetch employees');
         }
     }, [user?.companyId, asset?.companyId]);
@@ -57,8 +56,7 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
-        // @ts-ignore
-        const checked = e.target.checked;
+        const checked = (e.target as HTMLInputElement).checked;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
@@ -78,7 +76,7 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
         try {
             if (actionType === 'reassign') {
                 const req = new AssignAssetOpRequestModel(
-                    asset.id,
+                    Number(asset!.id),
                     Number(formData.employeeId),
                     user.id,
                     formData.remarks,
@@ -100,13 +98,13 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
                 if (actionType === 'retired') targetStatus = AssetStatusEnum.RETIRED;
 
                 const req = new ReturnAssetOpRequestModel(
-                    asset.id,
+                    Number(asset!.id),
                     user.id,
                     formData.remarks,
                     targetStatus
                 );
 
-                const response = await assetService.returnAssetOp(req as any);
+                const response = await assetService.returnAssetOp(req);
                 if (response.status) {
                     AlertMessages.getSuccessMessage('Asset status updated successfully');
                     onSuccess();
@@ -115,8 +113,8 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
                     AlertMessages.getErrorMessage(response.message || 'Failed to update asset');
                 }
             }
-        } catch (error: any) {
-            AlertMessages.getErrorMessage(error.message || 'An error occurred');
+        } catch (error) {
+            AlertMessages.getErrorMessage('An error occurred');
         } finally {
             setIsLoading(false);
         }
@@ -137,7 +135,7 @@ export const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onCl
                             label="Action"
                             name="actionType"
                             value={actionType}
-                            onChange={(e) => setActionType(e.target.value as any)}
+                            onChange={(e) => setActionType(e.target.value as 'reassign' | 'return' | 'maintenance' | 'retired')}
                             options={[
                                 { value: 'reassign', label: 'Reassign to Employee' },
                                 { value: 'return', label: 'Return to Store' },

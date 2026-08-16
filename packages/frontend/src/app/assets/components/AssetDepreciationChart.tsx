@@ -1,15 +1,7 @@
 "use client";
 
 import React from 'react';
-import {
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    AreaChart,
-    Area
-} from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 interface DepreciationChartProps {
     purchaseCost: number;
@@ -19,13 +11,7 @@ interface DepreciationChartProps {
     method: string;
 }
 
-export default function AssetDepreciationChart({
-    purchaseCost,
-    salvageValue,
-    usefulLifeYears,
-    purchaseDate,
-    method
-}: DepreciationChartProps) {
+export default function AssetDepreciationChart({ purchaseCost, salvageValue, usefulLifeYears, purchaseDate, method }: DepreciationChartProps) {
     const data = [];
     const startYear = new Date(purchaseDate).getFullYear();
 
@@ -75,7 +61,7 @@ export default function AssetDepreciationChart({
                     />
                     <Tooltip
                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                        formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Asset Value']}
+                        formatter={(value: number | string) => [`$${Number(value).toFixed(2)}`, 'Asset Value']}
                     />
                     <Area
                         type="monotone"

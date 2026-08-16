@@ -46,7 +46,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -75,7 +75,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -110,7 +110,7 @@ export const DepartmentsMasterView: React.FC<DepartmentsMasterViewProps> = ({ on
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (error: any) {
+            } catch (error) {
                 AlertMessages.getErrorMessage(error.message);
             }
         }

@@ -7,14 +7,17 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { getSocket } from '@/lib/socket';
 import { notificationsService } from '@/lib/api/services';
 
+import { NotificationPayload } from '@bosvault/shared-models';
+
 interface TopBarProps {
     onMenuClick?: () => void;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
+
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState<any[]>([]);
+    const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
     const { user, logout } = useAuth();
     const { theme, setTheme } = useTheme();
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -22,7 +25,7 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const menuRef = useRef<HTMLDivElement>(null);
     const notificationRef = useRef<HTMLDivElement>(null);
 
-    const unreadCount = notifications.filter(n => !n.read && !n.isRead).length;
+    const unreadCount = notifications.filter(n => !n.read).length;
 
     // Fetch initial notifications and listen to socket
     useEffect(() => {
@@ -32,9 +35,9 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
             try {
                 const response = await notificationsService.getNotifications();
                 if (Array.isArray(response)) {
-                    setNotifications(response.filter((n: any) => !n.read && !n.isRead));
-                } else if (response && Array.isArray((response as any).data)) {
-                    setNotifications((response as any).data.filter((n: any) => !n.read && !n.isRead));
+                    setNotifications(response.filter((n: NotificationPayload) => !n.read));
+                } else if (response && 'data' in response && Array.isArray((response as { data: NotificationPayload[] }).data)) {
+                    setNotifications((response as { data: NotificationPayload[] }).data.filter((n: NotificationPayload) => !n.read));
                 }
             } catch (error) {
                 console.error('[TopBar] Failed to fetch notifications:', error);
@@ -46,16 +49,15 @@ const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
         const socket = getSocket();
         socket.emit('joinUser', { userId: user.id });
 
-        socket.on('notification', (notif: any) => {
+        socket.on('notification', (notif: NotificationPayload) => {
             setNotifications(prev => {
                 // Prevent duplicate notifications in stream
                 if (prev.some(n => n.id === notif.id)) return prev;
                 const newNotif = {
                     ...notif,
-                    read: notif.read || false,
-                    isRead: notif.isRead || false
+                    read: Boolean(notif.read)
                 };
-                if (newNotif.read || newNotif.isRead) return prev;
+                if (newNotif.read) return prev;
                 return [newNotif, ...prev].slice(0, 15);
             });
         });

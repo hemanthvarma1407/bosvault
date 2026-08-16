@@ -102,7 +102,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -117,7 +117,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             ]);
 
             if (empRes.status && empRes.data) {
-                setEmployees(empRes.data.map((e: any) => ({
+                setEmployees(empRes.data.map((e) => ({
                     id: e.id,
                     name: `${e.firstName} ${e.lastName}`,
                     email: e.email,
@@ -125,7 +125,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                     department: e.departmentName,
                     slackUserId: e.slackUserId,
                     manager: e.managerName
-                })));
+                } as unknown as EmployeeOption)));
             }
 
             if (deptRes.status && deptRes.departments) {
@@ -135,7 +135,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             if (compRes.status && compRes.data) {
                 setCompanies(compRes.data);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -183,7 +183,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message || 'An error occurred');
         }
     };
@@ -225,7 +225,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }
@@ -247,7 +247,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
         try {
             const response = await companyService.getAllCompanies();
             if (response.status) {
-                const comp = response.data.find((c: any) => c.id.toString() === companyId);
+                const comp = response.data.find((c) => c.id.toString() === companyId);
                 if (comp) {
                     setConfigFormData({
                         slackBotToken: comp.slackBotToken || '',
@@ -256,29 +256,34 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
                     setIsConfigModalOpen(true);
                 }
             }
-        } catch (error) {
-            AlertMessages.getErrorMessage('Failed to fetch company settings');
+        } catch (err) {
+            console.error('Failed to fetch company details:', err);
         }
     };
 
-    const handleSaveConfig = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const [isSubmittingConfig, setIsSubmittingConfig] = useState(false);
+
+    const handleSaveSlackConfig = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!configCompanyId) return;
+        setIsSubmittingConfig(true);
         try {
             const response = await companyService.updateCompany({
                 id: Number(configCompanyId),
                 slackBotToken: configFormData.slackBotToken,
                 slackWorkspaceId: configFormData.slackWorkspaceId
-            } as any);
+            } as unknown as Parameters<typeof companyService.updateCompany>[0]);
 
             if (response.status) {
                 AlertMessages.getSuccessMessage('Slack settings saved successfully');
                 setIsConfigModalOpen(false);
-                fetchDependencies(); // Refresh companies list
             } else {
-                AlertMessages.getErrorMessage(response.message);
+                AlertMessages.getErrorMessage(response.message || 'Failed to save settings');
             }
-        } catch (error: any) {
-            AlertMessages.getErrorMessage(error.message);
+        } catch (err) {
+            AlertMessages.getErrorMessage('Error saving Slack settings');
+        } finally {
+            setIsSubmittingConfig(false);
         }
     };
 
@@ -296,7 +301,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         } finally {
             setIsSyncing(false);
@@ -738,7 +743,7 @@ export const SlackUsersMasterView: React.FC<SlackUsersMasterViewProps> = ({ onBa
             </Modal>
 
             <Modal isOpen={isConfigModalOpen} onClose={() => setIsConfigModalOpen(false)} title="Slack Integration Settings" size="md">
-                <form onSubmit={handleSaveConfig} className="space-y-6">
+                <form onSubmit={handleSaveSlackConfig} className="space-y-6">
                     <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl mb-6">
                         <div className="flex gap-3">
                             <Slack className="h-5 w-5 text-indigo-600 shrink-0" />

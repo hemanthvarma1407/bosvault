@@ -6,37 +6,41 @@ import { Modal } from '../../../components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { AssetStatusEnum } from '@bosvault/shared-models';
 import { deviceConfigService, assetTypeService } from '@/lib/api/services';
+import { OptionItem } from '../types';
+import { AlertMessages } from '@/lib/utils/AlertMessages';
+
+export interface AssetFilterState {
+    deviceConfigIds: (string | number)[];
+    assetTypeIds: (string | number)[];
+    statusFilter: AssetStatusEnum[];
+    purchaseDateFrom: string;
+    purchaseDateTo: string;
+}
 
 interface AdvancedFilterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onApply: (filters: any) => void;
-    initialFilters: any;
-}
-
-interface AdvancedFilterModalProps {
+    onApply: (filters: AssetFilterState) => void;
+    initialFilters: Partial<AssetFilterState>;
     children?: React.ReactNode;
 }
 
+
 export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen, onClose, onApply, initialFilters }: AdvancedFilterModalProps) => {
-    const [deviceConfigs, setDeviceConfigs] = useState<any[]>([]);
-    const [assetTypes, setAssetTypes] = useState<any[]>([]);
-    const [localFilters, setLocalFilters] = useState<any>({
-        deviceConfigIds: [],
-        assetTypeIds: [],
-        statusFilter: [],
-        purchaseDateFrom: '',
-        purchaseDateTo: ''
-    });
+    const [deviceConfigs, setDeviceConfigs] = useState<OptionItem[]>([]);
+    const [assetTypes, setAssetTypes] = useState<OptionItem[]>([]);
+    const [localFilters, setLocalFilters] = useState<AssetFilterState>({ deviceConfigIds: [], assetTypeIds: [], statusFilter: [], purchaseDateFrom: '', purchaseDateTo: '' });
 
     const fetchDeviceConfigs = useCallback(async () => {
         try {
             const response = await deviceConfigService.getAllDeviceConfigs();
             if (response.status) {
                 setDeviceConfigs(response.deviceConfigs || []);
+            } else {
+                AlertMessages.getErrorMessage(response.message);
             }
         } catch (error) {
-            console.error('Failed to fetch device configurations:', error);
+            AlertMessages.getErrorMessage(error.message);
         }
     }, []);
 
@@ -45,9 +49,11 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
             const response = await assetTypeService.getAllAssetTypes();
             if (response.status) {
                 setAssetTypes(response.assetTypes || []);
+            } else {
+                AlertMessages.getErrorMessage(response.message);
             }
         } catch (error) {
-            console.error('Failed to fetch asset types:', error);
+            AlertMessages.getErrorMessage(error.message);
         }
     }, []);
 
@@ -66,32 +72,32 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
     }, [isOpen, initialFilters, fetchDeviceConfigs, fetchAssetTypes]);
 
     const handleStatusToggle = (status: AssetStatusEnum) => {
-        setLocalFilters((prev: any) => {
+        setLocalFilters((prev: AssetFilterState) => {
             const current = prev.statusFilter || [];
             if (current.includes(status)) {
-                return { ...prev, statusFilter: current.filter((s: any) => s !== status) };
+                return { ...prev, statusFilter: current.filter((s: AssetStatusEnum) => s !== status) };
             } else {
                 return { ...prev, statusFilter: [...current, status] };
             }
         });
     };
 
-    const handleDeviceConfigToggle = (id: number) => {
-        setLocalFilters((prev: any) => {
+    const handleDeviceConfigToggle = (id: number | string) => {
+        setLocalFilters((prev: AssetFilterState) => {
             const current = prev.deviceConfigIds || [];
             if (current.includes(id)) {
-                return { ...prev, deviceConfigIds: current.filter((i: number) => i !== id) };
+                return { ...prev, deviceConfigIds: current.filter((i: number | string) => i !== id) };
             } else {
                 return { ...prev, deviceConfigIds: [...current, id] };
             }
         });
     };
 
-    const handleTypeToggle = (id: number) => {
-        setLocalFilters((prev: any) => {
+    const handleTypeToggle = (id: number | string) => {
+        setLocalFilters((prev: AssetFilterState) => {
             const current = prev.assetTypeIds || [];
             if (current.includes(id)) {
-                return { ...prev, assetTypeIds: current.filter((i: number) => i !== id) };
+                return { ...prev, assetTypeIds: current.filter((i: number | string) => i !== id) };
             } else {
                 return { ...prev, assetTypeIds: [...current, id] };
             }
@@ -114,12 +120,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title="Advanced Filters"
-            size="lg"
-        >
+        <Modal isOpen={isOpen} onClose={onClose} title="Advanced Filters" size="lg">
             <div className="p-4 space-y-6 max-h-[70vh] overflow-y-auto">
                 {/* Status Section */}
                 <div>
@@ -147,7 +148,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
                 <div>
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Asset Types</h3>
                     <div className="flex flex-wrap gap-2">
-                        {assetTypes.map((type: any) => (
+                        {assetTypes.map((type) => (
                             <button
                                 key={type.id}
                                 onClick={() => handleTypeToggle(type.id)}
@@ -169,7 +170,7 @@ export const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ isOpen
                 <div>
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Device Configurations</h3>
                     <div className="flex flex-wrap gap-2">
-                        {deviceConfigs.map((config: any) => (
+                        {deviceConfigs.map((config) => (
                             <button
                                 key={config.id}
                                 onClick={() => handleDeviceConfigToggle(config.id)}

@@ -77,7 +77,7 @@ const CredentialVaultPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage('Invalid vault password');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Verification failed');
         } finally {
             setIsVerifying(false);
@@ -105,7 +105,7 @@ const CredentialVaultPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to request OTP');
         } finally {
             setIsVerifying(false);
@@ -128,7 +128,7 @@ const CredentialVaultPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to set vault password');
         } finally {
             setIsVerifying(false);
@@ -149,7 +149,7 @@ const CredentialVaultPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to request OTP');
         } finally {
             setIsProcessingReset(false);
@@ -181,7 +181,7 @@ const CredentialVaultPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to reset password');
         } finally {
             setIsProcessingReset(false);

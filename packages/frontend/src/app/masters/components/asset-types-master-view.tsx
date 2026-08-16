@@ -46,7 +46,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -76,7 +76,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -107,7 +107,7 @@ export const AssetTypesMasterView: React.FC<AssetTypesMasterViewProps> = ({ onBa
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }

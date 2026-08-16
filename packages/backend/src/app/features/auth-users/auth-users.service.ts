@@ -130,11 +130,11 @@ export class AuthUsersService {
             let employeeId: string | null = null;
             if (reqModel.email !== 'it@5yinc.com') {
                 // Look up the employees table to find a matching employee by email
-                const empRecord = await this.dataSource.query(`SELECT id FROM employees WHERE email = $1 AND company_id = $2 AND deleted_at IS NULL LIMIT 1`, [reqModel.email, reqModel.companyId]);
-                if (!empRecord || empRecord.length == 0) {
+                const empRecord = await this.authUsersRepo.findEmployeeByEmailAndCompany(reqModel.email, reqModel.companyId);
+                if (!empRecord) {
                     throw new ErrorResponse(0, "Employee not exists")
                 }
-                employeeId = String(empRecord[0].id);
+                employeeId = String(empRecord.id);
             }
             await transManager.startTransaction()
             let finalPassword = reqModel.password;
@@ -279,11 +279,8 @@ export class AuthUsersService {
     async requestAccess(reqModel: RequestAccessModel): Promise<GlobalResponse> {
         try {
             // 1. Check if email exists in employees table
-            const empRecord = await this.dataSource.query(
-                `SELECT id FROM employees WHERE email = $1 AND deleted_at IS NULL LIMIT 1`,
-                [reqModel.email]
-            );
-            if (!empRecord || empRecord.length === 0) {
+            const empRecord = await this.authUsersRepo.findEmployeeByEmail(reqModel.email);
+            if (!empRecord) {
                 throw new ErrorResponse(0, "Your email is not registered in our employee directory. Please contact HR.");
             }
 
@@ -445,19 +442,7 @@ export class AuthUsersService {
 
             const formattedUsers = users.map(user => {
                 const userRoles = user.roles || (user.userRole ? [user.userRole] : [UserRoleEnum.USER]);
-                return new UsersResponseModel(
-                    user.id,
-                    user.fullName,
-                    user.email,
-                    user.phNumber,
-                    user.companyId,
-                    user.userRole,
-                    user.status,
-                    user.lastLogin,
-                    userRoles,
-                    user.createdAt,
-                    user.updatedAt
-                );
+                return new UsersResponseModel(user.id, user.fullName, user.email, user.phNumber, user.companyId, user.userRole, user.status, user.lastLogin, userRoles, user.createdAt, user.updatedAt);
             });
             return new GetAllUsersModel(true, 0, "Users Retrieved Successfully", formattedUsers);
         } catch (err) {
@@ -610,13 +595,13 @@ export class AuthUsersService {
                 })
                 .map(m => {
                     const children = m.children ? filterAndMapMenus(m.children) : undefined;
-                    
+
                     let permissions;
                     if (isSuperOrSite) {
                         permissions = { create: true, read: true, update: true, delete: true, scopes: ['*'] };
                     } else {
                         const hasWriteAccess = roles.includes(UserRoleEnum.ADMIN) || roles.includes(UserRoleEnum.ASSET_ADMIN);
-                        permissions = hasWriteAccess 
+                        permissions = hasWriteAccess
                             ? { create: true, read: true, update: true, delete: true }
                             : { create: false, read: true, update: false, delete: false };
                     }
@@ -632,9 +617,9 @@ export class AuthUsersService {
         let department = 'Engineering Support';
         if (user.employeeId) {
             try {
-                const empDept = await this.dataSource.query(` SELECT d.name as name  FROM employees e JOIN departments d ON e.department_id = d.id WHERE e.id = $1 AND e.deleted_at IS NULL LIMIT 1`, [parseInt(user.employeeId)]);
-                if (empDept && empDept.length > 0) {
-                    department = empDept[0].name;
+                const deptName = await this.authUsersRepo.getEmployeeDepartmentName(parseInt(user.employeeId));
+                if (deptName) {
+                    department = deptName;
                 }
             } catch (e) {
                 console.error("Failed to query user department:", e);

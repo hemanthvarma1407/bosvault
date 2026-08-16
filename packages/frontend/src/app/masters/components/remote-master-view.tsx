@@ -47,7 +47,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -100,7 +100,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -137,7 +137,7 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }
@@ -292,14 +292,14 @@ export const RemoteMasterView: React.FC<RemoteMasterViewProps> = ({ onBack }) =>
                                         <TrendingUp className="h-4 w-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">User ID</span>
                                     </div>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{(selectedTool as any).userName || 'N/A'}</p>
+                                    <p className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{(selectedTool as unknown as { userName?: string }).userName || 'N/A'}</p>
                                 </div>
                                 <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-2 text-slate-400">
                                         <Shield className="h-4 w-4" />
                                         <span className="text-[10px] font-black uppercase tracking-widest">Password</span>
                                     </div>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white">{(selectedTool as any).password || 'N/A'}</p>
+                                    <p className="text-sm font-bold text-slate-900 dark:text-white">{(selectedTool as unknown as { password?: string }).password || 'N/A'}</p>
                                 </div>
                             </div>
 

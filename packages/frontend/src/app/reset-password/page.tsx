@@ -58,7 +58,7 @@ function ResetPasswordContent() {
             } else {
                 toastError('Reset Failed', response.message || 'Could not reset password. The link may have expired.');
             }
-        } catch (error: any) {
+        } catch (error) {
             toastError('Reset Failed', error.message || 'An error occurred during password reset.');
         } finally {
             setIsResetting(false);

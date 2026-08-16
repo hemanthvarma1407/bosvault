@@ -22,7 +22,7 @@ const RequestAccessPage: React.FC = () => {
                 name: formData.name,
                 email: formData.email,
                 status: 'pending'
-            } as any);
+            });
 
             if (response && response.status) {
                 AlertMessages.getSuccessMessage('Access request sent to admin successfully.');
@@ -30,7 +30,7 @@ const RequestAccessPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response?.message || 'Failed to send access request.');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error?.message || 'An error occurred.');
         } finally {
             setIsLoading(false);

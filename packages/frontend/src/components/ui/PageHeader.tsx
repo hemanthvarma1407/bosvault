@@ -39,9 +39,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 {Icon && (
                     <div className={`p-1.5 rounded-lg bg-gradient-to-br ${gradient} text-white shadow-md [&>svg]:h-4 [&>svg]:w-4 flex items-center justify-center`}>
                         {React.isValidElement(Icon) ? Icon :
-                            (typeof Icon === 'function' || (typeof Icon === 'object' && Icon !== null && 'render' in (Icon as any))) ?
-                                React.createElement(Icon as any) :
-                                Icon as any}
+                            (typeof Icon === 'function' || (typeof Icon === 'object' && Icon !== null)) ?
+                                React.createElement(Icon as React.ElementType) :
+                                (Icon as React.ReactNode)}
                     </div>
                 )}
                 <div>

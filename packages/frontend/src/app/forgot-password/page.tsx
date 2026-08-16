@@ -27,7 +27,7 @@ const ForgotPasswordPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage(response.message || 'Failed to send reset link.');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error?.message || 'An error occurred.');
         } finally {
             setIsLoading(false);

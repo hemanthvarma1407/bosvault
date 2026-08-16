@@ -169,11 +169,7 @@ export class TicketsService {
         const dateStr = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD
 
         // Find the latest ticket code for today
-        const latestTicket = await this.ticketsRepo
-            .createQueryBuilder('ticket')
-            .where('ticket.ticketCode LIKE :prefix', { prefix: `TKT-${dateStr}-%` })
-            .orderBy('ticket.ticketCode', 'DESC')
-            .getOne();
+        const latestTicket = await this.ticketsRepo.findLatestTicketByPrefix(`TKT-${dateStr}-`);
 
         let sequence = 1;
         if (latestTicket) {

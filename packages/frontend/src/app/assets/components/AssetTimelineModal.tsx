@@ -9,14 +9,13 @@ import { Spinner } from '@/components/ui/Spinner';
 import { formatDateTime } from '@/lib/utils';
 import { Modal } from '../../../components/ui/Modal';
 
+import { Asset } from '../types';
+
 interface AssetTimelineModalProps {
     isOpen: boolean;
     onClose: () => void;
-    asset: any;
+    asset: Asset | null;
     companyId: number;
-}
-
-interface AssetTimelineModalProps {
     children?: React.ReactNode;
 }
 
@@ -35,7 +34,7 @@ export const AssetTimelineModal: React.FC<AssetTimelineModalProps> = ({ isOpen, 
         setIsLoading(true);
         setError(null);
         try {
-            const req = new AssetTimelineRequestModel(asset.id, companyId);
+            const req = new AssetTimelineRequestModel(Number(asset.id), companyId);
             const response = await services.asset.getTimeline(req);
             if (response.status) {
                 setEvents(response.events);
@@ -43,7 +42,7 @@ export const AssetTimelineModal: React.FC<AssetTimelineModalProps> = ({ isOpen, 
                 setError(response.message || 'Failed to fetch timeline');
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (err: any) {
+        } catch (err) {
             setError(err.message || 'Error fetching timeline');
             AlertMessages.getErrorMessage(err.message || 'Error fetching timeline');
         } finally {

@@ -48,11 +48,11 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
         try {
             const response = await vendorService.getAllVendors();
             if (response.status) {
-                setVendors(response.vendors as any);
+                setVendors(response.vendors);
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     }
@@ -83,7 +83,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -120,7 +120,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }
@@ -169,7 +169,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                                         <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 truncate max-w-[150px]">{item.contactPerson || '-'}</td>
-                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-500 italic uppercase">{(item as any).category || '-'}</td>
+                                            <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-500 italic uppercase">{(item as unknown as { category?: string }).category || '-'}</td>
                                             <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                 <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${item.isActive
                                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800'
@@ -257,7 +257,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                                 <Store className="h-8 w-8" />
                             </div>
                             <div className="text-center">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{(selectedVendor as any).category || 'Vendor Entity'}</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{(selectedVendor as unknown as { category?: string }).category || 'Vendor Entity'}</p>
                                 <h4 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{selectedVendor.name}</h4>
                             </div>
                             <span className={`mt-3 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border ${selectedVendor.isActive
@@ -282,7 +282,7 @@ export const VendorsMasterView: React.FC<VendorsMasterViewProps> = ({ onBack }) 
                                         <Tag className="h-3.5 w-3.5 text-emerald-500" />
                                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Business Type</span>
                                     </div>
-                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">{(selectedVendor as any).category || 'General'}</p>
+                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-tight">{(selectedVendor as unknown as { category?: string }).category || 'General'}</p>
                                 </div>
                             </div>
 

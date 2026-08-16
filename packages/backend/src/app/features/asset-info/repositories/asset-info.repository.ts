@@ -173,4 +173,18 @@ export class AssetInfoRepository extends Repository<AssetInfoEntity> {
         console.log(`[RAW-DEBUG-SEARCH] results[0] configuration:`, results[0]?.configuration ? 'EXISTS' : 'EMPTY');
         return results;
     }
+
+    async getAssetDetailsForEmail(assetId: number) {
+        return await this.createQueryBuilder('a')
+            .leftJoin('asset_types', 'd', 'a.device_id = d.id')
+            .leftJoin('device_configs', 'c', 'a.device_config_id = c.id')
+            .select([
+                'd.name as "assetType"',
+                'COALESCE(NULLIF(a.configuration, \'\'), c.configuration) as "specification"',
+                'c.laptop_company as "laptopCompany"',
+                'c.model as "model"'
+            ])
+            .where('a.id = :assetId', { assetId })
+            .getRawOne();
+    }
 }

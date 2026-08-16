@@ -9,11 +9,17 @@ import { services } from '@/lib/api/services';
 import * as XLSX from 'xlsx';
 import { Select } from '@/components/ui/Select';
 
+interface CompanyOption {
+    id: number | string;
+    companyName?: string;
+    name?: string;
+}
+
 interface BulkImportModalProps {
     isOpen: boolean;
     onClose: () => void;
     companyId: number;
-    companies?: any[];
+    companies?: CompanyOption[];
     onSuccess: () => void;
 }
 
@@ -104,7 +110,7 @@ export const BulkImportModal: React.FC<BulkImportModalProps> = ({ isOpen, onClos
                 });
                 showError('Import Failed', response.message);
             }
-        } catch (err: any) {
+        } catch (err) {
             showError('Import Error', err.message || 'Failed to upload file');
             setImportResult({
                 success: false,

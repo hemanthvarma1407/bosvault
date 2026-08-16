@@ -27,14 +27,7 @@ export class LicensesService {
      */
     async getAllLicenses(reqModel: IdRequestModel): Promise<GetAllLicensesResponseModel> {
         const companyId = reqModel.id;
-        const query = this.repo.createQueryBuilder('license')
-            .orderBy('license.createdAt', 'DESC');
-
-        if (companyId) {
-            query.where('license.companyId = :companyId', { companyId });
-        }
-
-        const licenses = await query.getMany();
+        const licenses = await this.repo.findAllWithRelations(companyId);
 
         if (licenses.length === 0) {
             return new GetAllLicensesResponseModel(true, 200, 'Licenses retrieved successfully', []);
@@ -199,10 +192,7 @@ export class LicensesService {
             const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
             const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
             if (master && master.totalQuantity > 0) {
-                const currentAssigned = await this.repo.createQueryBuilder('l')
-                    .where('l.applicationId = :appId', { appId: reqModel.applicationId })
-                    .andWhere('l.assignedEmployeeId IS NOT NULL')
-                    .getCount();
+                const currentAssigned = await this.repo.countAssignedSeats(reqModel.applicationId);
 
                 const requestedSeats = reqModel.seats || 1;
                 if (currentAssigned + requestedSeats > master.totalQuantity) {
@@ -263,11 +253,7 @@ export class LicensesService {
             const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
             const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
             if (master && master.totalQuantity > 0) {
-                const currentAssigned = await this.repo.createQueryBuilder('l')
-                    .where('l.applicationId = :appId', { appId: reqModel.applicationId })
-                    .andWhere('l.assignedEmployeeId IS NOT NULL')
-                    .andWhere('l.id != :id', { id: reqModel.id })
-                    .getCount();
+                const currentAssigned = await this.repo.countAssignedSeats(reqModel.applicationId, reqModel.id);
 
                 const requestedSeats = reqModel.seats || 1;
                 if (currentAssigned + requestedSeats > master.totalQuantity) {

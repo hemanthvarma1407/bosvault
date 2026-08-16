@@ -64,31 +64,14 @@ export class AssetTabsService {
             const savedReturn = await transManager.getRepository(AssetReturnHistoryEntity).save(returnHistory);
 
             // 2. Update active assignment in asset_assign table
-            await transManager.getRepository(AssetAssignEntity).update(
-                { assetId: reqModel.assetId, employeeId: reqModel.employeeId, returnDate: IsNull() },
-                { returnDate: returnHistory.returnDate, remarks: `Returned: ${reqModel.returnReason || 'No reason specified'}` }
-            );
+            await transManager.getRepository(AssetAssignEntity).update({ assetId: reqModel.assetId, employeeId: reqModel.employeeId, returnDate: IsNull() }, { returnDate: returnHistory.returnDate, remarks: `Returned: ${reqModel.returnReason || 'No reason specified'}` });
 
             // 3. Update asset status to available
-            await transManager.getRepository(AssetInfoEntity).update(reqModel.assetId, {
-                assetStatusEnum: AssetStatusEnum.AVAILABLE,
-                previousUserEmployeeId: reqModel.employeeId,
-                assignedToEmployeeId: null as any,
-                lastReturnDate: returnHistory.returnDate,
-                userAssignedDate: null as any
-            });
+            await transManager.getRepository(AssetInfoEntity).update(reqModel.assetId, { assetStatusEnum: AssetStatusEnum.AVAILABLE, previousUserEmployeeId: reqModel.employeeId, assignedToEmployeeId: null as any, lastReturnDate: returnHistory.returnDate, userAssignedDate: null as any });
 
             await transManager.completeTransaction();
 
-            const returnRecord: ReturnAssetModel = {
-                id: savedReturn.id,
-                employeeName: '',
-                returnDate: savedReturn.returnDate,
-                returnReason: savedReturn.returnReason,
-                assetCondition: savedReturn.assetCondition,
-                assetId: savedReturn.assetId,
-                allocationDate: savedReturn.allocationDate || undefined
-            };
+            const returnRecord: ReturnAssetModel = { id: savedReturn.id, employeeName: '', returnDate: savedReturn.returnDate, returnReason: savedReturn.returnReason, assetCondition: savedReturn.assetCondition, assetId: savedReturn.assetId, allocationDate: savedReturn.allocationDate || undefined };
             return new ProcessReturnResponseModel(true, 201, 'Asset return processed successfully', returnRecord);
         } catch (error) {
             await transManager.releaseTransaction();
@@ -162,22 +145,10 @@ export class AssetTabsService {
             await transManager.getRepository(AssetAssignEntity).save(newAssign);
 
             // 3. Update asset current status
-            await transManager.getRepository(AssetInfoEntity).update(reqModel.assetId, {
-                assignedToEmployeeId: assignment.employeeId,
-                assetStatusEnum: AssetStatusEnum.IN_USE,
-                userAssignedDate: newAssign.assignedDate
-            });
+            await transManager.getRepository(AssetInfoEntity).update(reqModel.assetId, { assignedToEmployeeId: assignment.employeeId, assetStatusEnum: AssetStatusEnum.IN_USE, userAssignedDate: newAssign.assignedDate });
 
             await transManager.completeTransaction();
-            const assignmentModel: NextAssignmentModel = {
-                id: assignment.id,
-                employeeName: '',
-                assetType: assignment.assetType,
-                requestDate: assignment.requestDate,
-                assignedAssetId: reqModel.assetId,
-                status: NextAssignmentStatusEnum.ASSIGNED as any as NextAssignmentStatus,
-                priority: assignment.priority as any as AssignmentPriority
-            };
+            const assignmentModel: NextAssignmentModel = { id: assignment.id, employeeName: '', assetType: assignment.assetType, requestDate: assignment.requestDate, assignedAssetId: reqModel.assetId, status: NextAssignmentStatusEnum.ASSIGNED as any as NextAssignmentStatus, priority: assignment.priority as any as AssignmentPriority };
             return new AssignFromQueueResponseModel(true, 200, 'Asset assigned successfully', assignmentModel);
         } catch (error) {
             await transManager.releaseTransaction();

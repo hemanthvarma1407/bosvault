@@ -309,20 +309,11 @@ export class AssetInfoService {
                     const assignedDate = reqModel.assignedDate ? new Date(reqModel.assignedDate) : new Date();
                     const assignedByName = assigner.fullName;
 
-                    const assetDetailsQuery = await this.dataSource.query(
-                        `SELECT d.name as "assetType", 
-                                COALESCE(NULLIF(a.configuration, ''), c.configuration) as "specification",
-                                c.laptop_company as "laptopCompany",
-                                c.model as "model"
-                          FROM asset_info a
-                          LEFT JOIN asset_types d ON a.device_id = d.id
-                          LEFT JOIN device_configs c ON a.device_config_id = c.id
-                          WHERE a.id = $1`, [assetId]
-                    );
-                    const assetType = assetDetailsQuery[0]?.assetType || 'Unknown Type';
-                    const specification = assetDetailsQuery[0]?.specification || 'N/A';
-                    const laptopCompany = assetDetailsQuery[0]?.laptopCompany || '';
-                    const configModel = assetDetailsQuery[0]?.model || '';
+                    const assetDetails = await this.assetInfoRepo.getAssetDetailsForEmail(assetId);
+                    const assetType = assetDetails?.assetType || 'Unknown Type';
+                    const specification = assetDetails?.specification || 'N/A';
+                    const laptopCompany = assetDetails?.laptopCompany || '';
+                    const configModel = assetDetails?.model || '';
                     const serialNumber = asset.serialNumber;
 
                     const brandModelName = (laptopCompany && configModel)
@@ -356,15 +347,9 @@ export class AssetInfoService {
                 const asset = await this.assetInfoRepo.findOne({ where: { id: assetId } });
 
                 if (employee && asset) {
-                    const assetDetailsQuery = await this.dataSource.query(
-                        `SELECT c.laptop_company as "laptopCompany",
-                                c.model as "model"
-                          FROM asset_info a
-                          LEFT JOIN device_configs c ON a.device_config_id = c.id
-                          WHERE a.id = $1`, [assetId]
-                    );
-                    const laptopCompany = assetDetailsQuery[0]?.laptopCompany || '';
-                    const configModel = assetDetailsQuery[0]?.model || '';
+                    const assetDetails = await this.assetInfoRepo.getAssetDetailsForEmail(assetId);
+                    const laptopCompany = assetDetails?.laptopCompany || '';
+                    const configModel = assetDetails?.model || '';
                     const brandModelName = (laptopCompany && configModel)
                         ? `${laptopCompany} ${configModel}`.trim()
                         : (laptopCompany || configModel || asset.model || 'Unknown Asset');

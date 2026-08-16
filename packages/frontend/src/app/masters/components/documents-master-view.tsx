@@ -45,7 +45,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
             } else {
                 AlertMessages.getErrorMessage(response.message || 'Failed to fetch documents');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to fetch documents');
         }
     }, [user]);
@@ -93,7 +93,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
             } else {
                 AlertMessages.getErrorMessage(response.message || 'Failed to synchronize document with vault');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to synchronize document with vault');
         } finally {
             setIsLoading(false);
@@ -138,7 +138,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
             } else {
                 AlertMessages.getErrorMessage(response.message || 'Failed to delete document');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message || 'Failed to delete document');
         }
     }, [documentToDelete, fetchDocuments, user]);
@@ -217,7 +217,7 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
             setIsPasswordModalOpen(false);
             setSecurePassword('');
             setSecureDocId(null);
-        } catch (error: any) {
+        } catch (error) {
             console.error('Secure download failed:', error);
             AlertMessages.getErrorMessage(error?.response?.data?.message || 'Invalid password or download failed.');
         } finally {

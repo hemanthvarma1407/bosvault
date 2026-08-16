@@ -1,15 +1,17 @@
 'use client';
 
 import { Laptop, Monitor, Smartphone, Tablet, HardDrive, User, CheckCircle2, UserPlus, Pencil, Trash2, History, QrCode, Eye } from 'lucide-react';
+import React from 'react';
+import { Asset } from '../types';
 
 interface AssetCardProps {
-    asset: any;
-    onEdit: (asset: any) => void;
-    onDelete: (asset: any) => void;
-    onQRCode: (asset: any) => void;
-    onHistory: (asset: any) => void;
-    onAssign: (asset: any) => void;
-    onView: (asset: any) => void;
+    asset: Asset;
+    onEdit: (asset: Asset) => void;
+    onDelete: (asset: Asset) => void;
+    onQRCode: (asset: Asset) => void;
+    onHistory: (asset: Asset) => void;
+    onAssign: (asset: Asset) => void;
+    onView: (asset: Asset) => void;
     canAssign?: boolean;
 }
 
@@ -24,27 +26,10 @@ const getAssetIcon = (name?: string) => {
 
 const getStatusConfig = (status?: string) => {
     const statusUpper = (status || 'AVAILABLE').toUpperCase();
-    const configs: Record<string, { color: string; bg: string; gradient: string; icon: any }> = {
-        'AVAILABLE': {
-            color: 'text-emerald-600 dark:text-emerald-400',
-            bg: 'bg-emerald-50 dark:bg-emerald-900/20',
-            gradient: 'from-emerald-500/10 to-teal-500/10',
-            icon: CheckCircle2
-        },
-        'IN_USE': {
-            color: 'text-blue-600 dark:text-blue-400',
-            bg: 'bg-blue-50 dark:bg-blue-900/20',
-            gradient: 'from-blue-500/10 to-cyan-500/10',
-            icon: User
-        },
-        'INUSE': {
-            color: 'text-blue-600 dark:text-blue-400',
-            bg: 'bg-blue-50 dark:bg-blue-900/20',
-            gradient: 'from-blue-500/10 to-cyan-500/10',
-            icon: User
-        },
-        // Keep other statuses if needed for future or specific cases, but for now specific icons are removed from imports if unused
-        // But let's keep the config objects just in case
+    const configs: Record<string, { color: string; bg: string; gradient: string; icon: React.ElementType }> = {
+        'AVAILABLE': { color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', gradient: 'from-emerald-500/10 to-teal-500/10', icon: CheckCircle2 },
+        'IN_USE': { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', gradient: 'from-blue-500/10 to-cyan-500/10', icon: User },
+        'INUSE': { color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', gradient: 'from-blue-500/10 to-cyan-500/10', icon: User },
     };
     return configs[statusUpper] || configs['AVAILABLE'];
 };
@@ -62,7 +47,6 @@ export const AssetCard: React.FC<AssetCardProps> = ({ asset, onEdit, onDelete, o
         <div className="group relative h-full">
             {/* Solid Card */}
             <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden h-full flex flex-col">
-
 
                 {/* Status Accent Bar */}
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${statusConfig.gradient.replace('/10', '')}`}></div>

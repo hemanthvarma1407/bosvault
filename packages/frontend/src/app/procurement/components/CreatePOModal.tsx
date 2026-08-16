@@ -12,37 +12,66 @@ import { vendorService, procurementService, employeeService, companyService, ass
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 
+interface OptionItem {
+    id: number | string;
+    name?: string;
+    companyName?: string;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    companyId?: number | string;
+}
+
+interface POFormState {
+    vendorId: number;
+    vendorName: string;
+    currency: string;
+    orderDate: string;
+    expectedDeliveryDate: string;
+    notes: string;
+    approverIds: number[];
+    companyId: number;
+    items: {
+        itemName: string;
+        quantity: number | string;
+        unitPrice: number | string;
+        assetTypeId?: number | string;
+        assetTypeName?: string;
+    }[];
+}
+
 interface CreatePOModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
-    initialPO?: any;
+    initialPO?: Record<string, unknown>;
 }
 
 export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreatePOModalProps) {
     const { user } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [vendors, setVendors] = useState<Vendor[]>([]);
-    const [approvers, setApprovers] = useState<any[]>([]);
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [assetTypes, setAssetTypes] = useState<any[]>([]);
-    const defaultForm = { vendorId: 0, vendorName: '', currency: 'USD', orderDate: new Date().toISOString().split('T')[0], expectedDeliveryDate: '', notes: '', approverIds: [], companyId: user?.companyId || 0, items: [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }] };
-    const [formData, setFormData] = useState<any>(defaultForm);
+    const [approvers, setApprovers] = useState<OptionItem[]>([]);
+    const [companies, setCompanies] = useState<OptionItem[]>([]);
+    const [assetTypes, setAssetTypes] = useState<OptionItem[]>([]);
+    const defaultForm: POFormState = { vendorId: 0, vendorName: '', currency: 'USD', orderDate: new Date().toISOString().split('T')[0], expectedDeliveryDate: '', notes: '', approverIds: [], companyId: user?.companyId || 0, items: [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }] };
+    const [formData, setFormData] = useState<POFormState>(defaultForm);
 
     useEffect(() => {
         if (isOpen) {
             fetchMasters();
             if (initialPO) {
                 setFormData({
-                    vendorId: initialPO.vendorId || 0,
-                    orderDate: initialPO.orderDate ? new Date(initialPO.orderDate).toISOString().split('T')[0] : '',
-                    expectedDeliveryDate: initialPO.expectedDeliveryDate ? new Date(initialPO.expectedDeliveryDate).toISOString().split('T')[0] : '',
-                    notes: initialPO.notes || '',
-                    approverIds: initialPO.approverIds || [],
-                    companyId: initialPO.companyId || user?.companyId || 0,
-                    currency: initialPO.currency || 'USD',
-                    vendorName: initialPO.vendorName || '',
-                    items: initialPO.items?.length > 0 ? initialPO.items.map((i: any) => ({ ...i, assetTypeName: i.assetTypeName || '' })) : [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }]
+                    vendorId: (initialPO.vendorId as number) || 0,
+                    orderDate: initialPO.orderDate ? new Date(initialPO.orderDate as string).toISOString().split('T')[0] : '',
+                    expectedDeliveryDate: initialPO.expectedDeliveryDate ? new Date(initialPO.expectedDeliveryDate as string).toISOString().split('T')[0] : '',
+                    notes: (initialPO.notes as string) || '',
+                    approverIds: (initialPO.approverIds as number[]) || [],
+                    companyId: (initialPO.companyId as number) || user?.companyId || 0,
+                    currency: (initialPO.currency as string) || 'USD',
+                    vendorName: (initialPO.vendorName as string) || '',
+                    items: Array.isArray(initialPO.items) && initialPO.items.length > 0 ? (initialPO.items as Record<string, unknown>[]).map((i) => ({ ...i, itemName: String(i.itemName || ''), quantity: Number(i.quantity || 0), unitPrice: Number(i.unitPrice || 0), assetTypeName: String(i.assetTypeName || '') })) : [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }]
                 });
             } else {
                 setFormData(defaultForm);
@@ -55,9 +84,9 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
             if (!isOpen) return;
             try {
                 const eRes = await employeeService.getAllEmployees(new GetAllEmployeesRequestModel(0));
-                const employeeList = (eRes as any)?.data || (eRes as any)?.employees || (Array.isArray(eRes) ? eRes : []);
+                const employeeList = eRes?.data || (eRes as unknown as { employees: OptionItem[] })?.employees || (Array.isArray(eRes) ? eRes : []);
                 setApprovers(employeeList);
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Failed to fetch employees', err);
             }
         };
@@ -73,10 +102,10 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                 assetTypeService.getAllAssetTypesDropdown()
             ]);
             setVendors(vRes.vendors || []);
-            setCompanies((cRes as any)?.data || (cRes as any)?.companies || []);
-            setAssetTypes((atRes as any)?.data || (atRes as any)?.assetTypes || []);
-        } catch (err: any) {
-            AlertMessages.getErrorMessage(err.message);
+            setCompanies((cRes as { data?: OptionItem[]; companies?: OptionItem[] })?.data || (cRes as { data?: OptionItem[]; companies?: OptionItem[] })?.companies || []);
+            setAssetTypes((atRes as { data?: OptionItem[]; assetTypes?: OptionItem[] })?.data || (atRes as { data?: OptionItem[]; assetTypes?: OptionItem[] })?.assetTypes || []);
+        } catch (err) {
+            AlertMessages.getErrorMessage('Error fetching masters');
         }
     };
 
@@ -86,18 +115,18 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
     const removeItem = (index: number) => {
         if (formData.items.length === 1) return;
-        const newItems = formData.items.filter((_: any, i: number) => i !== index);
+        const newItems = formData.items.filter((_, i: number) => i !== index);
         setFormData({ ...formData, items: newItems });
     };
 
-    const updateItem = (index: number, field: keyof POItemModel, value: any) => {
+    const updateItem = (index: number, field: keyof POItemModel, value: string | number) => {
         const newItems = [...formData.items];
         newItems[index] = { ...newItems[index], [field]: value };
         setFormData({ ...formData, items: newItems });
     };
 
     const calculateTotal = () => {
-        return formData.items.reduce((sum: number, item: any) => sum + (item.quantity * item.unitPrice), 0);
+        return formData.items.reduce((sum: number, item) => sum + (Number(item.quantity) * Number(item.unitPrice)), 0);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -107,19 +136,19 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
             return;
         }
 
-        if (formData.items.some((i: any) => !i.itemName || i.quantity <= 0)) {
+        if (formData.items.some((i) => !i.itemName || Number(i.quantity) <= 0)) {
             AlertMessages.getErrorMessage("Please fill in all item details correctly");
             return;
         }
 
         setIsSubmitting(true);
         try {
-            const items = formData.items.map((i: any) => new POItemModel(
+            const items = formData.items.map((i) => new POItemModel(
                 i.itemName,
                 Number(i.quantity || 0),
                 Number(i.unitPrice || 0),
-                Number(i.assetTypeId) || undefined,
-                i.assetTypeName
+                i.assetTypeId ? Number(i.assetTypeId) : undefined,
+                i.assetTypeName as string
             ));
 
             const orderDate = new Date(formData.orderDate);
@@ -127,7 +156,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
             let res;
             if (initialPO) {
-                const model = new UpdatePOModel(initialPO.id, user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, initialPO.invoiceUrl, formData.currency, formData.vendorName);
+                const model = new UpdatePOModel(Number(initialPO.id), user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, initialPO.invoiceUrl as string, formData.currency, formData.vendorName);
                 res = await procurementService.updatePurchaseOrder(model);
             } else {
                 const model = new CreatePOModel(user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, undefined, formData.currency, formData.vendorName);
@@ -143,7 +172,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
             } else {
                 AlertMessages.getErrorMessage(res.message);
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         } finally {
             setIsSubmitting(false);
@@ -297,7 +326,7 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                     </div>
 
                     <div className="space-y-3">
-                        {formData.items.map((item: any, index: number) => (
+                        {formData.items.map((item, index: number) => (
                             <div key={index} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 grid grid-cols-12 gap-3 items-end group">
                                 <div className="col-span-12 md:col-span-4">
                                     <Input

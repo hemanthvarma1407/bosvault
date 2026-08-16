@@ -164,16 +164,8 @@ export class DocumentsService {
      */
     async getAllDocuments(reqModel: GetAllDocumentsRequestModel): Promise<GetAllDocumentsResponseModel> {
         try {
-            const where: any = {};
-
-            if (reqModel.category) where.category = reqModel.category;
-
-            // Security: We return secure docs too, but frontend will see 'isSecure' flag and lock them.
-            if (reqModel.isSecure !== undefined) {
-                where.isSecure = String(reqModel.isSecure) === 'true';
-            }
-
-            const documents = await this.documentRepo.find({ where, order: { createdAt: 'DESC' } });
+            const isSecure = reqModel.isSecure !== undefined ? String(reqModel.isSecure) === 'true' : undefined;
+            const documents = await this.documentRepo.findFilteredDocuments(reqModel.category, isSecure);
 
             // Should we hide password hash? Yes.
             const sanitizedDocs = documents.map(doc => {

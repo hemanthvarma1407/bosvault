@@ -46,7 +46,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -77,7 +77,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -91,8 +91,8 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
             purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : '',
             expiryDate: item.expiryDate ? new Date(item.expiryDate).toISOString().split('T')[0] : '',
             isActive: item.isActive ?? true,
-            totalQuantity: (item as any).totalQuantity || 0,
-            price: (item as any).price || 0
+            totalQuantity: (item as unknown as { totalQuantity?: number }).totalQuantity || 0,
+            price: (item as unknown as { price?: number }).price || 0
         });
         setIsModalOpen(true);
     };
@@ -112,7 +112,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }
@@ -164,10 +164,11 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                 {licenses?.length === 0 ? (
                                     <tr><td colSpan={7} className="p-8 text-center text-slate-500">No licenses found</td></tr>
                                 ) : (
-                                    licenses?.map((item: License) => {
-                                        const total = Number((item as any).totalQuantity || 0);
-                                        const used = Number((item as any).usedCount ?? (item as any).usedQuantity ?? 0);
-                                        const unitPrice = Number((item as any).price || 0);
+                                    licenses.map(item => {
+                                        const licObj = item as unknown as { totalQuantity?: number; usedCount?: number; usedQuantity?: number; price?: number };
+                                        const total = Number(licObj.totalQuantity || 0);
+                                        const used = Number(licObj.usedCount ?? licObj.usedQuantity ?? 0);
+                                        const unitPrice = Number(licObj.price || 0);
                                         const isExceeded = used > total && total > 0;
 
                                         return (
@@ -303,20 +304,27 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
-                                    <span className="text-[9px] font-bold text-blue-400 uppercase tracking-wider block mb-1">Total</span>
-                                    <p className="text-lg font-black text-blue-600 dark:text-blue-400">{(selectedLicense as any).totalQuantity || 0}</p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50">
-                                    <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block mb-1">Used</span>
-                                    <p className="text-lg font-black text-amber-600 dark:text-amber-400">{(selectedLicense as any).usedCount ?? (selectedLicense as any).usedQuantity ?? 0}</p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50">
-                                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">Available</span>
-                                    <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">{Math.max(0, ((selectedLicense as any).totalQuantity || 0) - ((selectedLicense as any).usedCount ?? (selectedLicense as any).usedQuantity ?? 0))}</p>
-                                </div>
-                            </div>
+                            {(() => {
+                                const selObj = selectedLicense as unknown as { totalQuantity?: number; usedCount?: number; usedQuantity?: number };
+                                const selTotal = Number(selObj.totalQuantity || 0);
+                                const selUsed = Number(selObj.usedCount ?? selObj.usedQuantity ?? 0);
+                                return (
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50">
+                                            <span className="text-[9px] font-bold text-blue-400 uppercase tracking-wider block mb-1">Total</span>
+                                            <p className="text-lg font-black text-blue-600 dark:text-blue-400">{selTotal}</p>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50">
+                                            <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider block mb-1">Used</span>
+                                            <p className="text-lg font-black text-amber-600 dark:text-amber-400">{selUsed}</p>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50">
+                                            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">Available</span>
+                                            <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">{Math.max(0, selTotal - selUsed)}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
 
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Description</label>

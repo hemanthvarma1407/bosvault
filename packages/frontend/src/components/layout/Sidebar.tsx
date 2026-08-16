@@ -13,7 +13,14 @@ import {
     User, UserSquare2, DollarSign, CreditCard
 } from 'lucide-react';
 
-const IconMap: Record<string, any> = {
+interface MenuItemNode {
+    key: string;
+    label: string;
+    icon?: string;
+    children?: MenuItemNode[];
+}
+
+const IconMap: Record<string, React.ElementType> = {
     LayoutDashboard,
     Settings2,
     BarChart3,
@@ -87,9 +94,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                 setIsInitialized(true);
             }
 
+
             // Also ensure active group is expanded if navigating
             const activeGroup = menuTree.find(m =>
-                m.children?.some((c: any) =>
+                m.children?.some((c: MenuItemNode) =>
                     c.key === 'dashboard' ? pathname === '/dashboard' : pathname?.startsWith(`/${c.key}`)
                 )
             );
@@ -108,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
         );
     };
 
-    const renderMenuItem = (item: any, depth = 0) => {
+    const renderMenuItem = (item: MenuItemNode, depth = 0) => {
         const children = item.children || [];
         const hasChildren = children.length > 0;
         const isExpanded = expandedGroups.includes(item.key);
@@ -157,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
 
                 {hasChildren && isExpanded && (
                     <div className="ml-4 pl-4 border-l border-slate-800 mt-0.5 space-y-0.5 pr-3">
-                        {children.map((child: any) => renderMenuItem(child, depth + 1))}
+                        {children.map((child: MenuItemNode) => renderMenuItem(child, depth + 1))}
                     </div>
                 )}
             </div>

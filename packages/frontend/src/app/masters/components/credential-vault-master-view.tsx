@@ -65,7 +65,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -129,7 +129,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -172,7 +172,7 @@ export const CredentialVaultMasterView = forwardRef<CredentialVaultMasterViewHan
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }

@@ -9,40 +9,23 @@ import { AssetStatusEnum, ComplianceStatusEnum, EncryptionStatusEnum } from '@bo
 import { assetService, companyService, deviceConfigService, assetTypeService } from '@/lib/api/services';
 import { useToast } from '@/contexts/ToastContext';
 
+import { Asset, OptionItem } from '../types';
+
 interface AssetFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    asset?: any; // If provided, it's an update
+    asset?: Asset | null;
     onSuccess: () => void;
-}
-
-interface AssetFormModalProps {
     children?: React.ReactNode;
 }
 
 export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose, asset, onSuccess }: AssetFormModalProps) => {
     const { success, error: toastError } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [deviceConfigs, setDeviceConfigs] = useState<any[]>([]);
-    const [assetTypes, setAssetTypes] = useState<any[]>([]);
-    const [formData, setFormData] = useState({
-        deviceId: '',
-        deviceConfigId: '',
-        model: '',
-        serialNumber: '',
-        configuration: '',
-        companyId: '',
-        assetStatusEnum: AssetStatusEnum.AVAILABLE,
-        purchaseDate: '',
-        warrantyExpiry: '',
-        boxNo: '',
-        complianceStatus: ComplianceStatusEnum.UNKNOWN,
-        encryptionStatus: EncryptionStatusEnum.ENCRYPTED,
-        storageAvailable: '',
-        assignedToEmployeeId: undefined as number | undefined,
-        previousUserEmployeeId: undefined as number | undefined
-    });
+    const [companies, setCompanies] = useState<OptionItem[]>([]);
+    const [deviceConfigs, setDeviceConfigs] = useState<OptionItem[]>([]);
+    const [assetTypes, setAssetTypes] = useState<OptionItem[]>([]);
+    const [formData, setFormData] = useState({ deviceId: '', deviceConfigId: '', model: '', serialNumber: '', configuration: '', companyId: '', assetStatusEnum: AssetStatusEnum.AVAILABLE, purchaseDate: '', warrantyExpiry: '', boxNo: '', complianceStatus: ComplianceStatusEnum.UNKNOWN, encryptionStatus: EncryptionStatusEnum.ENCRYPTED, storageAvailable: '', assignedToEmployeeId: undefined as number | undefined, previousUserEmployeeId: undefined as number | undefined });
 
     const getCompanyId = useCallback((): number => {
         const storedUser = localStorage.getItem('auth_user');
@@ -74,7 +57,7 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
 
     const fetchCompanies = useCallback(async () => {
         try {
-            const response: any = await companyService.getAllCompanies();
+            const response = await companyService.getAllCompanies();
             if (response.status) {
                 // FIXED: API returns 'data' array, not 'companies'
                 setCompanies(response.data || []);
@@ -98,15 +81,15 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
                     serialNumber: asset.serialNumber || '',
                     configuration: asset.configuration || '',
                     companyId: asset.companyId?.toString() || '',
-                    assetStatusEnum: asset.assetStatusEnum || asset.status || AssetStatusEnum.AVAILABLE,
+                    assetStatusEnum: (asset.assetStatusEnum || asset.status || AssetStatusEnum.AVAILABLE) as AssetStatusEnum,
                     purchaseDate: asset.purchaseDate ? new Date(asset.purchaseDate).toISOString().split('T')[0] : '',
                     warrantyExpiry: asset.warrantyExpiry ? new Date(asset.warrantyExpiry).toISOString().split('T')[0] : '',
                     boxNo: asset.boxNo || '',
-                    complianceStatus: asset.complianceStatus || ComplianceStatusEnum.UNKNOWN,
-                    encryptionStatus: asset.encryptionStatus || EncryptionStatusEnum.UNKNOWN,
+                    complianceStatus: (asset.complianceStatus || ComplianceStatusEnum.UNKNOWN) as ComplianceStatusEnum,
+                    encryptionStatus: (asset.encryptionStatus || EncryptionStatusEnum.UNKNOWN) as EncryptionStatusEnum,
                     storageAvailable: asset.storageAvailable || '',
-                    assignedToEmployeeId: asset.assignedToEmployeeId,
-                    previousUserEmployeeId: asset.previousUserEmployeeId
+                    assignedToEmployeeId: asset.assignedToEmployeeId ? Number(asset.assignedToEmployeeId) : undefined,
+                    previousUserEmployeeId: asset.previousUserEmployeeId ? Number(asset.previousUserEmployeeId) : undefined
                 });
             } else {
                 setFormData({
@@ -168,8 +151,8 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
             };
 
             const response = asset
-                ? await assetService.updateAsset(payload as any)
-                : await assetService.createAsset(payload as any);
+                ? await assetService.updateAsset(payload as unknown as Parameters<typeof assetService.updateAsset>[0])
+                : await assetService.createAsset(payload as unknown as Parameters<typeof assetService.createAsset>[0]);
 
             if (response.status) {
                 success('Success', asset ? 'Asset updated successfully' : 'Asset created successfully');
@@ -178,7 +161,7 @@ export const AssetFormModal: React.FC<AssetFormModalProps> = ({ isOpen, onClose,
             } else {
                 toastError('Error', response.message || 'Operation failed');
             }
-        } catch (error: any) {
+        } catch (error) {
             toastError('Error', error.message || 'An error occurred');
         } finally {
             setIsLoading(false);

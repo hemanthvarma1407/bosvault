@@ -61,7 +61,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error.message);
         }
     };
@@ -115,7 +115,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
                     AlertMessages.getErrorMessage(response.message);
                 }
             }
-        } catch (err: any) {
+        } catch (err) {
             AlertMessages.getErrorMessage(err.message);
         }
     };
@@ -149,7 +149,7 @@ export const DeviceConfigsMasterView: React.FC<DeviceConfigsMasterViewProps> = (
                 } else {
                     AlertMessages.getErrorMessage(response.message);
                 }
-            } catch (err: any) {
+            } catch (err) {
                 AlertMessages.getErrorMessage(err.message);
             }
         }

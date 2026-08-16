@@ -55,15 +55,7 @@ export class AssetHistoryService {
 
                 // Add ASSIGNED event
                 const isCurrent = assign.returnDate === null && !assign.remarks?.includes('Returned:');
-                events.push({
-                    id: `assigned-${assign.id}`,
-                    date: assign.assignedDate,
-                    type: AssetTimelineEventType.ASSIGNED,
-                    title: isCurrent ? `Currently Assigned to ${empName}` : `Assigned to ${empName}`,
-                    description: isCurrent ? 'Active assignment' : 'Asset assigned',
-                    employeeName: empName,
-                    employeeId: Number(assign.employeeId)
-                });
+                events.push({ id: `assigned-${assign.id}`, date: assign.assignedDate, type: AssetTimelineEventType.ASSIGNED, title: isCurrent ? `Currently Assigned to ${empName}` : `Assigned to ${empName}`, description: isCurrent ? 'Active assignment' : 'Asset assigned', employeeName: empName, employeeId: Number(assign.employeeId) });
 
                 // If assignment is closed but NOT in returnRecords (e.g. transfer), add a generic END/RETURN event
                 // We check if a return record exists for this employee/date roughly
@@ -74,15 +66,7 @@ export class AssetHistoryService {
                     );
 
                     if (!hasReturnRecord) {
-                        events.push({
-                            id: `ended-${assign.id}`,
-                            date: assign.returnDate,
-                            type: AssetTimelineEventType.RETURNED, // Use RETURNED or a custom ENDED type
-                            title: `Assignment Ended (${empName})`,
-                            description: assign.returnRemarks || assign.remarks || 'Assignment ended (Transfer/Update)',
-                            employeeName: empName,
-                            employeeId: Number(assign.employeeId)
-                        });
+                        events.push({ id: `ended-${assign.id}`, date: assign.returnDate, type: AssetTimelineEventType.RETURNED, title: `Assignment Ended (${empName})`, description: assign.returnRemarks || assign.remarks || 'Assignment ended (Transfer/Update)', employeeName: empName, employeeId: Number(assign.employeeId) });
                     }
                 }
             }
@@ -90,16 +74,7 @@ export class AssetHistoryService {
             // 5. Build Return History Events (These contain more specific details like condition)
             for (const record of returnRecords) {
                 const empName = employeeMap.get(Number(record.employeeId)) || 'Unknown Employee';
-                events.push({
-                    id: `returned-${record.id}`,
-                    date: record.returnDate,
-                    type: AssetTimelineEventType.RETURNED,
-                    title: `Returned by ${empName}`,
-                    description: record.returnReason || 'No reason provided',
-                    employeeName: empName,
-                    employeeId: Number(record.employeeId),
-                    metadata: { condition: record.assetCondition, remarks: record.remarks }
-                });
+                events.push({ id: `returned-${record.id}`, date: record.returnDate, type: AssetTimelineEventType.RETURNED, title: `Returned by ${empName}`, description: record.returnReason || 'No reason provided', employeeName: empName, employeeId: Number(record.employeeId), metadata: { condition: record.assetCondition, remarks: record.remarks } });
             }
 
             // Sort by date descending

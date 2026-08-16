@@ -36,7 +36,7 @@ export function RouteGuard({
             }
 
             // Check if user has required role
-            const userRoles: string[] = (user as any).roles || (user?.role ? [user.role] : []);
+            const userRoles: string[] = user.roles || (user?.role ? [user.role] : []);
             const normalizedUserRoles = userRoles.map(r => r.toUpperCase());
             const normalizedRequiredRoles = requiredRoles.map(r => r.toUpperCase());
 

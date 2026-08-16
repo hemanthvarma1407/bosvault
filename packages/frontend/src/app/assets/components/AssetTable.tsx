@@ -3,14 +3,16 @@
 import React from 'react';
 import { Laptop, Monitor, Smartphone, Tablet, HardDrive, User, CheckCircle2, UserPlus, Pencil, Trash2, History, QrCode, Eye } from 'lucide-react';
 
+import { Asset } from '../types';
+
 interface AssetTableProps {
-    assets: any[];
-    onEdit: (asset: any) => void;
-    onDelete: (asset: any) => void;
-    onQRCode: (asset: any) => void;
-    onHistory: (asset: any) => void;
-    onAssign: (asset: any) => void;
-    onView: (asset: any) => void;
+    assets: Asset[];
+    onEdit: (asset: Asset) => void;
+    onDelete: (asset: Asset) => void;
+    onQRCode: (asset: Asset) => void;
+    onHistory: (asset: Asset) => void;
+    onAssign: (asset: Asset) => void;
+    onView: (asset: Asset) => void;
     canAssign?: boolean;
 }
 
@@ -25,7 +27,7 @@ const getAssetIcon = (name?: string) => {
 
 const getStatusConfig = (status?: string) => {
     const statusUpper = (status || 'AVAILABLE').toUpperCase();
-    const configs: Record<string, { text: string; color: string; bg: string; border: string; icon: any }> = {
+    const configs: Record<string, { text: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
         'AVAILABLE': {
             text: 'Available',
             color: 'text-emerald-700 dark:text-emerald-400',

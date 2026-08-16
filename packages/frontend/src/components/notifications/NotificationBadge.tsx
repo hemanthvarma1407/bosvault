@@ -31,12 +31,12 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({ className 
     }, []);
 
     // Subscribe to notification events
-    useWebSocketEvent(WebSocketEvent.NOTIFICATION, (notification: any) => {
+    useWebSocketEvent(WebSocketEvent.NOTIFICATION, (notification: NotificationPayload) => {
         console.log('[NotificationBadge] Received notification:', notification);
         const payload: NotificationPayload = {
             ...notification,
             timestamp: new Date(notification.timestamp || Date.now()),
-            read: notification.read || false
+            read: Boolean(notification.read)
         };
         setNotifications(prev => [payload, ...prev].slice(0, 50)); // Keep more in list
     });

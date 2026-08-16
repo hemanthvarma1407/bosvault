@@ -63,7 +63,7 @@ const RegisterPage: React.FC = () => {
             } else {
                 toastError('Registration Failed', response.message || 'Unable to create account.');
             }
-        } catch (err: any) {
+        } catch (err) {
             toastError('Error', err.message || 'An unexpected error occurred during registration.');
         } finally {
             setIsLoading(false);

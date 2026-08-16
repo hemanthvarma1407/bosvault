@@ -7,13 +7,12 @@ import { Modal } from '../../../components/ui/Modal';
 import { QRCodeSVG } from 'qrcode.react';
 
 
+import { Asset } from '../types';
+
 interface AssetQRModalProps {
     isOpen: boolean;
     onClose: () => void;
-    asset: any;
-}
-
-interface AssetQRModalProps {
+    asset: Asset | null;
     children?: React.ReactNode;
 }
 

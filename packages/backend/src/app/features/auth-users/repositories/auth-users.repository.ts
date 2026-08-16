@@ -52,4 +52,42 @@ export class AuthUsersRepository extends Repository<AuthUsersEntity> {
             await queryRunner.release();
         }
     }
+
+    async findEmployeeByEmailAndCompany(email: string, companyId?: number): Promise<{ id: number } | null> {
+        const query = this.dataSource.createQueryBuilder()
+            .select('e.id', 'id')
+            .from('employees', 'e')
+            .where('e.email = :email', { email })
+            .andWhere('e.deleted_at IS NULL');
+
+        if (companyId) {
+            query.andWhere('e.company_id = :companyId', { companyId });
+        }
+
+        const result = await query.limit(1).getRawOne();
+        return result || null;
+    }
+
+    async findEmployeeByEmail(email: string): Promise<{ id: number } | null> {
+        const result = await this.dataSource.createQueryBuilder()
+            .select('e.id', 'id')
+            .from('employees', 'e')
+            .where('e.email = :email', { email })
+            .andWhere('e.deleted_at IS NULL')
+            .limit(1)
+            .getRawOne();
+        return result || null;
+    }
+
+    async getEmployeeDepartmentName(employeeId: number): Promise<string | null> {
+        const result = await this.dataSource.createQueryBuilder()
+            .select('d.name', 'name')
+            .from('employees', 'e')
+            .innerJoin('departments', 'd', 'e.department_id = d.id')
+            .where('e.id = :employeeId', { employeeId })
+            .andWhere('e.deleted_at IS NULL')
+            .limit(1)
+            .getRawOne();
+        return result?.name || null;
+    }
 }

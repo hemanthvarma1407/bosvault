@@ -18,10 +18,7 @@ import { EmployeesRepository } from '../employees/repositories/employees.reposit
 import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([AssetInfoEntity, AssetReturnHistoryEntity, AssetNextAssignmentEntity, AssetAssignEntity, EmployeesEntity]),
-        NotificationsModule
-    ],
+    imports: [TypeOrmModule.forFeature([AssetInfoEntity, AssetReturnHistoryEntity, AssetNextAssignmentEntity, AssetAssignEntity, EmployeesEntity]), NotificationsModule],
     controllers: [AssetInfoController],
     providers: [AssetInfoService, AssetTabsService, AssetBulkService, AssetHistoryService, AssetInfoRepository, AssetReturnHistoryRepository, AssetNextAssignmentRepository, AssetAssignRepository, EmployeesRepository],
     exports: [AssetInfoService, AssetTabsService, AssetBulkService, AssetHistoryService, AssetInfoRepository]

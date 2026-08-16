@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
             } else {
                 AlertMessages.getErrorMessage('Login Failed: Unable to retrieve user details.');
             }
-        } catch (error: any) {
+        } catch (error) {
             AlertMessages.getErrorMessage(error?.message || 'Invalid credentials');
         }
     }, [login, formData, router]);
