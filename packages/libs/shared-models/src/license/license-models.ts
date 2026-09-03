@@ -7,6 +7,7 @@ export class CreateLicenseModel {
     companyId: number;
     applicationId: number;
     assignedEmployeeId?: number;
+    assignedEmployeeIds?: number[];
     licenseKey?: string;
     purchaseDate?: Date;
     assignedDate?: Date;
@@ -16,6 +17,8 @@ export class CreateLicenseModel {
     costPerSeat?: number;
     billingCycle?: string;
     role?: string;
+    subscriptionPlan?: string;
+    isPaid?: boolean;
 
     constructor(
         companyId: number,
@@ -29,11 +32,15 @@ export class CreateLicenseModel {
         remarks?: string,
         costPerSeat?: number,
         billingCycle?: string,
-        role?: string
+        role?: string,
+        subscriptionPlan?: string,
+        isPaid?: boolean,
+        assignedEmployeeIds?: number[]
     ) {
         this.companyId = companyId;
         this.applicationId = applicationId;
         this.assignedEmployeeId = assignedEmployeeId;
+        this.assignedEmployeeIds = assignedEmployeeIds;
         this.licenseKey = licenseKey;
         this.purchaseDate = purchaseDate;
         this.assignedDate = assignedDate;
@@ -43,6 +50,8 @@ export class CreateLicenseModel {
         this.costPerSeat = costPerSeat;
         this.billingCycle = billingCycle;
         this.role = role;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
     }
 }
 
@@ -63,6 +72,8 @@ export class UpdateLicenseModel {
     costPerSeat?: number;
     billingCycle?: string;
     role?: string;
+    subscriptionPlan?: string;
+    isPaid?: boolean;
 
     constructor(
         id: number,
@@ -77,7 +88,9 @@ export class UpdateLicenseModel {
         remarks?: string,
         costPerSeat?: number,
         billingCycle?: string,
-        role?: string
+        role?: string,
+        subscriptionPlan?: string,
+        isPaid?: boolean
     ) {
         this.id = id;
         this.companyId = companyId;
@@ -92,6 +105,8 @@ export class UpdateLicenseModel {
         this.costPerSeat = costPerSeat;
         this.billingCycle = billingCycle;
         this.role = role;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
     }
 }
 
@@ -129,6 +144,8 @@ export class LicenseResponseModel {
     billingCycle?: string | null;
     remarks?: string | null;
     role?: string | null;
+    subscriptionPlan?: string | null;
+    isPaid?: boolean | null;
     createdAt: Date;
     updatedAt: Date;
     company?: any;
@@ -154,7 +171,9 @@ export class LicenseResponseModel {
         role?: string | null,
         company?: any,
         application?: any,
-        assignedEmployee?: any
+        assignedEmployee?: any,
+        subscriptionPlan?: string | null,
+        isPaid?: boolean | null
     ) {
         this.id = id;
         this.companyId = companyId;
@@ -175,6 +194,8 @@ export class LicenseResponseModel {
         this.company = company;
         this.application = application;
         this.assignedEmployee = assignedEmployee;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
     }
 }
 

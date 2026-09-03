@@ -42,13 +42,6 @@ export class UpdateAssetAssignModel extends CreateAssetAssignModel {
     }
 }
 
-export class DeleteAssetAssignModel {
-    id: number;
-    constructor(id: number) {
-        this.id = id;
-    }
-}
-
 export class GetAssetAssignModel {
     id: number;
     constructor(id: number) {

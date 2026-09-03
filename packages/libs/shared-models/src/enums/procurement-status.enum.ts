@@ -7,9 +7,3 @@ export enum POStatusEnum {
     RECEIVED = 'RECEIVED',
     CANCELLED = 'CANCELLED'
 }
-
-export enum VendorStatusEnum {
-    ACTIVE = 'ACTIVE',
-    INACTIVE = 'INACTIVE',
-    BLACKLISTED = 'BLACKLISTED'
-}

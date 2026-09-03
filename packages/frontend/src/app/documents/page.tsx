@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { documentsService } from '@/lib/api/services';
 import { DocumentModel, UploadDocumentModel } from '@bosvault/shared-models';
 import { Button } from '@/components/ui/Button';
-import { FileText, Upload, Download, Trash2, Search, FileSpreadsheet, Image as ImageIcon, FileCode, FileArchive, Plus, File as FileIcon, Lock, Eye } from 'lucide-react';
+import { FileText, Upload, Download, Trash2, FileSpreadsheet, Image as ImageIcon, FileCode, FileArchive, Plus, File as FileIcon, Lock, Eye } from 'lucide-react';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 import { UserRoleEnum } from '@bosvault/shared-models';
 import { Modal } from '@/components/ui/Modal';
@@ -12,6 +12,8 @@ import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal
 import { useAuth } from '@/contexts/AuthContext';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { GetAllDocumentsRequestModel } from '@bosvault/shared-models';
+
+import { Spinner } from '@/components/ui/Spinner';
 
 const DocumentsPage: React.FC = () => {
     const { user } = useAuth();
@@ -22,13 +24,20 @@ const DocumentsPage: React.FC = () => {
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [tags, setTags] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState<string>('All');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [documentToDelete, setDocumentToDelete] = useState<DocumentModel | null>(null);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [secureDocId, setSecureDocId] = useState<number | null>(null);
     const [securePassword, setSecurePassword] = useState('');
+
+    // Document Preview Viewer state
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+    const [viewingDoc, setViewingDoc] = useState<DocumentModel | null>(null);
+    const [viewingBlobUrl, setViewingBlobUrl] = useState<string | null>(null);
+    const [viewingType, setViewingType] = useState<'pdf' | 'image' | 'text' | 'unsupported'>('unsupported');
+    const [viewingTextContent, setViewingTextContent] = useState<string | null>(null);
+    const [isViewingLoading, setIsViewingLoading] = useState(false);
 
     const fetchDocuments = useCallback(async () => {
         if (!user) return;
@@ -138,68 +147,82 @@ const DocumentsPage: React.FC = () => {
 
     const handleDownload = async (id: number) => {
         try {
-            const response = await documentsService.getDocument({ id });
-            if (!response.status) throw new Error(response.message);
-
-            const doc = response.document as DocumentModel;
-            if (doc.isSecure) {
+            const doc = documents.find(d => d.id === id);
+            if (doc?.isSecure) {
                 setSecureDocId(id);
                 setIsPasswordModalOpen(true);
                 return;
             }
 
-            // Normal download flow
-            const dlResponse = await documentsService.downloadDocument({ id });
-            if (dlResponse.status && dlResponse.downloadPath) {
-                const url = documentsService.getDownloadUrl(dlResponse.downloadPath, dlResponse.originalName);
-                const fetchRes = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                const blob = await fetchRes.blob();
-                const dlUrl = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = dlUrl;
-                link.setAttribute('download', dlResponse.originalName);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                window.URL.revokeObjectURL(dlUrl);
-            }
+            const blob = await documentsService.downloadFile(id);
+            const dlUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = dlUrl;
+            link.setAttribute('download', doc?.originalName || `document-${id}`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(dlUrl);
         } catch (error: any) {
-            AlertMessages.getErrorMessage(error.message);
+            AlertMessages.getErrorMessage(error.message || 'Failed to download document');
         }
     };
 
     const handleView = async (id: number) => {
         try {
-            const response = await documentsService.getDocument({ id });
-            if (!response.status) throw new Error(response.message);
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
 
-            const doc = response.document as DocumentModel;
             if (doc.isSecure) {
-                // Secure documents require password even for viewing
                 setSecureDocId(id);
                 setIsPasswordModalOpen(true);
                 return;
             }
 
-            const dlResponse = await documentsService.downloadDocument({ id });
-            if (dlResponse.status && dlResponse.downloadPath) {
-                const url = documentsService.getDownloadUrl(dlResponse.downloadPath, dlResponse.originalName);
-                const fetchRes = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                const blob = await fetchRes.blob();
-                const viewUrl = window.URL.createObjectURL(blob);
-                window.open(viewUrl, '_blank');
+            setViewingDoc(doc);
+            setIsViewerOpen(true);
+            setIsViewingLoading(true);
+            setViewingBlobUrl(null);
+            setViewingTextContent(null);
+
+            const blob = await documentsService.downloadFile(id);
+            const mime = (doc.mimeType || '').toLowerCase();
+            const fileName = (doc.originalName || '').toLowerCase();
+
+            if (mime.includes('image') || fileName.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i)) {
+                const url = window.URL.createObjectURL(blob);
+                setViewingBlobUrl(url);
+                setViewingType('image');
+            } else if (mime.includes('pdf') || fileName.endsWith('.pdf')) {
+                const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(pdfBlob);
+                setViewingBlobUrl(url);
+                setViewingType('pdf');
+            } else if (mime.includes('text') || mime.includes('json') || mime.includes('csv') || fileName.match(/\.(txt|json|csv|md|log|xml|js|ts|html|css)$/i)) {
+                const text = await blob.text();
+                setViewingTextContent(text);
+                setViewingType('text');
+            } else {
+                const url = window.URL.createObjectURL(blob);
+                setViewingBlobUrl(url);
+                setViewingType('unsupported');
             }
         } catch (error: any) {
-            AlertMessages.getErrorMessage(error.message);
+            AlertMessages.getErrorMessage(error.message || 'Failed to load document preview');
+            setIsViewerOpen(false);
+        } finally {
+            setIsViewingLoading(false);
         }
+    };
+
+    const handleCloseViewer = () => {
+        if (viewingBlobUrl) {
+            window.URL.revokeObjectURL(viewingBlobUrl);
+        }
+        setIsViewerOpen(false);
+        setViewingDoc(null);
+        setViewingBlobUrl(null);
+        setViewingTextContent(null);
     };
 
     const handleSecureDownloadOrView = async () => {
@@ -207,32 +230,23 @@ const DocumentsPage: React.FC = () => {
         setIsLoading(true);
         try {
             const doc = documents.find(d => d.id === secureDocId);
-            const dlResponse = await documentsService.downloadDocument({ id: secureDocId, password: securePassword });
-            if (dlResponse.status && dlResponse.downloadPath) {
-                const url = documentsService.getDownloadUrl(dlResponse.downloadPath, dlResponse.originalName);
-                const fetchRes = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-                    }
-                });
-                const blob = await fetchRes.blob();
-                const dlUrl = window.URL.createObjectURL(blob);
+            const blob = await documentsService.downloadSecureDocument({ id: secureDocId, password: securePassword });
+            const dlUrl = window.URL.createObjectURL(blob);
 
-                // For secure, we just allow download for now as it's "Unlock & Download" in UI
-                const link = document.createElement('a');
-                link.href = dlUrl;
-                link.setAttribute('download', dlResponse.originalName);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                window.URL.revokeObjectURL(dlUrl);
+            const link = document.createElement('a');
+            link.href = dlUrl;
+            link.setAttribute('download', doc?.originalName || `secure-document-${secureDocId}`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(dlUrl);
 
-                setIsPasswordModalOpen(false);
-                setSecurePassword('');
-                setSecureDocId(null);
-            }
+            setIsPasswordModalOpen(false);
+            setSecurePassword('');
+            setSecureDocId(null);
+            AlertMessages.getSuccessMessage('Secure document unlocked and downloaded');
         } catch (error: any) {
-            AlertMessages.getErrorMessage(error.message || 'Invalid password or download failed.');
+            AlertMessages.getErrorMessage(error.message || 'Invalid password or decryption failed.');
         } finally {
             setIsLoading(false);
         }
@@ -240,11 +254,9 @@ const DocumentsPage: React.FC = () => {
 
     const filteredDocuments = useMemo(() => {
         return documents.filter(doc => {
-            const matchesSearch = doc.originalName.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesCategory = activeCategory === 'All' || doc.category === activeCategory;
-            return matchesSearch && matchesCategory;
+            return activeCategory === 'All' || doc.category === activeCategory;
         });
-    }, [documents, searchQuery, activeCategory]);
+    }, [documents, activeCategory]);
 
     const categories = useMemo(() => {
         const cats = Array.from(new Set(documents.map(d => d.category).filter(Boolean)));
@@ -276,17 +288,6 @@ const DocumentsPage: React.FC = () => {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <div className="relative group/search">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within/search:text-slate-900 dark:text-white transition-colors" />
-                            <input
-                                type="text"
-                                placeholder="Locate document..."
-                                className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-4 focus:ring-indigo-500/5 focus:border-slate-700 transition-all text-sm w-full sm:w-[240px] font-medium shadow-sm"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-
                         <Button
                             variant="success"
                             onClick={() => setIsUploadModalOpen(true)}
@@ -574,6 +575,84 @@ const DocumentsPage: React.FC = () => {
                                 Unlock & Download
                             </Button>
                         </div>
+                    </div>
+                </Modal>
+
+                {/* One-Click In-App Document Viewer Modal */}
+                <Modal
+                    isOpen={isViewerOpen}
+                    onClose={handleCloseViewer}
+                    title={viewingDoc?.originalName || "Document Preview"}
+                    size="5xl"
+                    footer={
+                        <div className="flex items-center justify-between w-full">
+                            <div className="text-xs text-slate-400 font-medium">
+                                {viewingDoc && `${formatFileSize(viewingDoc.fileSize)} • ${viewingDoc.mimeType || 'Document'}`}
+                            </div>
+                            <div className="flex gap-2">
+                                {viewingDoc && (
+                                    <Button
+                                        variant="primary"
+                                        size="sm"
+                                        leftIcon={<Download className="h-4 w-4" />}
+                                        onClick={() => handleDownload(viewingDoc.id)}
+                                    >
+                                        Download
+                                    </Button>
+                                )}
+                                <Button variant="outline" size="sm" onClick={handleCloseViewer}>
+                                    Close
+                                </Button>
+                            </div>
+                        </div>
+                    }
+                >
+                    <div className="min-h-[450px] max-h-[75vh] flex items-center justify-center p-2 bg-slate-900/5 dark:bg-slate-950/60 rounded-xl overflow-hidden">
+                        {isViewingLoading ? (
+                            <div className="flex flex-col items-center gap-3 py-16">
+                                <Spinner size="lg" />
+                                <p className="text-xs font-semibold text-slate-500 animate-pulse">Loading document preview...</p>
+                            </div>
+                        ) : viewingType === 'pdf' && viewingBlobUrl ? (
+                            <iframe
+                                src={viewingBlobUrl}
+                                title={viewingDoc?.originalName || 'PDF Viewer'}
+                                className="w-full h-[650px] rounded-lg border border-slate-200 dark:border-slate-800 shadow-inner"
+                            />
+                        ) : viewingType === 'image' && viewingBlobUrl ? (
+                            <div className="max-h-[650px] overflow-auto flex items-center justify-center p-4">
+                                <img
+                                    src={viewingBlobUrl}
+                                    alt={viewingDoc?.originalName || 'Image'}
+                                    className="max-h-[600px] max-w-full object-contain rounded-lg shadow-md"
+                                />
+                            </div>
+                        ) : viewingType === 'text' && viewingTextContent !== null ? (
+                            <div className="w-full h-[550px] overflow-auto p-4 bg-slate-950 text-slate-100 font-mono text-xs rounded-lg border border-slate-800 custom-scrollbar whitespace-pre-wrap">
+                                {viewingTextContent}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16 px-4">
+                                <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4">
+                                    <FileIcon className="h-8 w-8" />
+                                </div>
+                                <h4 className="text-base font-bold text-slate-800 dark:text-slate-200 mb-1">
+                                    {viewingDoc?.originalName}
+                                </h4>
+                                <p className="text-xs text-slate-500 max-w-md mx-auto mb-6">
+                                    This file format ({viewingDoc?.mimeType || 'binary'}) cannot be directly rendered inline. Please download the file to view its full contents.
+                                </p>
+                                {viewingDoc && (
+                                    <Button
+                                        variant="primary"
+                                        leftIcon={<Download className="h-4 w-4" />}
+                                        onClick={() => handleDownload(viewingDoc.id)}
+                                    >
+                                        Download File
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </Modal>
             </div>

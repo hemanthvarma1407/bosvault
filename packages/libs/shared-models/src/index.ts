@@ -15,4 +15,3 @@ export * from './common';
 export * from './procurement/procurement.models';
 export * from './websocket/websocket-events.model';
 export * from './knowledge-base';
-export * from './network';

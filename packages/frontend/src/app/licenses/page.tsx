@@ -213,14 +213,13 @@ export default function LicensesPage() {
             <div className="p-4 lg:p-8 min-h-screen bg-slate-50 dark:bg-slate-950/40 space-y-8 pb-32">
                 {/* Header Section */}
                 <PageHeader
-                    title="Software Licenses"
-                    description="Enterprise software asset management"
+                    title="Tools & Subscriptions"
+                    description="Enterprise tools, software subscriptions, seat assignments, and cost management"
                     icon={<Shield />}
                     gradient="from-slate-800 to-slate-900"
                     actions={[
-
                         {
-                            label: 'Add License',
+                            label: 'Assign Tool',
                             onClick: () => { setEditLicense(null); setIsModalOpen(true); },
                             icon: <Plus className="h-3.5 w-3.5" />,
                             variant: 'primary'
@@ -232,7 +231,7 @@ export default function LicensesPage() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-slate-900 dark:text-white transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Search licences..."
+                                placeholder="Search tools or assigned users..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-11 pr-4 h-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-slate-700 transition-all font-medium text-xs outline-none shadow-sm"
@@ -241,24 +240,7 @@ export default function LicensesPage() {
                     </div>
                 </PageHeader>
 
-
-
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    {/* Summary Metrics */}
-                    {/* <div className="lg:col-span-1 space-y-4">
-                        <div className="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/5 shadow-sm relative overflow-hidden group">
-                            <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700" />
-                            <div className="relative z-10">
-                                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Assigned Licenses</div>
-                                <div className="text-3xl font-black text-emerald-500 flex items-baseline gap-2">
-                                    {assignedCount}
-                                    <span className="text-xs text-slate-400 font-bold">Assigned</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div> */}
-
                     {/* Registry Content */}
                     <div className="lg:col-span-4 space-y-3">
                         <>
@@ -267,15 +249,18 @@ export default function LicensesPage() {
                                     <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-950/20 rounded-3xl flex items-center justify-center mb-8 shadow-inner animate-pulse">
                                         <Key className="h-8 w-8 text-slate-300" />
                                     </div>
-                                    <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">No Licences Found</h3>
+                                    <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight">No Tool Assignments Found</h3>
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 max-w-xs font-medium leading-relaxed uppercase tracking-[0.1em]">
-                                        Add a new software licence to get started.
+                                        Assign a software subscription or tool to get started.
                                     </p>
                                 </div>
                             ) : (
                                 Object.entries(groupedData).map(([appName, appLicenses]) => {
                                     const isExpanded = !!expandedApps[appName];
                                     const firstLicense = appLicenses[0];
+                                    const firstAppObj = firstLicense.application as any;
+                                    const plan = (firstLicense as any).subscriptionPlan || firstAppObj?.subscriptionPlan || 'Standard';
+                                    const isPaid = (firstLicense as any).isPaid !== false && (firstLicense as any).isPaid !== 'false';
 
                                     return (
                                         <div key={appName} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
@@ -292,15 +277,23 @@ export default function LicensesPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-left">
-                                                        <h3 className="font-black text-xs uppercase tracking-tight text-slate-900 dark:text-white leading-none mb-1">{appName}</h3>
-                                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Software Application</p>
+                                                        <div className="flex items-center gap-2">
+                                                            <h3 className="font-black text-xs uppercase tracking-tight text-slate-900 dark:text-white leading-none">{appName}</h3>
+                                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                                                {plan}
+                                                            </span>
+                                                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${isPaid ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400' : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400'}`}>
+                                                                {isPaid ? 'Paid' : 'Free'}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Software Tool</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-4">
                                                      <div className="hidden sm:flex items-center gap-4 mr-2">
                                                          <div className="flex flex-col items-end">
                                                              <p className="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-tight">
-                                                                 Consumed Cost
+                                                                 Assigned Cost
                                                              </p>
                                                              <p className="text-xs font-black text-slate-800 dark:text-slate-200 leading-none">
                                                                  ${appLicenses.filter(l => l.assignedEmployeeId).reduce((sum, l) => sum + ((Number(l.costPerSeat) || 0) * (Number(l.totalSeats || l.seats) || 1)), 0).toLocaleString()}
@@ -330,7 +323,7 @@ export default function LicensesPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-2 py-0.5 rounded-lg border border-indigo-100 dark:border-indigo-900/10">
-                                                        {appLicenses.length}
+                                                        {appLicenses.length} user(s)
                                                     </div>
                                                     {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
                                                 </div>
@@ -343,19 +336,77 @@ export default function LicensesPage() {
                                                             <thead>
                                                                 <tr className="bg-slate-50/50 dark:bg-white/[0.01]">
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Company</th>
-                                                                    <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Assigned Employee</th>
+                                                                    <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Assigned User</th>
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Role</th>
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Allocation Date</th>
-                                                                    <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Price</th>
+                                                                    <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Seat Price</th>
                                                                     <th className="p-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border border-slate-200 dark:border-slate-700/60">Actions</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {appLicenses.map((license: License, idx: number) => {
-
                                                                     return (
                                                                         <tr key={license.id} className={`group/row hover:bg-slate-50/50 dark:hover:bg-slate-900/[0.02] transition-colors ${idx % 2 === 0 ? '' : 'bg-slate-50/[0.01]'}`}>
-
+                                                                            <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
+                                                                                <div className="flex items-center justify-center gap-2">
+                                                                                    <Building2 className="w-3.5 h-3.5 text-slate-900 dark:text-white/50" />
+                                                                                    <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-tight">
+                                                                                        {license.company?.companyName || 'N/A'}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
+                                                                                {license.assignedEmployeeId ? (
+                                                                                    <div className="flex items-center justify-center gap-3">
+                                                                                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px] shadow-lg shadow-indigo-600/20">
+                                                                                            {license.assignedEmployee
+                                                                                                ? `${license.assignedEmployee.firstName[0]}${license.assignedEmployee.lastName[0]}`
+                                                                                                : 'U'}
+                                                                                        </div>
+                                                                                        <div className="text-left">
+                                                                                            <p className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                                                                                                {license.assignedEmployee
+                                                                                                    ? `${license.assignedEmployee.firstName} ${license.assignedEmployee.lastName}`
+                                                                                                    : `Employee #${license.assignedEmployeeId}`}
+                                                                                            </p>
+                                                                                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Active User</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ) : (
+                                                                                    <div className="flex items-center justify-center gap-3 opacity-40">
+                                                                                        <div className="w-8 h-8 rounded-lg border border-dashed border-slate-300 dark:border-white/10 flex items-center justify-center capitalize">
+                                                                                            <Plus className="w-3 h-3 text-slate-400" />
+                                                                                        </div>
+                                                                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Unassigned</span>
+                                                                                    </div>
+                                                                                )}
+                                                                            </td>
+                                                                            <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
+                                                                                <div className="flex items-center justify-center gap-2">
+                                                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${license.role === 'Owner' ? 'bg-amber-50 text-amber-600 border-amber-200' : (license.role === 'Member' ? 'bg-slate-100 dark:bg-slate-800/60 text-slate-900 dark:text-white border-indigo-200' : 'bg-slate-50 text-slate-600 border-slate-200')}`}>
+                                                                                        {license.role || 'Member'}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
+                                                                                <div className="flex items-center justify-center gap-2">
+                                                                                    <Clock className="w-3.5 h-3.5 text-slate-900 dark:text-white/50" />
+                                                                                    <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-tight">
+                                                                                        {license.assignedDate ? new Date(license.assignedDate).toLocaleDateString() : 'N/A'}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
+                                                                                <div className="flex flex-col items-center justify-center">
+                                                                                    {license.costPerSeat && license.costPerSeat > 0 ? (
+                                                                                        <span className="text-[10px] font-black text-slate-900 dark:text-white dark:text-slate-300 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 px-2 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/10 w-fit">
+                                                                                            ${Number(license.costPerSeat).toLocaleString()} / {license.billingCycle?.toLowerCase() || 'monthly'}
+                                                                                        </span>
+                                                                                    ) : (
+                                                                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Free / N/A</span>
+                                                                                    )}
+                                                                                </div>
+                                                                            </td>
                                                                             <td className="p-4 text-center border border-slate-200 dark:border-slate-700/60">
                                                                                 <div className="flex items-center justify-center gap-2">
                                                                                     <Building2 className="w-3.5 h-3.5 text-slate-900 dark:text-white/50" />

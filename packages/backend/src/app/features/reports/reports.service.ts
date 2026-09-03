@@ -12,6 +12,9 @@ import { DepartmentsMasterEntity } from '../masters/department/entities/departme
 import { CompanyInfoEntity } from '../masters/company-info/entities/company-info.entity';
 import { CompanyLicenseEntity } from '../licenses/entities/company-license.entity';
 import { LicensesMasterEntity } from '../masters/license/entities/license.entity';
+import { SlackUsersMasterEntity } from '../masters/slack-user/entities/slack-user.entity';
+import { PurchaseOrderEntity } from '../procurement/entities/purchase-order.entity';
+import { VendorsMasterEntity } from '../masters/vendor/entities/vendor.entity';
 
 @Injectable()
 export class ReportsService {
@@ -567,6 +570,143 @@ export class ReportsService {
         }));
     }
 
+    async getConsolidatedToolsCostReport(format = 'summary', companyId?: number) {
+        // 1. Software Tools / Subscriptions
+        const toolAssignments = await this.dataSource.getRepository(CompanyLicenseEntity)
+            .createQueryBuilder('l')
+            .leftJoin(LicensesMasterEntity, 'app', 'l.applicationId = app.id')
+            .leftJoin(CompanyInfoEntity, 'c', 'l.companyId = c.id')
+            .leftJoin(EmployeesEntity, 'e', 'l.assignedEmployeeId = e.id')
+            .leftJoin(DepartmentsMasterEntity, 'dept', 'e.departmentId = dept.id')
+            .select([
+                'app.name AS "toolName"',
+                'app.subscription_plan AS "plan"',
+                'l.cost_per_seat AS "costPerSeat"',
+                'l.billing_cycle AS "billingCycle"',
+                'c.company_name AS "companyName"',
+                'dept.name AS "departmentName"',
+                "CONCAT(e.first_name, ' ', e.last_name) AS \"assignedEmployee\"",
+                'e.email AS "employeeEmail"'
+            ])
+            .where(companyId ? 'l.companyId = :companyId' : '1=1', { companyId })
+            .getRawMany();
+
+        // 2. All Software Catalog Tools (including unassigned pool capacity)
+        const toolMasters = await this.dataSource.getRepository(LicensesMasterEntity).find();
+
+        // Format detailed list
+        const results = toolAssignments.map((row: any) => {
+            const cost = Number(row.costPerSeat || 0);
+            const cycle = (row.billingCycle || 'MONTHLY').toUpperCase();
+            const monthlyCost = cycle === 'YEARLY' ? cost / 12 : cost;
+            const annualCost = cycle === 'YEARLY' ? cost : cost * 12;
+
+            return {
+                'Tool / Software': row.toolName || 'Unknown Tool',
+                'Subscription Plan': row.plan || 'Standard',
+                'Company': row.companyName || 'N/A',
+                'Department': row.departmentName || 'General',
+                'Assigned User': row.assignedEmployee || 'Unassigned',
+                'User Email': row.employeeEmail || 'N/A',
+                'Billing Cycle': cycle,
+                'Monthly Cost ($)': `$${monthlyCost.toFixed(2)}`,
+                'Annual Cost ($)': `$${annualCost.toFixed(2)}`
+            };
+        });
+
+        return results;
+    }
+
+    async getProcurementSpendReport(format = 'summary', companyId?: number) {
+        const query = this.dataSource.getRepository(PurchaseOrderEntity)
+            .createQueryBuilder('po')
+            .leftJoin(VendorsMasterEntity, 'v', 'po.vendorId = v.id')
+            .leftJoin(CompanyInfoEntity, 'c', 'po.companyId = c.id')
+            .leftJoin(EmployeesEntity, 'req', 'po.requesterId = req.id')
+            .select([
+                'po.po_number AS "poNumber"',
+                'po.order_date AS "orderDate"',
+                'po.status AS "status"',
+                'po.total_amount AS "totalAmount"',
+                'po.currency AS "currency"',
+                'COALESCE(v.name, po.vendor_name) AS "vendorName"',
+                'c.company_name AS "companyName"',
+                "CONCAT(req.first_name, ' ', req.last_name) AS \"requester\""
+            ])
+            .orderBy('po.order_date', 'DESC');
+
+        if (companyId) {
+            query.where('po.companyId = :companyId', { companyId });
+        }
+
+        const rawResults = await query.getRawMany();
+
+        return rawResults.map((row: any) => ({
+            'PO Number': row.poNumber,
+            'Vendor': row.vendorName || 'N/A',
+            'Company': row.companyName || 'N/A',
+            'Requester': row.requester || 'N/A',
+            'Order Date': row.orderDate ? new Date(row.orderDate).toLocaleDateString() : 'N/A',
+            'Status': row.status,
+            'Total Amount': `$${Number(row.totalAmount || 0).toLocaleString()}`,
+            'Currency': row.currency || 'USD'
+        }));
+    }
+
+    async getManagementExecutiveSummaryReport(format = 'summary', companyId?: number) {
+        // Total Hardware Assets Valuation
+        const assets = await this.dataSource.getRepository(AssetInfoEntity).find();
+        const totalHardwareAssets = assets.length;
+        const assignedAssets = assets.filter(a => a.assignedToEmployeeId).length;
+
+        // Software Subscriptions / Tools Spend
+        const licenses = await this.dataSource.getRepository(CompanyLicenseEntity).find();
+        const totalToolMonthlySpend = licenses.reduce((sum, l) => {
+            const cost = Number(l.costPerSeat || 0);
+            return sum + ((l.billingCycle || '').toUpperCase() === 'YEARLY' ? cost / 12 : cost);
+        }, 0);
+
+        // Employee Headcount & Monthly Billing
+        const employees = await this.dataSource.getRepository(EmployeesEntity).find();
+        const activeEmployees = employees.filter(e => (e.empStatus || '').toLowerCase() === 'active');
+        const totalEmployeeMonthlyBilling = activeEmployees.reduce((sum, e) => sum + Number(e.billingAmount || 0), 0);
+
+        // Slack Users
+        const slackUsers = await this.dataSource.getRepository(SlackUsersMasterEntity).find();
+        const billableSlackUsers = slackUsers.filter(u => u.isBillable !== false).length;
+
+        return [
+            {
+                'Metric Category': 'IT Hardware Assets',
+                'Total Count': totalHardwareAssets,
+                'Active / Allocated': assignedAssets,
+                'Monthly Spend ($)': 'Capital Asset',
+                'Annual Projection ($)': 'N/A'
+            },
+            {
+                'Metric Category': 'Software Tools & Subscriptions',
+                'Total Count': licenses.length,
+                'Active / Allocated': licenses.filter(l => l.assignedEmployeeId).length,
+                'Monthly Spend ($)': `$${totalToolMonthlySpend.toFixed(2)}`,
+                'Annual Projection ($)': `$${(totalToolMonthlySpend * 12).toFixed(2)}`
+            },
+            {
+                'Metric Category': 'User Directory (Google Workspace)',
+                'Total Count': employees.length,
+                'Active / Allocated': activeEmployees.length,
+                'Monthly Spend ($)': `$${totalEmployeeMonthlyBilling.toFixed(2)}`,
+                'Annual Projection ($)': `$${(totalEmployeeMonthlyBilling * 12).toFixed(2)}`
+            },
+            {
+                'Metric Category': 'Slack Workspace Seats',
+                'Total Count': slackUsers.length,
+                'Active / Allocated': billableSlackUsers,
+                'Monthly Spend ($)': `$${(billableSlackUsers * 8.75).toFixed(2)}`,
+                'Annual Projection ($)': `$${(billableSlackUsers * 8.75 * 12).toFixed(2)}`
+            }
+        ];
+    }
+
     async generateReport(type: string, filters: any, userId?: number, ipAddress?: string) {
         const format = filters.format || 'summary';
         let data: any;
@@ -575,6 +715,7 @@ export class ReportsService {
         const isExcel = format === 'excel';
         const isPdf = format === 'pdf';
         const fetchFormat = (isExcel || isPdf) ? 'detailed' : format;
+        const compId = filters.companyId ? Number(filters.companyId) : undefined;
 
         switch (type) {
             case 'Asset Inventory Report':
@@ -596,13 +737,25 @@ export class ReportsService {
                 data = await this.getUnassignedAssetsReport(fetchFormat);
                 break;
             case 'Employee Directory':
-                data = await this.getEmployeeReports(fetchFormat, filters.companyId ? Number(filters.companyId) : undefined);
+                data = await this.getEmployeeReports(fetchFormat, compId);
                 break;
             case 'Employees by Department Report':
                 data = await this.getEmployeesByDepartmentReport(fetchFormat);
                 break;
             case 'License Assignment Report':
+            case 'Tools Assignment Report':
                 data = await this.getLicenseReports(fetchFormat);
+                break;
+            case 'Consolidated Tools Cost Report':
+            case 'Consolidated Cost Report':
+                data = await this.getConsolidatedToolsCostReport(fetchFormat, compId);
+                break;
+            case 'Procurement Spend Report':
+                data = await this.getProcurementSpendReport(fetchFormat, compId);
+                break;
+            case 'Management Executive Summary Report':
+            case 'Management Report':
+                data = await this.getManagementExecutiveSummaryReport(fetchFormat, compId);
                 break;
             case 'Department Summary Report':
                 data = await this.getDepartmentSummaryReport(fetchFormat);

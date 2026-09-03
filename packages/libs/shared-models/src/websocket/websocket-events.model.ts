@@ -204,31 +204,6 @@ export class AssetEventPayload extends WebSocketPayload {
 }
 
 /**
- * User Status Payload
- */
-export class UserStatusPayload extends WebSocketPayload {
-    userId: number;
-    username: string;
-    status: 'online' | 'offline' | 'away';
-    lastSeen?: Date;
-
-    constructor(
-        timestamp: Date,
-        userId: number,
-        username: string,
-        status: 'online' | 'offline' | 'away',
-        companyId?: number,
-        lastSeen?: Date
-    ) {
-        super(timestamp, userId, companyId);
-        this.userId = userId;
-        this.username = username;
-        this.status = status;
-        this.lastSeen = lastSeen;
-    }
-}
-
-/**
  * System Alert Payload
  */
 export class SystemAlertPayload extends WebSocketPayload {

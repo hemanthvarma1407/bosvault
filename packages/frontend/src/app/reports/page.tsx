@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { FileText, Users, Package, TrendingUp, BarChart3, FileSpreadsheet, Clock, AlertCircle, ArrowLeft, Search } from 'lucide-react';
+import { FileText, Users, Package, TrendingUp, BarChart3, FileSpreadsheet, Clock, AlertCircle, ArrowLeft, Search, DollarSign, CreditCard, Layers, Briefcase, ShieldCheck } from 'lucide-react';
 import { reportsService } from '@/lib/api/services';
 import { useToast } from '@/contexts/ToastContext';
 import { RouteGuard } from '@/components/auth/RouteGuard';
@@ -43,6 +43,25 @@ const ReportsPage: React.FC = () => {
 
     const reportCategories: ReportCategory[] = [
         {
+            id: 'billing',
+            title: 'Cost & Billing Reports',
+            description: 'Consolidated tools spend, subscription metrics, and executive cost summaries',
+            icon: DollarSign,
+            reports: [
+                { name: 'Consolidated Tools Cost Report', description: 'Aggregated Google Workspace, Slack, Jira, GitHub, and tools subscription costs by company and department', icon: CreditCard, stats: 'Consolidated Spend' },
+                { name: 'Management Executive Summary Report', description: 'High-level executive dashboard combining hardware asset valuation, software licenses, employee billing, and Slack seats', icon: Briefcase, stats: 'Executive KPI' },
+            ]
+        },
+        {
+            id: 'procurement',
+            title: 'Procurement Reports',
+            description: 'Purchase orders, vendor tracking, and equipment expenditure',
+            icon: Layers,
+            reports: [
+                { name: 'Procurement Spend Report', description: 'Purchase order expenditure, vendor allocations, and status tracking across companies', icon: Layers, stats: 'Procurement Audit' },
+            ]
+        },
+        {
             id: 'assets',
             title: 'Asset Reports',
             description: 'Comprehensive asset inventory and allocation analytics',
@@ -58,21 +77,21 @@ const ReportsPage: React.FC = () => {
         },
         {
             id: 'employees',
-            title: 'Employee Reports',
-            description: 'Workforce directory and departmental analytics',
+            title: 'User Directory Reports',
+            description: 'Google Workspace accounts and departmental analytics',
             icon: Users,
             reports: [
-                { name: 'Employee Directory', description: 'Complete employee list with contact information and department details', icon: Users, stats: 'Directory' },
-                { name: 'Employees by Department Report', description: 'Employee count and listing grouped by department', icon: TrendingUp, stats: 'Distribution' },
+                { name: 'Employee Directory', description: 'Complete user directory with contact information and department details', icon: Users, stats: 'Directory' },
+                { name: 'Employees by Department Report', description: 'User count and listing grouped by department', icon: TrendingUp, stats: 'Distribution' },
             ]
         },
         {
             id: 'licenses',
-            title: 'License Reports',
-            description: 'Software license allocation and expiry tracking',
+            title: 'Tools & Subscription Reports',
+            description: 'Software license allocation, plan tiers, and expiry tracking',
             icon: FileText,
             reports: [
-                { name: 'License Assignment Report', description: 'Complete list of software licenses assigned to employees with expiry tracking', icon: BarChart3, stats: 'Assignments' },
+                { name: 'License Assignment Report', description: 'Complete list of software tools and subscriptions assigned to users with plan and seat tracking', icon: BarChart3, stats: 'Assignments' },
             ]
         }
     ];
@@ -162,7 +181,7 @@ const ReportsPage: React.FC = () => {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => { setSelectedReport(null); setReportData(null); }}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:text-white hover:border-indigo-200 transition-all bg-white dark:bg-slate-900 shadow-sm"
+                                    className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 shadow-sm"
                                 >
                                     <ArrowLeft className="h-3.5 w-3.5" />
                                     Back To Reports
@@ -188,7 +207,7 @@ const ReportsPage: React.FC = () => {
                                     <button
                                         onClick={generateReport}
                                         disabled={isLoading}
-                                        className="ml-2 p-1 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+                                        className="ml-2 p-1 rounded-lg"
                                         title="Apply Filter"
                                     >
                                         <Search className={`h-3 w-3 ${isLoading ? 'animate-spin text-slate-900 dark:text-white' : 'text-slate-900 dark:text-white'}`} />
@@ -257,11 +276,11 @@ const ReportsPage: React.FC = () => {
                                                         </thead>
                                                         <tbody>
                                                             {reportData.slice(0, 500).map((row: any, idx: number) => (
-                                                                <tr key={idx} className="hover:bg-slate-100 dark:hover:bg-slate-800/60/30 dark:hover:bg-slate-900/5 transition-colors group border-b border-slate-200 dark:border-white/[0.02] last:border-0">
+                                                                <tr key={idx} className="border-b border-slate-200 dark:border-white/[0.02] last:border-0">
                                                                     {Object.values(row).map((cell: any, cellIdx: number) => (
                                                                         <td
                                                                             key={cellIdx}
-                                                                            className={`px-6 py-4 text-[10px] font-bold text-slate-600 dark:text-slate-400 min-w-[150px] max-w-[400px] break-words group-hover:text-slate-900 dark:text-white transition-colors leading-normal uppercase border-r border-slate-200 dark:border-white/5 ${cellIdx === Object.values(row).length - 1 ? 'border-r-0' : ''}`}
+                                                                            className={`px-6 py-4 text-[10px] font-bold text-slate-600 dark:text-slate-400 min-w-[150px] max-w-[400px] break-words leading-normal uppercase border-r border-slate-200 dark:border-white/5 ${cellIdx === Object.values(row).length - 1 ? 'border-r-0' : ''}`}
                                                                         >
                                                                             {cell === null || cell === undefined ? <span className="opacity-20">---</span> : String(cell)}
                                                                         </td>
@@ -314,7 +333,7 @@ const ReportsPage: React.FC = () => {
                                     onClick={() => setActiveTab('all')}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl font-black text-xs uppercase tracking-tight transition-all border-b-2 ${activeTab === 'all'
                                         ? 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 border-slate-700'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 border-transparent'
+                                        : 'text-slate-500 dark:text-slate-400 border-transparent'
                                         }`}
                                 >
                                     <FileText className="h-4 w-4" />
@@ -329,7 +348,7 @@ const ReportsPage: React.FC = () => {
                                             onClick={() => setActiveTab(category.id)}
                                             className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl font-black text-xs uppercase tracking-tight transition-all border-b-2 ${isActive
                                                 ? 'bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 border-slate-700'
-                                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5 border-transparent'
+                                                : 'text-slate-500 dark:text-slate-400 border-transparent'
                                                 }`}
                                         >
                                             <CategoryIcon className="h-4 w-4" />
@@ -350,17 +369,17 @@ const ReportsPage: React.FC = () => {
                                                     <button
                                                         key={idx}
                                                         onClick={() => setSelectedReport(report.name)}
-                                                        className="group p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm hover:border-slate-700 dark:hover:border-slate-700 hover:shadow-md hover:-translate-y-0.5 transition-all text-left relative overflow-hidden"
+                                                        className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm text-left relative overflow-hidden"
                                                     >
                                                         <div className="flex items-center justify-between mb-2.5 relative z-10">
-                                                            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 group-hover:scale-110 transition-transform shadow-sm">
+                                                            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 text-slate-900 dark:text-white dark:text-slate-300 shadow-sm">
                                                                 <ReportIcon className="h-3.5 w-3.5" />
                                                             </div>
                                                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-white/5 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-white/5">
                                                                 {report.stats}
                                                             </span>
                                                         </div>
-                                                        <h4 className="text-[11px] font-black text-slate-900 dark:text-white mb-1 leading-tight group-hover:text-slate-900 dark:text-white dark:group-hover:text-slate-300 transition-colors uppercase tracking-tight relative z-10">
+                                                        <h4 className="text-[11px] font-black text-slate-900 dark:text-white mb-1 leading-tight uppercase tracking-tight relative z-10">
                                                             {report.name}
                                                         </h4>
                                                         <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight line-clamp-2 relative z-10">

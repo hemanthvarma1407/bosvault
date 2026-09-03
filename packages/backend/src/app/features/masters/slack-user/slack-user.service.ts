@@ -80,6 +80,33 @@ export class SlackUserService {
             const timezoneLabel = member.tz_label || '';
             const isAdmin = member.is_admin || false;
 
+            // Validate user type & billing status
+            const isUltraRestricted = Boolean(member.is_ultra_restricted); // Single-channel guest
+            const isRestricted = Boolean(member.is_restricted); // Multi-channel or restricted guest
+            const isGuest = isUltraRestricted || isRestricted;
+            const isStranger = Boolean(member.is_stranger); // External / Slack Connect user
+            const isBot = Boolean(member.is_bot || member.is_app_user || member.id === 'USLACKBOT');
+
+            let userType = 'Member';
+            let isBillable = true;
+
+            if (isStranger) {
+                userType = 'External';
+                isBillable = false;
+            } else if (isUltraRestricted) {
+                userType = 'Single-Channel Guest';
+                isBillable = false; // Single channel guests are free (5 free per paid seat)
+            } else if (isRestricted) {
+                userType = 'Multi-Channel Guest';
+                isBillable = true; // Multi-channel guests are paid seats
+            } else if (isBot) {
+                userType = 'Bot';
+                isBillable = false;
+            } else {
+                userType = 'Member';
+                isBillable = true;
+            }
+
             // Try to find matching employee by email to auto-link and update their Slack info
             let matchedEmployeeId: number | undefined = undefined;
             let matchedEmp: EmployeesEntity | null = null;
@@ -115,6 +142,12 @@ export class SlackUserService {
                 existingUser.timezoneLabel = timezoneLabel || existingUser.timezoneLabel;
                 existingUser.isAdmin = isAdmin;
                 existingUser.isActive = true;
+                existingUser.isGuest = isGuest;
+                existingUser.isUltraRestricted = isUltraRestricted;
+                existingUser.isRestricted = isRestricted;
+                existingUser.isStranger = isStranger;
+                existingUser.userType = userType;
+                existingUser.isBillable = isBillable;
                 if (!existingUser.employeeId && matchedEmployeeId) {
                     existingUser.employeeId = matchedEmployeeId;
                 }
@@ -135,6 +168,12 @@ export class SlackUserService {
                 newEntity.timezoneLabel = timezoneLabel;
                 newEntity.isAdmin = isAdmin;
                 newEntity.isActive = true;
+                newEntity.isGuest = isGuest;
+                newEntity.isUltraRestricted = isUltraRestricted;
+                newEntity.isRestricted = isRestricted;
+                newEntity.isStranger = isStranger;
+                newEntity.userType = userType;
+                newEntity.isBillable = isBillable;
                 newEntity.employeeId = matchedEmployeeId;
                 await this.slackUserRepo.save(newEntity);
                 imported++;
@@ -208,10 +247,25 @@ export class SlackUserService {
             const companyMap = new Map<number, string>();
             companies.forEach(c => companyMap.set(Number(c.id), c.companyName));
 
-            const mappedUsers = users.map(u => ({
-                ...u,
-                companyName: companyMap.get(Number(u.companyId)) || null
-            }));
+            const mappedUsers = users.map(u => {
+                let resolvedType = u.userType;
+                if (!resolvedType) {
+                    if (u.isStranger) resolvedType = 'External';
+                    else if (u.isUltraRestricted) resolvedType = 'Single-Channel Guest';
+                    else if (u.isRestricted || u.isGuest) resolvedType = 'Multi-Channel Guest';
+                    else resolvedType = 'Member';
+                }
+                const resolvedBillable = u.isBillable !== undefined && u.isBillable !== null
+                    ? u.isBillable
+                    : (resolvedType === 'Member' || resolvedType === 'Multi-Channel Guest');
+
+                return {
+                    ...u,
+                    userType: resolvedType,
+                    isBillable: resolvedBillable,
+                    companyName: companyMap.get(Number(u.companyId)) || null
+                };
+            });
             return new GetAllSlackUsersResponseModel(true, 200, 'Slack Users retrieved successfully', mappedUsers as any);
         } catch (error) {
             throw new ErrorResponse(500, 'Failed to fetch Slack Users');

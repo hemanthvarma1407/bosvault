@@ -22,7 +22,29 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [formData, setFormData] = useState<{ name: string, description: string, purchaseDate: string, expiryDate: string, isActive: boolean, totalQuantity: string | number, price: string | number }>({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '', price: '' });
+    const [formData, setFormData] = useState<{
+        name: string;
+        description: string;
+        purchaseDate: string;
+        expiryDate: string;
+        isActive: boolean;
+        totalQuantity: string | number;
+        price: string | number;
+        subscriptionPlan: string;
+        isPaid: boolean;
+        billingCycle: string;
+    }>({
+        name: '',
+        description: '',
+        purchaseDate: '',
+        expiryDate: '',
+        isActive: true,
+        totalQuantity: '',
+        price: '',
+        subscriptionPlan: 'Standard',
+        isPaid: true,
+        billingCycle: 'MONTHLY'
+    });
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
@@ -55,9 +77,20 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
         e.preventDefault();
         if (!user) return;
         try {
-
             if (isEditMode && editingId) {
-                const model = new UpdateLicenseMasterModel(editingId, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity), Number(formData.price));
+                const model = new UpdateLicenseMasterModel(
+                    editingId,
+                    formData.name,
+                    formData.description,
+                    formData.isActive,
+                    formData.purchaseDate ? new Date(formData.purchaseDate) : undefined,
+                    formData.expiryDate ? new Date(formData.expiryDate) : undefined,
+                    Number(formData.totalQuantity),
+                    Number(formData.price),
+                    formData.subscriptionPlan,
+                    formData.isPaid,
+                    formData.billingCycle
+                );
                 const response = await licenseService.updateLicense(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -67,7 +100,21 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                     AlertMessages.getErrorMessage(response.message);
                 }
             } else {
-                const model = new CreateLicenseMasterModel(user.id, user.companyId!, formData.name, formData.description, formData.isActive, formData.purchaseDate ? new Date(formData.purchaseDate) : undefined, formData.expiryDate ? new Date(formData.expiryDate) : undefined, Number(formData.totalQuantity), undefined, Number(formData.price));
+                const model = new CreateLicenseMasterModel(
+                    user.id,
+                    user.companyId!,
+                    formData.name,
+                    formData.description,
+                    formData.isActive,
+                    formData.purchaseDate ? new Date(formData.purchaseDate) : undefined,
+                    formData.expiryDate ? new Date(formData.expiryDate) : undefined,
+                    Number(formData.totalQuantity),
+                    undefined,
+                    Number(formData.price),
+                    formData.subscriptionPlan,
+                    formData.isPaid,
+                    formData.billingCycle
+                );
                 const response = await licenseService.createLicense(model);
                 if (response.status) {
                     AlertMessages.getSuccessMessage(response.message);
@@ -85,14 +132,18 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
     const handleEdit = (item: License): void => {
         setIsEditMode(true);
         setEditingId(item.id);
+        const licObj = item as any;
         setFormData({
             name: item.name,
             description: item.description || '',
             purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : '',
             expiryDate: item.expiryDate ? new Date(item.expiryDate).toISOString().split('T')[0] : '',
             isActive: item.isActive ?? true,
-            totalQuantity: (item as unknown as { totalQuantity?: number }).totalQuantity || 0,
-            price: (item as unknown as { price?: number }).price || 0
+            totalQuantity: licObj.totalQuantity || 0,
+            price: licObj.price || 0,
+            subscriptionPlan: licObj.subscriptionPlan || 'Standard',
+            isPaid: licObj.isPaid !== undefined ? Boolean(licObj.isPaid) : true,
+            billingCycle: licObj.billingCycle || 'MONTHLY'
         });
         setIsModalOpen(true);
     };
@@ -122,7 +173,18 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
         setIsModalOpen(false);
         setIsEditMode(false);
         setEditingId(null);
-        setFormData({ name: '', description: '', purchaseDate: '', expiryDate: '', isActive: true, totalQuantity: '', price: '' });
+        setFormData({
+            name: '',
+            description: '',
+            purchaseDate: '',
+            expiryDate: '',
+            isActive: true,
+            totalQuantity: '',
+            price: '',
+            subscriptionPlan: 'Standard',
+            isPaid: true,
+            billingCycle: 'MONTHLY'
+        });
     };
 
     const formatDate = (date: Date | string | null | undefined): string => {
@@ -134,7 +196,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
         <>
             <Card className="border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 overflow-hidden h-[600px] flex flex-col p-0">
                 <CardHeader className="p-4 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center border-b border-slate-200 dark:border-slate-700 mb-0">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100">Licenses</h3>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100">Tools & Subscriptions Catalog</h3>
                     <div className="flex items-center gap-3">
                         {onBack && (
                             <Button size="xs" variant="primary" onClick={onBack} leftIcon={<ArrowLeft className="h-4 w-4" />}>
@@ -142,7 +204,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             </Button>
                         )}
                         <Button size="xs" variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setIsModalOpen(true)}>
-                            Add License
+                            Add Tool / Subscription
                         </Button>
                     </div>
                 </CardHeader>
@@ -151,40 +213,64 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                         <table className="w-full border-collapse border border-slate-200 dark:border-slate-700">
                             <thead className="bg-slate-50/80 dark:bg-slate-800/80 sticky top-0 z-10">
                                 <tr>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">License Name</th>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Total</th>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Used</th>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Price</th>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Consumed Price</th>
-                                    <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Status</th>
+                                    <th className="px-4 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Tool Name</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Plan</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Type</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Total Seats</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Assigned</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Available</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Price/Seat</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Total Value</th>
+                                    <th className="px-3 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Status</th>
                                     <th className="px-4 py-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider border border-slate-200 dark:border-slate-700">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-gray-900">
                                 {licenses?.length === 0 ? (
-                                    <tr><td colSpan={7} className="p-8 text-center text-slate-500">No licenses found</td></tr>
+                                    <tr><td colSpan={10} className="p-8 text-center text-slate-500">No tools or software subscriptions found</td></tr>
                                 ) : (
                                     licenses.map(item => {
-                                        const licObj = item as unknown as { totalQuantity?: number; usedCount?: number; usedQuantity?: number; price?: number };
+                                        const licObj = item as any;
                                         const total = Number(licObj.totalQuantity || 0);
                                         const used = Number(licObj.usedCount ?? licObj.usedQuantity ?? 0);
                                         const unitPrice = Number(licObj.price || 0);
                                         const isExceeded = used > total && total > 0;
+                                        const available = Math.max(0, total - used);
+                                        const isPaid = licObj.isPaid !== false && licObj.isPaid !== 'false';
+                                        const plan = licObj.subscriptionPlan || 'Standard';
 
                                         return (
                                             <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-500 font-bold">{total}</td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold">
-                                                    <span className={isExceeded ? 'text-rose-600 dark:text-rose-400 font-black' : 'text-slate-500'}>
+                                                <td className="px-4 py-3 text-left border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-900 dark:text-white">
+                                                    <div>{item.name}</div>
+                                                    {item.description && <div className="text-xs text-slate-400 font-normal truncate max-w-xs">{item.description}</div>}
+                                                </td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                    <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                                        {plan}
+                                                    </span>
+                                                </td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-xs">
+                                                    <span className={`px-2 py-0.5 rounded-full font-bold ${isPaid ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400' : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/30 dark:text-blue-400'}`}>
+                                                        {isPaid ? 'Paid' : 'Free'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-300 font-bold">{total}</td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold">
+                                                    <span className={isExceeded ? 'text-rose-600 dark:text-rose-400 font-black' : 'text-slate-700 dark:text-slate-300'}>
                                                         {used}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white dark:text-slate-300">${unitPrice.toLocaleString()}</td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-amber-600 dark:text-amber-400">${(unitPrice * used).toLocaleString()}</td>
-                                                <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                                    {available}
+                                                </td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white">
+                                                    ${unitPrice.toLocaleString()}<span className="text-[10px] text-slate-400 font-normal">/{licObj.billingCycle === 'YEARLY' ? 'yr' : 'mo'}</span>
+                                                </td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm font-bold text-indigo-600 dark:text-indigo-400">${(unitPrice * total).toLocaleString()}</td>
+                                                <td className="px-3 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                     {isExceeded ? (
-                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800" title={`Used count (${used}) exceeds total quantity (${total})`}>
+                                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800" title={`Assigned count (${used}) exceeds total capacity (${total})`}>
                                                             Over-allocated (+{used - total})
                                                         </span>
                                                     ) : (
@@ -198,7 +284,7 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                                                 </td>
                                                 <td className="px-4 py-3 text-center border border-slate-200 dark:border-slate-700 text-sm">
                                                     <div className="flex justify-center gap-2">
-                                                        <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-900 text-white transition-colors shadow-sm" title="View">
+                                                        <button onClick={() => { setSelectedLicense(item); setIsDetailModalOpen(true); }} className="h-7 w-7 flex items-center justify-center rounded bg-slate-900 hover:bg-slate-800 text-white transition-colors shadow-sm" title="View">
                                                             <Eye className="h-4 w-4" />
                                                         </button>
                                                         <button onClick={() => handleEdit(item)} className="h-7 w-7 flex items-center justify-center rounded bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm" title="Edit">
@@ -219,22 +305,51 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                 </CardContent>
             </Card>
 
-            <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={isEditMode ? "Edit License" : "Add License"}>
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={isEditMode ? "Edit Tool / Subscription" : "Add Tool / Subscription"} size="lg">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input label="License Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-14" required />
-                    <Input label="Description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-14" />
+                    <Input label="Tool / Software Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-12" placeholder="e.g. Google Workspace, Slack, Jira, GitHub..." required />
+                    <Input label="Description / Features" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="h-12" placeholder="Subscription tier details, admin URL..." />
+                    
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Input label="Total Quantity" type="number" value={formData.totalQuantity} onChange={e => setFormData({ ...formData, totalQuantity: Number(e.target.value) })} className="h-14" />
-                        <Input label="Price ($)" type="number" min="0" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="h-14" />
-                        <Input label="Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })} className="h-14" />
+                        <Input label="Subscription Plan" value={formData.subscriptionPlan} onChange={(e) => setFormData({ ...formData, subscriptionPlan: e.target.value })} className="h-12" placeholder="Free, Pro, Enterprise, Business..." />
+                        <div>
+                            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Payment Status</label>
+                            <select
+                                value={formData.isPaid ? 'paid' : 'free'}
+                                onChange={(e) => setFormData({ ...formData, isPaid: e.target.value === 'paid' })}
+                                className="w-full h-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                <option value="paid">Paid Subscription</option>
+                                <option value="free">Free Tier</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Billing Cycle</label>
+                            <select
+                                value={formData.billingCycle}
+                                onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value })}
+                                className="w-full h-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                <option value="MONTHLY">Monthly</option>
+                                <option value="YEARLY">Yearly / Annual</option>
+                                <option value="ONE_TIME">One-Time / Perpetual</option>
+                                <option value="FREE">Free</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Input label="Total Seats / License Count" type="number" min="0" value={formData.totalQuantity} onChange={e => setFormData({ ...formData, totalQuantity: Number(e.target.value) })} className="h-12" required />
+                        <Input label="Price per Seat ($)" type="number" min="0" step="0.01" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="h-12" />
+                        <Input label="Renewal / Expiry Date" type="date" value={formData.expiryDate} onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })} className="h-12" />
                     </div>
 
                     <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 rounded-xl flex items-center justify-between">
                         <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
-                            Calculated Total Value:
+                            Calculated Total Subscription Value:
                         </span>
                         <span className="text-sm font-black text-emerald-700 dark:text-emerald-400">
-                            ${((Number(formData.price) || 0) * (Number(formData.totalQuantity) || 0)).toLocaleString()}
+                            ${((Number(formData.price) || 0) * (Number(formData.totalQuantity) || 0)).toLocaleString()} / {formData.billingCycle.toLowerCase()}
                         </span>
                     </div>
 
@@ -247,13 +362,13 @@ export const LicensesMasterView: React.FC<LicensesMasterViewProps> = ({ onBack }
                             className="w-4 h-4 text-slate-900 dark:text-white border-gray-300 rounded focus:ring-indigo-500"
                         />
                         <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Active
+                            Active in Tools Catalog
                         </label>
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
                         <Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
-                        <Button variant="primary" type="submit">{isEditMode ? 'Update' : 'Create'}</Button>
+                        <Button variant="primary" type="submit">{isEditMode ? 'Update Tool' : 'Save Tool'}</Button>
                     </div>
                 </form>
             </Modal>

@@ -1,9 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Res, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+import express from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ProcurementService } from './procurement.service';
 import { CreatePOModel, UpdatePOModel, GetAllPOsModel, GetPOByIdModel, GetAllPOsCompanyIdRequestModel, GetPORequestModel, UpdatePOStatusRequestModel } from '@bosvault/shared-models';
 import { GlobalResponse, returnException } from '@bosvault/backend-utils';
-import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { Public } from '../../decorators/public.decorator';
 
 @ApiTags('Procurement')
 @Controller('procurement')
@@ -77,6 +80,28 @@ export class ProcurementController {
             return await this.service.deletePurchaseOrder(reqModel.id);
         } catch (error) {
             return returnException(GlobalResponse, error);
+        }
+    }
+
+    @Post('uploadDocument')
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadDocument(@UploadedFile() file: Express.Multer.File): Promise<GlobalResponse> {
+        try {
+            return await this.service.uploadDocument(file);
+        } catch (error) {
+            return returnException(GlobalResponse, error);
+        }
+    }
+
+    @Public()
+    @Get('document/:filename')
+    async getDocument(@Param('filename') filename: string, @Res() res: express.Response) {
+        try {
+            const filePath = this.service.getDocument(filename);
+            res.sendFile(filePath);
+        } catch (error) {
+            res.status(404).send('File not found');
         }
     }
 }

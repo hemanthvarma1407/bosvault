@@ -38,7 +38,7 @@ const DEFAULT_MENUS = [
         icon: 'Users',
         roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN],
         children: [
-            { key: 'employees', label: 'Employees', icon: 'Contact', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
+            { key: 'employees', label: 'User Directory', icon: 'Contact', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
             { key: 'slack-users', label: 'Slack Users', icon: 'Slack', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN] },
             { key: 'email-management', label: 'Email Info', icon: 'Mail', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN] },
         ]
@@ -50,7 +50,7 @@ const DEFAULT_MENUS = [
         roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN],
         children: [
             { key: 'assets', label: 'Hardware Assets', icon: 'Monitor', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
-            { key: 'licenses', label: 'Software Licenses', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
+            { key: 'licenses', label: 'Tools & Subscriptions', icon: 'Key', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     },
     {
@@ -83,7 +83,6 @@ const DEFAULT_MENUS = [
         children: [
             { key: 'tickets', label: 'Support Tickets', icon: 'Ticket', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER] },
             { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
-            { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] },
             { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen', roles: [UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.MANAGER, UserRoleEnum.USER, UserRoleEnum.VIEWER, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN, UserRoleEnum.ASSET_ADMIN] }
         ]
     }

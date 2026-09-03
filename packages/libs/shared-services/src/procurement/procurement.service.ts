@@ -34,4 +34,10 @@ export class ProcurementService extends CommonAxiosService {
     async deletePurchaseOrder(id: number, config?: AxiosRequestConfig): Promise<GlobalResponse> {
         return await this.axiosPostCall(this.getURL('deletePurchaseOrder'), { id }, config);
     }
+
+    async uploadDocument(file: File, config?: AxiosRequestConfig): Promise<GlobalResponse> {
+        const formData = new FormData();
+        formData.append('file', file);
+        return await this.axiosPostCall(this.getURL('uploadDocument'), formData, config);
+    }
 }

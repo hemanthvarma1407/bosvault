@@ -116,14 +116,12 @@ const ProcurementPage: React.FC = () => {
 
         setIsUploading(true);
         try {
-            // In a real app, we would upload to S3/Cloudinary here
-            // For this demo, we'll simulate an upload and use a mock URL
-            // and update the PO with this URL
+            const uploadRes = await procurementService.uploadDocument(file);
+            if (!uploadRes.status || !uploadRes.data?.url) {
+                throw new Error(uploadRes.message || 'Failed to upload invoice');
+            }
 
-            // Simulating API delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            const mockUrl = `https://bos-vault.storage/invoices/${selectedPO.poNumber}_invoice.pdf`;
+            const uploadedUrl = uploadRes.data.url;
 
             // Create the update model
             const updateModel = {
@@ -137,7 +135,7 @@ const ProcurementPage: React.FC = () => {
                 items: selectedPO.items || [],
                 expectedDeliveryDate: selectedPO.expectedDeliveryDate,
                 notes: selectedPO.notes,
-                invoiceUrl: mockUrl
+                invoiceUrl: uploadedUrl
             };
 
             const response = await procurementService.updatePurchaseOrder(updateModel as any);
@@ -147,7 +145,7 @@ const ProcurementPage: React.FC = () => {
                 // Refresh data
                 fetchPOs();
                 // Update local state for immediate feedback
-                setSelectedPO({ ...selectedPO, invoiceUrl: mockUrl });
+                setSelectedPO({ ...selectedPO, invoiceUrl: uploadedUrl });
             } else {
                 AlertMessages.getErrorMessage(response.message);
             }

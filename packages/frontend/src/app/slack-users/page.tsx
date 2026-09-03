@@ -143,21 +143,43 @@ const SlackUsersPage: React.FC = () => {
         }
     };
 
+    const [billingFilter, setBillingFilter] = useState<'all' | 'billable' | 'non_billable' | 'guests'>('all');
+
     const filteredUsers = useMemo(() => {
         const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
         let list = users;
         if (targetCompanyId > 0) {
             list = users.filter(u => Number(u.companyId) === targetCompanyId);
         }
+
+        if (billingFilter === 'billable') {
+            list = list.filter(u => (u as any).isBillable !== false);
+        } else if (billingFilter === 'non_billable') {
+            list = list.filter(u => (u as any).isBillable === false);
+        } else if (billingFilter === 'guests') {
+            list = list.filter(u => (u as any).isGuest || (u as any).isStranger || (u as any).userType?.includes('Guest') || (u as any).userType === 'External');
+        }
+
         if (!searchQuery.trim()) return list;
         const q = searchQuery.toLowerCase();
         return list.filter(u =>
             (u as any).realName?.toLowerCase().includes(q) ||
             u.email?.toLowerCase().includes(q) ||
             u.name?.toLowerCase().includes(q) ||
-            (u as any).title?.toLowerCase().includes(q)
+            (u as any).title?.toLowerCase().includes(q) ||
+            (u as any).userType?.toLowerCase().includes(q)
         );
-    }, [users, reduxCompanyId, searchQuery]);
+    }, [users, reduxCompanyId, billingFilter, searchQuery]);
+
+    const stats = useMemo(() => {
+        const targetCompanyId = reduxCompanyId ? Number(reduxCompanyId) : 0;
+        const list = targetCompanyId > 0 ? users.filter(u => Number(u.companyId) === targetCompanyId) : users;
+        const billable = list.filter(u => (u as any).isBillable !== false).length;
+        const multiChannelGuests = list.filter(u => (u as any).userType === 'Multi-Channel Guest' || ((u as any).isRestricted && !(u as any).isUltraRestricted)).length;
+        const singleChannelGuests = list.filter(u => (u as any).userType === 'Single-Channel Guest' || (u as any).isUltraRestricted).length;
+        const external = list.filter(u => (u as any).userType === 'External' || (u as any).isStranger).length;
+        return { total: list.length, billable, multiChannelGuests, singleChannelGuests, external };
+    }, [users, reduxCompanyId]);
 
     return (
         <RouteGuard requiredRoles={[UserRoleEnum.ADMIN, UserRoleEnum.SUPER_ADMIN, UserRoleEnum.SUPPORT_ADMIN, UserRoleEnum.SITE_ADMIN]}>
@@ -165,13 +187,13 @@ const SlackUsersPage: React.FC = () => {
 
                 {/* Header */}
                 <PageHeader
-                    title="Slack Workspace"
-                    description="Sync and manage your workspace members"
+                    title="Slack Workspace Members"
+                    description="Validate billable accounts, guest users, and external Slack Connect seats"
                     icon={<Slack />}
                     gradient="from-[#4A154B] to-[#7C3085]"
                     actions={[
                         {
-                            label: isImporting ? 'Importing...' : 'Import from Slack',
+                            label: isImporting ? 'Importing...' : 'Sync Slack Workspace',
                             onClick: handleImportFromSlack,
                             icon: isImporting ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />,
                             variant: 'primary',
@@ -179,25 +201,44 @@ const SlackUsersPage: React.FC = () => {
                         }
                     ]}
                 >
-                    <div className="hidden md:flex items-center gap-1.5">
+                    <div className="hidden md:flex items-center gap-1.5 flex-wrap">
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-white/10 text-white border border-white/20">
-                            <span className="text-[10px] font-medium opacity-70">Total</span> {filteredUsers.length}
+                            <span className="text-[10px] font-medium opacity-70">Total</span> {stats.total}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            <span className="text-[10px] font-medium opacity-70">Billable Seats</span> {stats.billable}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                            <span className="text-[10px] font-medium opacity-70">Single-Channel (Free)</span> {stats.singleChannelGuests}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <span className="text-[10px] font-medium opacity-70">External / Connect</span> {stats.external}
                         </span>
                     </div>
                 </PageHeader>
 
-                {/* Search Bar */}
+                {/* Filter & Search Bar */}
                 <div className="flex flex-col sm:flex-row gap-2">
                     <div className="relative flex-1">
                         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Search by name, email or ID..."
+                            placeholder="Search by name, email, user type or ID..."
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
                             className="w-full pl-9 pr-3 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-colors shadow-sm"
                         />
                     </div>
+                    <select
+                        value={billingFilter}
+                        onChange={e => setBillingFilter(e.target.value as any)}
+                        className="h-10 px-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-1 focus:ring-violet-500 outline-none"
+                    >
+                        <option value="all">All Accounts ({stats.total})</option>
+                        <option value="billable">Billable Seats Only ({stats.billable})</option>
+                        <option value="non_billable">Non-Billable / Free Only ({stats.total - stats.billable})</option>
+                        <option value="guests">Guests & External Only</option>
+                    </select>
                     <Button
                         variant="outline"
                         onClick={fetchUsers}
@@ -217,17 +258,20 @@ const SlackUsersPage: React.FC = () => {
                             <Slack className="h-6 w-6 text-white" />
                         </div>
                         <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">No Slack members found</h3>
-                        <p className="text-xs text-slate-500">Try adjusting your search or company filter.</p>
+                        <p className="text-xs text-slate-500">Try adjusting your search or billing status filter.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-8 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
                         {filteredUsers.map(u => {
                             const a = u as any;
                             const initials = u.name?.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+                            const isBillable = a.isBillable !== false;
+                            const userType = a.userType || (a.isStranger ? 'External' : (a.isUltraRestricted ? 'Single-Channel Guest' : (a.isRestricted ? 'Multi-Channel Guest' : 'Member')));
+
                             return (
                                 <div
                                     key={u.id}
-                                    className="group relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 flex flex-col gap-3 overflow-hidden cursor-pointer"
+                                    className="group relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-3.5 shadow-sm hover:shadow-md hover:border-violet-300 dark:hover:border-violet-800 transition-all duration-300 flex flex-col gap-3 overflow-hidden cursor-pointer"
                                     onClick={() => { setSelectedUser(u); setIsDetailModalOpen(true); }}
                                 >
                                     <div className="flex items-start gap-3">
@@ -244,14 +288,14 @@ const SlackUsersPage: React.FC = () => {
                                             />
                                             <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-slate-800 ${u.isActive ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                             {a.isAdmin && (
-                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center shadow-sm">
+                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center shadow-sm" title="Workspace Admin">
                                                     <Shield className="h-2.5 w-2.5 text-white" />
                                                 </div>
                                             )}
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between gap-1.5">
+                                            <div className="flex items-center justify-between gap-1">
                                                 <h3 className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
                                                     {u.name}
                                                 </h3>
@@ -259,9 +303,17 @@ const SlackUsersPage: React.FC = () => {
                                             <div className="text-[10px] font-medium text-violet-500/80 truncate">
                                                 @{u.displayName || u.name?.toLowerCase().replace(/\s+/g, '')}
                                             </div>
-                                            <div className="inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700/50 rounded text-[9px] font-mono font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600">
-                                                <Slack className="h-2 w-2" />
-                                                {u.slackUserId || 'NO_ID'}
+                                            <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+                                                <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                                                    isBillable
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400'
+                                                        : 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400'
+                                                }`}>
+                                                    {isBillable ? 'Billable' : 'Non-Billable'}
+                                                </span>
+                                                <span className="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 truncate max-w-[110px]">
+                                                    {userType}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -368,27 +420,40 @@ const SlackUsersPage: React.FC = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <MapPin className="h-3.5 w-3.5 text-red-500" />
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Company</span>
+                                            <Shield className="h-3.5 w-3.5 text-indigo-500" />
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Account Type</span>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{(selectedUser as any).companyName || 'N/A'}</p>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{(selectedUser as any).userType || 'Member'}</p>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Activity className="h-3.5 w-3.5 text-emerald-500" />
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Billing Classification</span>
+                                        </div>
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                                            (selectedUser as any).isBillable !== false
+                                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300'
+                                        }`}>
+                                            {(selectedUser as any).isBillable !== false ? 'Billable Active Seat' : 'Non-Billable / Free Guest'}
+                                        </span>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-1">
+                                            <MapPin className="h-3.5 w-3.5 text-red-500" />
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Company</span>
+                                        </div>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{(selectedUser as any).companyName || 'N/A'}</p>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                                        <div className="flex items-center gap-2 mb-1">
                                             <Globe className="h-3.5 w-3.5 text-orange-500" />
                                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Timezone</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{(selectedUser as any).timezoneLabel || 'UTC'}</p>
-                                    </div>
-                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <Activity className="h-3.5 w-3.5 text-cyan-500" />
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Team ID</span>
-                                        </div>
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{(selectedUser as any).teamId || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>

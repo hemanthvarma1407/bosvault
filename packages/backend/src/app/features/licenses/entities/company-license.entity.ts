@@ -36,4 +36,10 @@ export class CompanyLicenseEntity extends CommonBaseEntity {
 
     @Column({ name: 'role', type: 'varchar', length: 100, nullable: true, comment: 'Role of the employee for this license (Owner, Member, etc.)' })
     role: string | null;
+
+    @Column({ name: 'subscription_plan', type: 'varchar', length: 100, nullable: true, default: 'Standard', comment: 'Subscription Plan tier' })
+    subscriptionPlan: string | null;
+
+    @Column({ name: 'is_paid', type: 'boolean', nullable: true, default: true, comment: 'Paid or Free status' })
+    isPaid: boolean | null;
 }

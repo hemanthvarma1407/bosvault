@@ -1,5 +1,7 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { DataSource, In } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { CreatePOModel, UpdatePOModel, PurchaseOrderModel, POItemModel, GetAllPOsModel, GetPOByIdModel, POStatusEnum, GetPORequestModel, UpdatePOStatusRequestModel, GetAllPOsCompanyIdRequestModel } from '@bosvault/shared-models';
 import { GlobalResponse, ErrorResponse } from '@bosvault/backend-utils';
 import { PurchaseOrderEntity } from './entities/purchase-order.entity';
@@ -15,8 +17,11 @@ import { AssetTypeMasterEntity } from '../masters/asset-type/entities/asset-type
 import { SendPOApprovalEmailModel } from '@bosvault/shared-models';
 import { EmailInfoService } from '../email/email-info.service';
 import { VendorRepository } from '../masters/vendor/repositories/vendor.repository';
+
 @Injectable()
 export class ProcurementService {
+    private readonly uploadPath = path.resolve(__dirname, '../../../../../../uploads/procurement');
+
     constructor(
         private dataSource: DataSource,
         private poRepo: PurchaseOrderRepository,
@@ -25,7 +30,11 @@ export class ProcurementService {
         @Inject(forwardRef(() => EmailInfoService))
         private emailInfoService: EmailInfoService,
         private vendorRepo: VendorRepository,
-    ) { }
+    ) {
+        if (!fs.existsSync(this.uploadPath)) {
+            fs.mkdirSync(this.uploadPath, { recursive: true });
+        }
+    }
 
     async createPurchaseOrder(reqModel: CreatePOModel): Promise<GlobalResponse> {
         const transManager = new GenericTransactionManager(this.dataSource);
@@ -369,5 +378,39 @@ export class ProcurementService {
             await transManager.releaseTransaction();
             throw error;
         }
+    }
+
+    async uploadDocument(file: Express.Multer.File): Promise<GlobalResponse> {
+        try {
+            if (!file) {
+                throw new ErrorResponse(400, 'No file uploaded');
+            }
+
+            const sanitizedOriginalName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+            const fileName = `${Date.now()}-${sanitizedOriginalName}`;
+            const filePath = path.join(this.uploadPath, fileName);
+
+            fs.writeFileSync(filePath, file.buffer);
+
+            const fileUrl = `/api/procurement/document/${fileName}`;
+
+            return new GlobalResponse(true, 201, 'Document uploaded successfully', {
+                name: file.originalname,
+                url: fileUrl,
+                type: file.mimetype,
+                size: file.size,
+                fileName: fileName
+            });
+        } catch (error) {
+            throw error instanceof ErrorResponse ? error : new ErrorResponse(500, 'Failed to upload document');
+        }
+    }
+
+    getDocument(filename: string): string {
+        const filePath = path.join(this.uploadPath, filename);
+        if (!fs.existsSync(filePath)) {
+            throw new ErrorResponse(404, 'File not found');
+        }
+        return filePath;
     }
 }

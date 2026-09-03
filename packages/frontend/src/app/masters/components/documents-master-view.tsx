@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
-import { FileText, Upload, Download, Trash2, Search, Plus, File as FileIcon, Lock, ArrowLeft, FileSpreadsheet, Image as ImageIcon, FileCode, FileArchive, Eye } from 'lucide-react';
+import { FileText, Upload, Download, Trash2, Plus, File as FileIcon, Lock, ArrowLeft, FileSpreadsheet, Image as ImageIcon, FileCode, FileArchive, Eye } from 'lucide-react';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -25,7 +25,6 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [tags, setTags] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [documentToDelete, setDocumentToDelete] = useState<DocumentModel | null>(null);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -232,27 +231,15 @@ export const DocumentsMasterView: React.FC<DocumentsMasterViewProps> = ({ onBack
                     <div className="flex items-center gap-2">
                         <h3 className="font-bold text-slate-800 dark:text-slate-100">Document Vault</h3>
                     </div>
-                    <div className="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto mt-3 md:mt-0">
-                        <div className="relative w-full md:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Search documents..."
-                                className="w-full pl-10 pr-4 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-slate-700 transition-all text-sm"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            {onBack && (
-                                <Button size="xs" variant="primary" onClick={onBack} leftIcon={<ArrowLeft className="h-4 w-4" />}>
-                                    Back to Masters
-                                </Button>
-                            )}
-                            <Button size="xs" variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setIsUploadModalOpen(true)}>
-                                Upload Document
+                    <div className="flex items-center gap-3">
+                        {onBack && (
+                            <Button size="xs" variant="primary" onClick={onBack} leftIcon={<ArrowLeft className="h-4 w-4" />}>
+                                Back to Masters
                             </Button>
-                        </div>
+                        )}
+                        <Button size="xs" variant="success" leftIcon={<Plus className="h-4 w-4" />} onClick={() => setIsUploadModalOpen(true)}>
+                            Upload Document
+                        </Button>
                     </div>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto p-4 custom-scrollbar">

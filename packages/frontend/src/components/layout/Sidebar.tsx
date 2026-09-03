@@ -79,7 +79,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
     // Build hierarchy for sidebar categories
     // The backend now sends a nested structure with 'children'
     const menuTree = useMemo(() => {
-        const baseMenus = allowedMenus || [];
+        let baseMenus = (allowedMenus || []).map(m => ({
+            ...m,
+            children: m.children ? m.children.filter((c: MenuItemNode) => c.key !== 'ticket-insights') : undefined
+        })).filter(m => m.key !== 'ticket-insights');
+
         const hasSupport = baseMenus.some(m => m.key === 'support' || m.key === 'helpdesk');
         if (!hasSupport && baseMenus.length > 0) {
             return [
@@ -91,7 +95,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
                     children: [
                         { key: 'tickets', label: 'Support Tickets', icon: 'Ticket' },
                         { key: 'create-ticket', label: 'Create Ticket', icon: 'PlusCircle' },
-                        { key: 'ticket-insights', label: 'Helpdesk Analytics', icon: 'BarChart3' },
                         { key: 'knowledge-base', label: 'Help Center', icon: 'BookOpen' }
                     ]
                 }

@@ -76,8 +76,10 @@ export class LicensesService {
                 l.remarks,
                 l.role,
                 company ? { id: company.id, companyName: company.companyName } : undefined,
-                app ? { id: app.id, name: app.name, price: Number(app.price || 0), logo: '' } as any : undefined,
-                emp ? { id: emp.id, firstName: emp.firstName, lastName: emp.lastName, avatar: emp.slackAvatar } : undefined
+                app ? { id: app.id, name: app.name, price: Number(app.price || 0), subscriptionPlan: app.subscriptionPlan, isPaid: app.isPaid, logo: '' } as any : undefined,
+                emp ? { id: emp.id, firstName: emp.firstName, lastName: emp.lastName, avatar: emp.slackAvatar } : undefined,
+                l.subscriptionPlan || app?.subscriptionPlan || 'Standard',
+                l.isPaid !== null && l.isPaid !== undefined ? l.isPaid : (app?.isPaid ?? true)
             );
         });
 
@@ -99,30 +101,19 @@ export class LicensesService {
             query.where('license.companyId = :companyId', { companyId });
         }
 
-        const licenses = await query.getMany();
+        const totalLicenses = await query.getCount();
+        const usedLicenses = await query.andWhere('license.assignedEmployeeId IS NOT NULL').getCount();
 
-        let total = 0;
-        let used = 0;
-        let totalCost = 0;
-
-        licenses.forEach(l => {
-            total += (l.totalSeats || 1);
-            // In this simplified model, each license record is an assignment
-            // If totalSeats > 1, it might represent a pool. 
-            // For now, let's assume each record is a specific assignment of one or more seats.
-            used += 1;
-            totalCost += Number(l.costPerSeat || 0) * (l.totalSeats || 1);
-        });
+        // Calculate total cost
+        const allLicenses = await this.repo.find({ where: companyId ? { companyId } : {} });
+        const totalCost = allLicenses.reduce((sum, l) => sum + (Number(l.costPerSeat || 0) * (l.totalSeats || 1)), 0);
 
         // Expiring in 30 days
         const thirtyDaysFromNow = new Date();
         thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+        const expiringSoon = allLicenses.filter(l => l.expiryDate && new Date(l.expiryDate) <= thirtyDaysFromNow && new Date(l.expiryDate) >= new Date()).length;
 
-        const expiringSoon = licenses.filter(l =>
-            l.expiryDate && new Date(l.expiryDate) <= thirtyDaysFromNow && new Date(l.expiryDate) >= new Date()
-        ).length;
-
-        const stats = new LicenseStatsModel(total, used, totalCost, expiringSoon);
+        const stats = new LicenseStatsModel(totalLicenses, usedLicenses, totalCost, expiringSoon);
         return new GetLicenseStatisticsResponseModel(true, 200, 'License statistics retrieved successfully', stats);
     }
 
@@ -181,56 +172,71 @@ export class LicensesService {
     }
 
     /**
-     * Create a new license assignment
-     * Assigns a software license to an employee
+     * Create a new license assignment (supports single or multi-select batch assignment)
+     * Assigns a software license to one or more employees
      * 
      * @param reqModel - License assignment creation data
      * @returns GlobalResponse indicating creation success
      */
     async createLicense(reqModel: CreateLicenseModel, userId?: number, ipAddress?: string): Promise<GlobalResponse> {
-        if (reqModel.applicationId && reqModel.assignedEmployeeId) {
+        const employeeIds: (number | null)[] = reqModel.assignedEmployeeIds && reqModel.assignedEmployeeIds.length > 0
+            ? reqModel.assignedEmployeeIds
+            : (reqModel.assignedEmployeeId ? [reqModel.assignedEmployeeId] : [null]);
+
+        if (reqModel.applicationId && employeeIds.some(id => !!id)) {
             const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
             const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
             if (master && master.totalQuantity > 0) {
                 const currentAssigned = await this.repo.countAssignedSeats(reqModel.applicationId);
-
-                const requestedSeats = reqModel.seats || 1;
+                const requestedSeats = employeeIds.length;
                 if (currentAssigned + requestedSeats > master.totalQuantity) {
                     return new GlobalResponse(
                         false,
                         400,
-                        `Cannot assign license for "${master.name}": Exceeds total available seats (${currentAssigned}/${master.totalQuantity} already assigned).`
+                        `Cannot assign license for "${master.name}": Exceeds total available seats (${currentAssigned}/${master.totalQuantity} already assigned, requesting ${requestedSeats} new seat(s)).`
                     );
                 }
             }
         }
 
         let finalCostPerSeat = Number((reqModel as any).costPerSeat || 0);
-        if (finalCostPerSeat <= 0 && reqModel.applicationId) {
+        let defaultPlan = reqModel.subscriptionPlan;
+        let defaultIsPaid = reqModel.isPaid;
+        let defaultBillingCycle = (reqModel as any).billingCycle || 'MONTHLY';
+
+        if (reqModel.applicationId) {
             const masterRepo = this.repo.manager.getRepository(LicensesMasterEntity);
             const master = await masterRepo.findOne({ where: { id: reqModel.applicationId } });
-            if (master && master.price) {
-                finalCostPerSeat = Number(master.price);
+            if (master) {
+                if (finalCostPerSeat <= 0 && master.price) finalCostPerSeat = Number(master.price);
+                if (!defaultPlan) defaultPlan = master.subscriptionPlan;
+                if (defaultIsPaid === undefined) defaultIsPaid = master.isPaid;
+                if (!defaultBillingCycle) defaultBillingCycle = master.billingCycle || 'MONTHLY';
             }
         }
 
-        const licenseData: Partial<CompanyLicenseEntity> = {
-            companyId: reqModel.companyId,
-            applicationId: reqModel.applicationId,
-            assignedEmployeeId: reqModel.assignedEmployeeId,
-            licenseKey: reqModel.licenseKey,
-            purchaseDate: reqModel.purchaseDate,
-            assignedDate: reqModel.assignedDate,
-            expiryDate: reqModel.expiryDate,
-            remarks: reqModel.remarks,
-            totalSeats: reqModel.seats || 1,
-            costPerSeat: finalCostPerSeat,
-            billingCycle: (reqModel as any).billingCycle,
-            role: reqModel.role || null
-        };
+        const entitiesToSave: CompanyLicenseEntity[] = [];
+        for (const empId of employeeIds) {
+            const licenseData: Partial<CompanyLicenseEntity> = {
+                companyId: reqModel.companyId,
+                applicationId: reqModel.applicationId,
+                assignedEmployeeId: empId ? Number(empId) : (undefined as any),
+                licenseKey: reqModel.licenseKey,
+                purchaseDate: reqModel.purchaseDate,
+                assignedDate: reqModel.assignedDate || new Date(),
+                expiryDate: reqModel.expiryDate,
+                remarks: reqModel.remarks,
+                totalSeats: 1,
+                costPerSeat: finalCostPerSeat,
+                billingCycle: defaultBillingCycle,
+                role: reqModel.role || 'Member',
+                subscriptionPlan: defaultPlan || 'Standard',
+                isPaid: defaultIsPaid !== undefined ? defaultIsPaid : true
+            };
+            entitiesToSave.push(this.repo.create(licenseData));
+        }
 
-        const license = this.repo.create(licenseData);
-        const saved = await this.repo.save(license);
+        await this.repo.save(entitiesToSave);
 
         try {
             await this.licenseMasterService.updateUsedCount(reqModel.applicationId);
@@ -238,7 +244,10 @@ export class LicensesService {
             console.error('Failed to sync license usage count', e);
         }
 
-        return new GlobalResponse(true, 201, 'License assigned successfully');
+        const msg = entitiesToSave.length > 1
+            ? `License assigned successfully to ${entitiesToSave.length} employees`
+            : 'License assigned successfully';
+        return new GlobalResponse(true, 201, msg);
     }
 
     /**

@@ -48,6 +48,10 @@ export class LicenseService {
             }
             newLicense.totalQuantity = reqModel.totalQuantity;
             newLicense.price = reqModel.price || 0;
+            newLicense.subscriptionPlan = reqModel.subscriptionPlan || 'Standard';
+            newLicense.isPaid = reqModel.isPaid !== undefined ? reqModel.isPaid : true;
+            newLicense.billingCycle = reqModel.billingCycle || 'MONTHLY';
+            newLicense.currency = reqModel.currency || 'USD';
 
             await transManager.getRepository(LicensesMasterEntity).save(newLicense);
             await transManager.completeTransaction();
@@ -75,8 +79,6 @@ export class LicenseService {
             const licenses = await this.licenseRepo.find();
 
             // Return licenses directly as usedCount is now a persisted field
-            // We can still verify with a quick check if needed, but for better performance 
-            // and based on user request to have it "increase", we lean on the persisted column.
             return new GetAllLicenseMastersResponseModel(true, 200, 'Licenses retrieved successfully', licenses as any);
         } catch (error) {
             throw error;
@@ -128,7 +130,11 @@ export class LicenseService {
                 purchaseDate: reqModel.purchaseDate,
                 expiryDate: reqModel.expiryDate,
                 totalQuantity: reqModel.totalQuantity,
-                price: reqModel.price
+                price: reqModel.price,
+                subscriptionPlan: reqModel.subscriptionPlan ?? existing.subscriptionPlan,
+                isPaid: reqModel.isPaid !== undefined ? reqModel.isPaid : existing.isPaid,
+                billingCycle: reqModel.billingCycle ?? existing.billingCycle,
+                currency: reqModel.currency ?? existing.currency
             };
 
             await transManager.getRepository(LicensesMasterEntity).update(reqModel.id, updateData);

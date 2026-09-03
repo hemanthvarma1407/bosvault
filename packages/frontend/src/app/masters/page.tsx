@@ -71,8 +71,8 @@ const MastersPage: React.FC = () => {
         },
         {
             id: 'applications',
-            title: 'Licenses',
-            description: 'Manage software licenses and subscriptions',
+            title: 'Tools',
+            description: 'Manage software subscriptions, tools and catalogs',
             icon: AppWindow,
             color: 'from-cyan-500 to-slate-900',
             component: LicensesMasterView

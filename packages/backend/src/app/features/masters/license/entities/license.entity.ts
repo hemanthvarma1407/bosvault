@@ -26,4 +26,16 @@ export class LicensesMasterEntity extends MasterBaseEntity {
 
     @Column('decimal', { name: 'price', precision: 12, scale: 2, default: 0, nullable: true, comment: 'Price per license unit' })
     price: number;
+
+    @Column('varchar', { name: 'subscription_plan', length: 100, nullable: true, default: 'Standard', comment: 'Subscription Plan tier (e.g. Free, Starter, Pro, Enterprise)' })
+    subscriptionPlan: string;
+
+    @Column('boolean', { name: 'is_paid', nullable: false, default: true, comment: 'Whether license is Paid or Free' })
+    isPaid: boolean;
+
+    @Column('varchar', { name: 'billing_cycle', length: 50, nullable: true, default: 'MONTHLY', comment: 'Billing frequency' })
+    billingCycle: string;
+
+    @Column('varchar', { name: 'currency', length: 10, nullable: true, default: 'USD', comment: 'Currency code' })
+    currency: string;
 }

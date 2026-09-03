@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { MultiSelect } from '@/components/ui/MultiSelect';
-import { Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, FileText, FileUp, CheckCircle2 } from 'lucide-react';
 import { CreatePOModel, UpdatePOModel, POItemModel, Vendor, GetAllEmployeesRequestModel } from '@bosvault/shared-models';
 import { vendorService, procurementService, employeeService, companyService, assetTypeService } from '@/lib/api/services';
 import { AlertMessages } from '@/lib/utils/AlertMessages';
@@ -57,6 +57,8 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
     const [assetTypes, setAssetTypes] = useState<OptionItem[]>([]);
     const defaultForm: POFormState = { vendorId: 0, vendorName: '', currency: 'USD', orderDate: new Date().toISOString().split('T')[0], expectedDeliveryDate: '', notes: '', approverIds: [], companyId: user?.companyId || 0, items: [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }] };
     const [formData, setFormData] = useState<POFormState>(defaultForm);
+    const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
+    const [documentUrl, setDocumentUrl] = useState<string>('');
 
     useEffect(() => {
         if (isOpen) {
@@ -73,8 +75,12 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                     vendorName: (initialPO.vendorName as string) || '',
                     items: Array.isArray(initialPO.items) && initialPO.items.length > 0 ? (initialPO.items as Record<string, unknown>[]).map((i) => ({ ...i, itemName: String(i.itemName || ''), quantity: Number(i.quantity || 0), unitPrice: Number(i.unitPrice || 0), assetTypeName: String(i.assetTypeName || '') })) : [{ itemName: '', quantity: '', unitPrice: '', assetTypeId: undefined, assetTypeName: '' }]
                 });
+                setDocumentUrl((initialPO.invoiceUrl as string) || '');
+                setSelectedDocument(null);
             } else {
                 setFormData(defaultForm);
+                setDocumentUrl('');
+                setSelectedDocument(null);
             }
         }
     }, [isOpen, initialPO]);
@@ -143,6 +149,20 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
         setIsSubmitting(true);
         try {
+            let finalInvoiceUrl = documentUrl || undefined;
+            if (selectedDocument) {
+                try {
+                    const uploadRes = await procurementService.uploadDocument(selectedDocument);
+                    if (uploadRes.status && uploadRes.data?.url) {
+                        finalInvoiceUrl = uploadRes.data.url;
+                    }
+                } catch (uploadErr: any) {
+                    AlertMessages.getErrorMessage(uploadErr.message || 'Failed to upload document');
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+
             const items = formData.items.map((i) => new POItemModel(
                 i.itemName,
                 Number(i.quantity || 0),
@@ -156,10 +176,10 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
 
             let res;
             if (initialPO) {
-                const model = new UpdatePOModel(Number(initialPO.id), user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, initialPO.invoiceUrl as string, formData.currency, formData.vendorName);
+                const model = new UpdatePOModel(Number(initialPO.id), user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, finalInvoiceUrl, formData.currency, formData.vendorName);
                 res = await procurementService.updatePurchaseOrder(model);
             } else {
-                const model = new CreatePOModel(user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, undefined, formData.currency, formData.vendorName);
+                const model = new CreatePOModel(user?.fullName || 'User', user?.id || 0, '', formData.companyId, formData.vendorId, orderDate, items, expectedDeliveryDate, formData.notes, undefined, formData.approverIds?.length ? formData.approverIds : undefined, finalInvoiceUrl, formData.currency, formData.vendorName);
                 res = await procurementService.createPurchaseOrder(model);
             }
 
@@ -391,6 +411,77 @@ export function CreatePOModal({ isOpen, onClose, onSuccess, initialPO }: CreateP
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+
+                {/* Notes & Document Upload */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            Additional Notes / Reference
+                        </label>
+                        <textarea
+                            rows={4}
+                            placeholder="Enter any reference, delivery instructions, or notes..."
+                            value={formData.notes}
+                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 dark:text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            Upload Document / Invoice
+                        </label>
+                        <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-3 text-center bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-center min-h-[96px]">
+                            {selectedDocument ? (
+                                <div className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                    <div className="flex items-center gap-2 truncate">
+                                        <FileText className="h-4 w-4 text-indigo-500 shrink-0" />
+                                        <span className="text-xs font-bold truncate text-slate-800 dark:text-slate-200">{selectedDocument.name}</span>
+                                        <span className="text-[10px] text-slate-400 shrink-0">({(selectedDocument.size / 1024).toFixed(1)} KB)</span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedDocument(null)}
+                                        className="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                                        title="Remove file"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            ) : documentUrl ? (
+                                <div className="flex items-center justify-between p-2.5 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                                    <div className="flex items-center gap-2 truncate">
+                                        <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                                        <span className="text-xs font-bold truncate text-emerald-700 dark:text-emerald-300">Document Attached</span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setDocumentUrl('')}
+                                        className="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                                        title="Remove document"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className="cursor-pointer block py-2">
+                                    <FileUp className="h-6 w-6 text-slate-400 mx-auto mb-1" />
+                                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Click to upload invoice or document</span>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">PDF, DOC, DOCX, PNG, JPG (up to 10MB)</p>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) setSelectedDocument(file);
+                                        }}
+                                        className="hidden"
+                                    />
+                                </label>
+                            )}
+                        </div>
                     </div>
                 </div>
             </form>

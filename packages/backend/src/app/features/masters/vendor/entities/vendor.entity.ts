@@ -27,6 +27,6 @@ export class VendorsMasterEntity extends MasterBaseEntity {
 
     @Column('varchar', { name: 'category', length: 255, nullable: true, comment: 'Vendor category' })
     category: string;
-
-
 }
+
+export { VendorsMasterEntity as VendorEntity };

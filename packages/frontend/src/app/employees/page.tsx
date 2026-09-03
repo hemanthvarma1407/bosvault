@@ -466,8 +466,8 @@ const EmployeesPage: React.FC = () => {
 
                 {/* Header */}
                 <PageHeader
-                    title="Employee Directory"
-                    description="Manage organization members and roles"
+                    title="User Directory"
+                    description="Manage Google Workspace accounts, email users, and organization members"
                     icon={<Users />}
                     gradient="from-slate-900 to-slate-900"
                     actions={[
@@ -478,7 +478,7 @@ const EmployeesPage: React.FC = () => {
                             variant: 'outline'
                         },
                         {
-                            label: 'Add Employee',
+                            label: 'Add User',
                             onClick: handleAddEmployee,
                             icon: <Plus className="h-3.5 w-3.5" />,
                             variant: 'primary'

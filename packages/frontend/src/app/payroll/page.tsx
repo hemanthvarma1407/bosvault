@@ -255,7 +255,7 @@ const PayrollInfoPage: React.FC = () => {
                 </div>
                 <div className="border-t border-slate-200 dark:border-slate-700 pt-2 space-y-1">
                     <div className="flex justify-between">
-                        <span>Base Payroll:</span>
+                        <span>Email Cost:</span>
                         <span>${costs.baseMonthly.toLocaleString()}/mo</span>
                     </div>
                     <div className="flex justify-between">
@@ -403,7 +403,7 @@ const PayrollInfoPage: React.FC = () => {
                                                     <p className="text-lg font-bold text-slate-900 dark:text-white">${costs.totalMonthly.toLocaleString()}<span className="text-xs text-slate-400 font-normal">/mo</span></p>
                                                 </div>
                                                 <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-100 dark:border-emerald-800/30">
-                                                    <p className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">Grand Total Paid</p>
+                                                    <p className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">Till Now Emp Cost</p>
                                                     <p className="text-lg font-bold text-emerald-600 dark:text-emerald-300">${costs.grandTotal.toLocaleString()}</p>
                                                 </div>
                                             </div>
@@ -416,17 +416,17 @@ const PayrollInfoPage: React.FC = () => {
                                     return (
                                         <>
                                             {/* KPI Metric Summary Cards */}
-                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                                {/* Base Payroll */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {/* Email Cost (renamed from Base Salary) */}
                                                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                                                     <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Base Salary</span>
+                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Cost</span>
                                                         <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-lg">
-                                                            <DollarSign className="h-4 w-4" />
+                                                            <Mail className="h-4 w-4" />
                                                         </div>
                                                     </div>
                                                     <p className="text-2xl font-black text-slate-900 dark:text-white">${costs.baseMonthly.toLocaleString()}<span className="text-xs text-slate-400 font-normal">/mo</span></p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">Total Paid: <span className="font-semibold text-slate-700 dark:text-slate-300">${costs.baseTotal.toLocaleString()}</span></p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">Total Email Cost: <span className="font-semibold text-slate-700 dark:text-slate-300">${costs.baseTotal.toLocaleString()}</span></p>
                                                 </div>
 
                                                 {/* Licenses */}
@@ -438,10 +438,22 @@ const PayrollInfoPage: React.FC = () => {
                                                         </div>
                                                     </div>
                                                     <p className="text-2xl font-black text-slate-900 dark:text-white">${costs.licenseMonthly.toLocaleString()}<span className="text-xs text-slate-400 font-normal">/mo</span></p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{costs.empLicenses.length} Assigned ({costs.licenseTotal.toLocaleString()} total)</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{costs.empLicenses.length} Assigned (${costs.licenseTotal.toLocaleString()} total)</p>
                                                 </div>
 
-                                                {/* Grand Total */}
+                                                {/* Month (Active Duration) */}
+                                                <div className="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Month</span>
+                                                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-lg">
+                                                            <Calendar className="h-4 w-4" />
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{costs.months.toFixed(1)} <span className="text-xs text-slate-400 font-normal">Months</span></p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">Active Tenure Duration</p>
+                                                </div>
+
+                                                {/* Till Now Emp Cost */}
                                                 <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md space-y-2 relative overflow-hidden">
                                                     <div className="absolute top-3 right-3">
                                                         <button onClick={() => setIsSummaryOpen(!isSummaryOpen)} className="p-1 rounded-md hover:bg-white/20 text-white transition-colors focus:outline-none">
@@ -463,7 +475,7 @@ const PayrollInfoPage: React.FC = () => {
                                                             )}
                                                         </AnimatePresence>
                                                     </div>
-                                                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-100">Grand Total Cost</span>
+                                                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-100">Till Now Emp Cost</span>
                                                     <p className="text-3xl font-black">${costs.grandTotal.toLocaleString()}</p>
                                                     <p className="text-xs text-emerald-100/80">Tenure: {costs.months.toFixed(1)} months</p>
                                                 </div>
@@ -530,6 +542,26 @@ const PayrollInfoPage: React.FC = () => {
                                                                 </div>
                                                             </div>
                                                         )}
+
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="p-2 bg-slate-100 dark:bg-slate-800/60 dark:bg-indigo-900/20 rounded-lg">
+                                                                <Calendar className="h-4 w-4 text-slate-900 dark:text-white" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Month (Active Tenure)</p>
+                                                                <p className="font-semibold text-slate-800 dark:text-slate-200">{costs.months.toFixed(1)} Months</p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                                                                <DollarSign className="h-4 w-4 text-emerald-600" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">Till Now Emp Cost</p>
+                                                                <p className="font-semibold text-emerald-600 dark:text-emerald-400">${costs.grandTotal.toLocaleString()}</p>
+                                                            </div>
+                                                        </div>
 
                                                         {selectedEmployee.remarks && (
                                                             <div className="flex items-start gap-3 pt-2 border-t border-slate-100 dark:border-slate-700/50">

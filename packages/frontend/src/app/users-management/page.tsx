@@ -807,68 +807,24 @@ export default function UsersManagementPage() {
                                 disabled={submitting}
                             />
                         )}
-                        <div className="space-y-2">
-                            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                Assigned Roles
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
-                                {ALL_ROLES.map((roleOpt) => {
-                                    const isSelected = formData.roles?.includes(roleOpt.value);
-                                    return (
-                                        <button
-                                            key={roleOpt.value}
-                                            type="button"
-                                            onClick={() => {
-                                                const currentRoles = formData.roles || [];
-                                                let nextRoles;
-                                                if (currentRoles.includes(roleOpt.value)) {
-                                                    // Don't allow removing all roles, at least one is required
-                                                    if (currentRoles.length === 1) return;
-                                                    nextRoles = currentRoles.filter(r => r !== roleOpt.value);
-                                                } else {
-                                                    nextRoles = [...currentRoles, roleOpt.value];
-                                                }
-                                                setFormData({
-                                                    ...formData,
-                                                    roles: nextRoles,
-                                                    role: nextRoles[0] || UserRoleEnum.USER
-                                                });
-                                            }}
-                                            className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer ${isSelected
-                                                    ? 'border-slate-700 bg-slate-100 dark:bg-slate-800/60/40 dark:bg-indigo-950/20 dark:border-slate-700 shadow-sm'
-                                                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
-                                                }`}
-                                        >
-                                            <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border border-slate-300 dark:border-slate-700 text-white transition-all duration-200">
-                                                {isSelected && (
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="3"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className="h-3 w-3 text-slate-900 dark:text-white dark:text-slate-300"
-                                                    >
-                                                        <polyline points="20 6 9 17 4 12" />
-                                                    </svg>
-                                                )}
-                                            </div>
-                                            <div className="space-y-0.5">
-                                                <div className={`text-xs font-bold leading-none ${isSelected ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-900 dark:text-slate-100'
-                                                    }`}>
-                                                    {roleOpt.label}
-                                                </div>
-                                                <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-normal">
-                                                    {roleOpt.desc}
-                                                </div>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
+                        <Select
+                            label="Assigned Roles"
+                            value={formData.role || (formData.roles && formData.roles[0]) || UserRoleEnum.USER}
+                            onChange={e => {
+                                const selectedRole = e.target.value as UserRoleEnum;
+                                setFormData({
+                                    ...formData,
+                                    role: selectedRole,
+                                    roles: [selectedRole]
+                                });
+                            }}
+                            options={ALL_ROLES.map(r => ({
+                                value: r.value,
+                                label: `${r.label} (${r.desc})`
+                            }))}
+                            disabled={submitting}
+                            required
+                        />
                         <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-700">
                             <Button variant="outline" type="button" onClick={handleCloseModal} disabled={submitting}>
                                 Cancel

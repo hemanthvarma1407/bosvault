@@ -44,4 +44,22 @@ export class SlackUsersMasterEntity extends MasterBaseEntity {
 
     @Column('bigint', { name: 'employee_id', nullable: true, comment: 'Linked Employee ID' })
     employeeId: number;
+
+    @Column('boolean', { name: 'is_guest', nullable: true, default: false, comment: 'Whether user is a Slack guest account' })
+    isGuest: boolean;
+
+    @Column('boolean', { name: 'is_ultra_restricted', nullable: true, default: false, comment: 'Single-channel guest' })
+    isUltraRestricted: boolean;
+
+    @Column('boolean', { name: 'is_restricted', nullable: true, default: false, comment: 'Multi-channel or restricted guest' })
+    isRestricted: boolean;
+
+    @Column('boolean', { name: 'is_stranger', nullable: true, default: false, comment: 'External / Slack Connect user' })
+    isStranger: boolean;
+
+    @Column('varchar', { name: 'user_type', length: 50, nullable: true, default: 'Member', comment: 'User type: Member, Multi-Channel Guest, Single-Channel Guest, External, Bot' })
+    userType: string;
+
+    @Column('boolean', { name: 'is_billable', nullable: true, default: true, comment: 'Whether user is billable under workspace billing' })
+    isBillable: boolean;
 }

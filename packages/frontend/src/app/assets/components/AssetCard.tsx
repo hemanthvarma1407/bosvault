@@ -1,6 +1,6 @@
 'use client';
 
-import { Laptop, Monitor, Smartphone, Tablet, HardDrive, User, CheckCircle2, UserPlus, Pencil, Trash2, History, QrCode, Eye } from 'lucide-react';
+import { Laptop, Monitor, Smartphone, Tablet, HardDrive, User, CheckCircle2, UserPlus, Pencil, Trash2, History, QrCode, Eye, CreditCard } from 'lucide-react';
 import React from 'react';
 import { Asset } from '../types';
 
@@ -21,6 +21,7 @@ const getAssetIcon = (name?: string) => {
     if (lowerName.includes('monitor') || lowerName.includes('screen') || lowerName.includes('display')) return Monitor;
     if (lowerName.includes('phone') || lowerName.includes('iphone') || lowerName.includes('android')) return Smartphone;
     if (lowerName.includes('tablet') || lowerName.includes('ipad')) return Tablet;
+    if (lowerName.includes('terminal') || lowerName.includes('stripe') || lowerName.includes('card reader') || lowerName.includes('reader') || lowerName.includes('pos')) return CreditCard;
     return HardDrive;
 };
 

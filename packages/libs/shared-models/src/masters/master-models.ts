@@ -263,6 +263,10 @@ export class License extends MasterBase {
     usedQuantity?: number;
     usedCount?: number;
     price?: number;
+    subscriptionPlan?: string;
+    isPaid?: boolean;
+    billingCycle?: string;
+    currency?: string;
 
     constructor(
         id: number,
@@ -278,7 +282,12 @@ export class License extends MasterBase {
         updatedAt?: Date,
         totalQuantity?: number,
         usedQuantity?: number,
-        usedCount?: number
+        usedCount?: number,
+        price?: number,
+        subscriptionPlan?: string,
+        isPaid?: boolean,
+        billingCycle?: string,
+        currency?: string
     ) {
         super(id, userId, name, isActive, companyId, description, createdAt, updatedAt);
         this.purchaseDate = purchaseDate;
@@ -287,11 +296,13 @@ export class License extends MasterBase {
         this.totalQuantity = totalQuantity;
         this.usedQuantity = usedQuantity ?? usedCount;
         this.usedCount = usedCount ?? usedQuantity;
+        this.price = price;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
+        this.billingCycle = billingCycle;
+        this.currency = currency || 'USD';
     }
 }
-
-
-
 
 export class SlackUserModel extends MasterBase {
     email: string;
@@ -308,6 +319,12 @@ export class SlackUserModel extends MasterBase {
     timezone?: string;
     timezoneLabel?: string;
     teamId?: string;
+    isGuest?: boolean;
+    isUltraRestricted?: boolean;
+    isRestricted?: boolean;
+    isStranger?: boolean;
+    userType?: string;
+    isBillable?: boolean;
 
     constructor(
         id: number,
@@ -329,7 +346,15 @@ export class SlackUserModel extends MasterBase {
         createdAt?: Date,
         updatedAt?: Date,
         isAdmin?: boolean,
-        timezone?: string
+        timezone?: string,
+        timezoneLabel?: string,
+        teamId?: string,
+        isGuest?: boolean,
+        isUltraRestricted?: boolean,
+        isRestricted?: boolean,
+        isStranger?: boolean,
+        userType?: string,
+        isBillable?: boolean
     ) {
         super(id, userId, name, isActive, companyId, description, createdAt, updatedAt);
         this.email = email;
@@ -344,6 +369,14 @@ export class SlackUserModel extends MasterBase {
         this.companyName = companyName;
         this.isAdmin = isAdmin;
         this.timezone = timezone;
+        this.timezoneLabel = timezoneLabel;
+        this.teamId = teamId;
+        this.isGuest = isGuest;
+        this.isUltraRestricted = isUltraRestricted;
+        this.isRestricted = isRestricted;
+        this.isStranger = isStranger;
+        this.userType = userType;
+        this.isBillable = isBillable;
     }
 }
 
@@ -648,24 +681,6 @@ export class CreateDeviceConfigResponseModel extends GlobalResponse {
     }
 }
 
-export class CreateVendorResponseModel extends GlobalResponse {
-    vendor: Vendor;
-
-    constructor(status: boolean, code: number, message: string, vendor: Vendor) {
-        super(status, code, message);
-        this.vendor = vendor;
-    }
-}
-
-
-
-
-
-
-
-
-
-
 // ============================================
 // RESPONSE MODELS - UPDATE (Single Item)
 // ============================================
@@ -689,18 +704,6 @@ export class UpdateDeviceConfigResponseModel extends GlobalResponse {
 
 
 
-
-
-
-
-export class CreateSlackUserResponseModel extends GlobalResponse {
-    slackUser: SlackUserModel;
-
-    constructor(status: boolean, code: number, message: string, slackUser: SlackUserModel) {
-        super(status, code, message);
-        this.slackUser = slackUser;
-    }
-}
 
 
 
@@ -1000,13 +1003,36 @@ export class CreateLicenseMasterModel extends CreateMasterModel {
     expiryDate?: Date;
     totalQuantity?: number;
     price?: number;
+    subscriptionPlan?: string;
+    isPaid?: boolean;
+    billingCycle?: string;
+    currency?: string;
 
-    constructor(userId: number, companyId: number, name: string, description?: string, isActive?: boolean, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number, id?: number, price?: number) {
+    constructor(
+        userId: number,
+        companyId: number,
+        name: string,
+        description?: string,
+        isActive?: boolean,
+        purchaseDate?: Date,
+        expiryDate?: Date,
+        totalQuantity?: number,
+        id?: number,
+        price?: number,
+        subscriptionPlan?: string,
+        isPaid?: boolean,
+        billingCycle?: string,
+        currency?: string
+    ) {
         super(userId, companyId, name, description, isActive, id);
         this.purchaseDate = purchaseDate;
         this.expiryDate = expiryDate;
         this.totalQuantity = totalQuantity;
         this.price = price;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
+        this.billingCycle = billingCycle;
+        this.currency = currency || 'USD';
     }
 }
 
@@ -1019,8 +1045,25 @@ export class UpdateLicenseMasterModel {
     expiryDate?: Date;
     totalQuantity?: number;
     price?: number;
+    subscriptionPlan?: string;
+    isPaid?: boolean;
+    billingCycle?: string;
+    currency?: string;
 
-    constructor(id: number, name: string, description?: string, isActive = true, purchaseDate?: Date, expiryDate?: Date, totalQuantity?: number, price?: number) {
+    constructor(
+        id: number,
+        name: string,
+        description?: string,
+        isActive = true,
+        purchaseDate?: Date,
+        expiryDate?: Date,
+        totalQuantity?: number,
+        price?: number,
+        subscriptionPlan?: string,
+        isPaid?: boolean,
+        billingCycle?: string,
+        currency?: string
+    ) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -1029,6 +1072,10 @@ export class UpdateLicenseMasterModel {
         this.expiryDate = expiryDate;
         this.totalQuantity = totalQuantity;
         this.price = price;
+        this.subscriptionPlan = subscriptionPlan;
+        this.isPaid = isPaid;
+        this.billingCycle = billingCycle;
+        this.currency = currency || 'USD';
     }
 }
 
